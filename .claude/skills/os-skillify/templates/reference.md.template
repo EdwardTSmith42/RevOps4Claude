@@ -1,0 +1,30 @@
+# <Reference topic>
+
+<!--
+Authoring note: references encode domain knowledge — taxonomies, criteria, frameworks. They tend to be naturally list-shaped; that's fine. Where a concept involves judgment or craft, write the *principle* (what's protected, what failure mode is avoided) rather than a bare rule. Avoid verbatim sample text where a description of the effect would do. See `../_shared/references/skill-prompting-principles.md`. Remove this comment before shipping.
+-->
+
+<One-line summary capturing what this reference contains and the lens it offers to skills that load it.>
+
+## <Concept or section 1>
+
+<Domain knowledge. Definitions, criteria, taxonomies, checklists. Written so that multiple skills could load this reference and use it unchanged. No job-specific instructions.>
+
+## <Concept or section 2>
+
+<...>
+
+## Used by
+
+- `<skill-name>` — <how it's used there>
+- `<skill-name>` — <how it's used there>
+
+<Cross-reference list so the dependency graph is visible. Update when new skills begin using this reference.>
+
+## Malleability note
+
+<Required for references promoted to `_shared/`. Optional but recommended for skill-internal references that encode frameworks or taxonomies.>
+
+<Name what's canonical and what's adaptable. Canonical = the shape of the framework that shouldn't change across skills (renaming categories, reordering stages, dropping required elements). Adaptable = the calibration that varies per skill (where dividing lines sit, whether every element is surfaced explicitly in every output, whether the canonical implications apply literally in a given context).>
+
+<Skills that diverge from the canonical should note the reason in their Design Rationale. The malleability note prevents the reference from becoming sacred while keeping the framework coherent.>

@@ -1,0 +1,78 @@
+---
+name: <skill-name>
+description: >-
+  <A routing prompt for this skill. State the job, input shapes, and representative user phrasings. Include terse mode coverage, a differentiating method or architecture, and "Do NOT trigger for X" boundaries when those details materially change selection. Preserve routing signal that has proven useful; move only post-selection detail into the body. Aim for 400–800 characters as guidance, with a hard maximum of 1024. See references/frontmatter-format.md for the full rules — always use this `>-` block-folded scalar form so colons, quotes, and apostrophes don't break YAML.>
+---
+
+# <Skill title — human-readable>
+
+<!--
+Authoring note for the agent filling this template:
+
+This skill's body should be written in the shape its output takes. If the output is prose for human consumption, write the body in prose with the cadence and tonal range you want the output to have — not as bullet lists. If the output is structured (code, schemas, tables), lists are fine. The shape leaks either way.
+
+Where craft moves appear, capture the principle behind the move (the why and the failure mode it avoids), not just the rule. Hard-and-fast rules survive only where there's literally one right answer.
+
+For any slot where the model would produce a phrasing (greetings, hooks, headlines, transitions, examples), describe the *effect* the slot should produce rather than supplying text the model will copy verbatim.
+
+Full reference: `../_shared/references/skill-prompting-principles.md`. Remove this comment block before shipping.
+-->
+
+## Purpose
+
+<One paragraph capturing: what job this skill does, who it serves, what distinguishes a strong output from a mediocre one. Preserve craft framing from the source prompt where applicable. Do not include scaffolding. For prose-domain skills, write this paragraph in the voice the skill is meant to produce.>
+
+## When to use
+
+<Bullet list or prose describing the concrete situations that call for this skill. Specific enough that the trigger is clear, general enough that edge cases are covered.>
+
+## Inputs
+
+<What the skill expects as input. Content to work on, context about audience/purpose, any optional parameters. Keep it brief — full detail goes in the run section if needed.>
+
+## Run
+
+<Numbered or prose steps describing how the agent should approach the job. Preserve craft moves verbatim from the source prompt. Keep scaffolding out.>
+
+<For category skills: this section describes mode selection and routing. Each mode's run logic lives in `modes/<mode-name>.md`.>
+
+## Output
+
+<What the skill produces. If strict mode applies, point to the template in `templates/`. If flexible mode is the default, describe the output characteristics and note that exact shape adapts to context.>
+
+<!--
+If this skill is ADDITIVE (its value grows as the user's library / mode list / coverage accumulates over time), include the section below — adapted to this skill's own language for what extension would look like. If this skill is COMPLETE (one well-defined job done once well), DELETE the section entirely. The full additive-vs-complete heuristic is in `../_shared/references/self-extending-skills.md`. When in doubt, ask the user.
+-->
+
+## When the requested <thing> isn't yet <a mode / a lens / supported>
+
+<For additive skills only — replace `<thing>` and the supported-capability noun with terms native to this skill (format, lens, scope, audience type, etc.). Describe the three-beat pattern in this skill's voice: surface the gap, offer two paths (set up for next time via the appropriate meta-skill hand-off; produce once without setup), and close with the greedy-when-recurring discipline plus the why-behind-the-why. Point readers at `../_shared/references/self-extending-skills.md` for the canonical principle.>
+
+## Design Rationale
+
+Why this skill is structured the way it is:
+
+- **<Load-bearing move 1>** — <one-sentence reason from source or elicited from author>.
+- **<Load-bearing move 2>** — <reason>.
+- **<Load-bearing move 3>** — <reason>.
+<3–8 bullets covering the non-obvious moves. Keep each to 1–2 sentences.>
+
+## References
+
+- `references/<file>.md` — <one-line description>
+<Point to the references this skill uses. Skip if none.>
+
+## Templates
+
+- `templates/<file>.md` — <one-line description of when to use>
+<Skip if none.>
+
+## Examples
+
+- `examples/<file>.md` — <one-line description>
+<Skip if none.>
+
+## Related skills
+
+- `<skill-name>` — <when to use together, or hand-off relationship>
+<Note any skills this one commonly chains to or from.>

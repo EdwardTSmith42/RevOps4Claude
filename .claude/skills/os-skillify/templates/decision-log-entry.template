@@ -1,0 +1,96 @@
+# Decision log: <source-prompt-filename OR category-skill-name (category skill)>
+
+## Which template variant to use
+
+**Standalone skill (one source → one skill):** use the full entry below. File name matches the source prompt.
+
+**Category skill (multiple sources → one skill with modes):** write a consolidated entry using this template, named after the skill (e.g., `audience (category skill).md`), plus one thin stub per source prompt. Stub format:
+
+```markdown
+# Decision: <source-prompt-filename>
+
+**Source:** `/source/old-prompts/<source-filename>.md`
+**Date converted:** <YYYY-MM-DD>
+**Disposition:** MERGED — absorbed into the `<skill-name>` category skill as `modes/<mode>`
+**Destination:** `/ship/skills/<skill-name>/modes/<mode>.md` + related refs/templates
+
+## Summary
+
+<One or two paragraphs: what this prompt contributed to the category skill, notable merge decisions.>
+
+## Full decision record
+
+See `<workspace>/decision-log/<skill-name> (category skill).md` for the complete conversion record.
+
+## Provenance
+
+Original prompt preserved at `/source/old-prompts/<source-filename>.md` (untouched).
+```
+
+## Full entry template (standalone skill or consolidated category-skill entry)
+
+**Source(s):** `/source/old-prompts/<source-filename>.md` (list all if category skill)
+**Date converted:** <YYYY-MM-DD>
+**Disposition:** <SHIP NOW | ADAPT | MERGE | ARCHIVE | BONUS ONLY | BACKEND ONLY>
+**Destination:** `/ship/skills/<skill-name>/` (and specific sub-paths if category skill)
+
+## Summary
+
+<Two or three sentences: what the source(s) do, what they became, any notable decisions. For category skills, cover the consolidation logic.>
+
+## Classification
+
+| Source chunk | Category | Disposition |
+|---|---|---|
+| <quote or paraphrase> | trigger/framing | SKILL.md Purpose |
+| <quote or paraphrase> | craft move | SKILL.md Run (verbatim) |
+| <quote or paraphrase> | domain knowledge | references/<file>.md |
+| <quote or paraphrase> | output shape | templates/<file>.md |
+| <quote or paraphrase> | example | examples/<file>.md |
+| <quote or paraphrase> | scaffolding | dropped |
+
+<Cover every meaningful chunk. For category skills, separate "Shared (category-level) classification" (content that lives in SKILL.md or cross-mode references) from per-mode classification tables. If a line is decorative filler, group similar lines and note the pattern.>
+
+## Rationale captured
+
+<For each significant design move, the rationale note that went into the converted SKILL.md's Design Rationale section. Mark each as "stated in source" or "elicited" so tacit-made-explicit is visible.>
+
+- **<Move>** — <rationale>. [stated in source | elicited]
+- **<Move>** — <rationale>. [stated in source | elicited]
+- **<Move>** — TBD: <open question for a future pass>. [preserved explicitly as unresolved rather than silently omitted]
+
+## Dropped
+
+<Content from the source that did not make it into the conversion. Each item with a brief reason. Usually this is scaffolding.>
+
+- *"<quoted scaffolding line>"* — <reason, e.g., "tip bribery, scaffolding-patterns.md">
+- *"<quoted scaffolding line>"* — <reason>
+
+## Shared-reference promotions
+
+<For category skills and conversions that touch shared content. List any references promoted to `_shared/references/` during this conversion, the two-skill threshold that was met, and any promotion candidates flagged for future. Omit if no promotions happened.>
+
+- **`<shared-ref>.md`** — promoted from `<origin>`. Two-skill threshold met: <skills X and Y load for the same reason>. Malleability note added.
+
+## Merged with
+
+<If this prompt was merged with other sources (into the same skill or mode), list them. For category skills, list the full source inventory here. Otherwise "N/A".>
+
+## Verification
+
+<How the converted skill was tested. For multi-skill batches, cross-reference the batch file at `<workspace>/decision-log/_VERIFICATION-BATCH-<date>.md` rather than duplicating the full test plan here.>
+
+- **Craft preserved:** <yes/no + notes, or "see batch verification file">
+- **Rationale holds under variation:** <yes/no + notes>
+- **No silent loss:** <yes/no + notes>
+
+## Open questions
+
+<Anything unresolved. Ambiguous classifications, moves whose rationale is still unclear (TBD), decisions that might need to be revisited.>
+
+## Provenance
+
+Original prompt(s) preserved at `/source/old-prompts/` (untouched).
+Classification artifact: `/source/extracted-skills/<skill-or-source>-classification.md`
+Conversion performed by: skillify v<version>
+<For category skills, also reference the verification batch file if one was produced.>

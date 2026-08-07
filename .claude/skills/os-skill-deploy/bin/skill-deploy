@@ -1,0 +1,727 @@
+#!/usr/bin/env python3
+"""skill-deploy — manage the edit-here / deploy-to-harness loop for skills.
+
+Vault layout assumed (buyer workspace):
+  skills/<name>/SKILL.md
+(Creator repo layout ship/skills/<name>/SKILL.md also supported.)
+
+Manifest lives at ./.skill-manifest.json (committed).
+Zips land in ./dist/<name>.zip.
+Symlinks created at ~/.agents/skills/<name> (Agent Skills standard) and/or
+~/.claude/skills/<name> (Claude Code-specific compatibility) → vault skill folder.
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+import re
+import shutil
+import sys
+import zipfile
+from datetime import datetime, timezone
+from pathlib import Path
+
+# Windows consoles default to cp1252, which can't encode the arrows and box
+# glyphs this tool prints; force UTF-8 where the runtime allows it.
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+    sys.stderr.reconfigure(encoding="utf-8")
+except (AttributeError, ValueError):
+    pass
+
+def _find_vault() -> Path:
+    """Walk up from CWD until we find a directory that looks like a skill vault.
+
+    Markers (any one is enough): skills/ (containing at least one SKILL.md),
+    ship/skills/, or .skill-manifest.json. Override with SKILL_VAULT_ROOT env var.
+    """
+    env = os.environ.get("SKILL_VAULT_ROOT")
+    if env:
+        return Path(env).resolve()
+    cur = Path.cwd().resolve()
+    for candidate in [cur, *cur.parents]:
+        skills_dir = candidate / "skills"
+        if skills_dir.is_dir() and any(skills_dir.glob("*/SKILL.md")):
+            return candidate
+        if (candidate / "ship" / "skills").exists():
+            return candidate
+        if (candidate / ".skill-manifest.json").exists():
+            return candidate
+    print(
+        "error: not inside a skill vault. Run from a directory containing "
+        "skills/ (with at least one SKILL.md), ship/skills/, or .skill-manifest.json — "
+        "or set SKILL_VAULT_ROOT.",
+        file=sys.stderr,
+    )
+    sys.exit(1)
+
+
+VAULT = _find_vault()
+SKILL_ROOTS = [VAULT / "skills", VAULT / "ship" / "skills"]
+MANIFEST_PATH = VAULT / ".skill-manifest.json"
+DIST_DIR = VAULT / "dist"
+SKILL_TARGET_DIRS = {
+    "claude": Path.home() / ".claude" / "skills",
+    "agents": Path.home() / ".agents" / "skills",
+}
+LEGACY_TARGET_ALIASES = {"codex": "agents"}
+
+IGNORE_NAMES = {".DS_Store", "__pycache__", ".git", ".skillignore"}
+IGNORE_PATTERNS_BUILTIN = [".fuse_hidden*"]  # FUSE/worktree artifacts; always skipped
+
+ALL_SURFACES = ["code", "cowork", "web"]
+UPLOAD_SURFACES = {"cowork", "web"}
+MAX_SKILL_DESCRIPTION_CHARS = 1024
+
+
+# ---------- color ----------
+
+def _supports_color() -> bool:
+    return sys.stdout.isatty() and os.environ.get("NO_COLOR") is None
+
+
+class C:
+    if True:  # placeholder; bound below
+        pass
+
+
+def _init_color():
+    if _supports_color():
+        C.reset = "\033[0m"
+        C.green = "\033[32m"
+        C.yellow = "\033[33m"
+        C.blue = "\033[34m"
+        C.gray = "\033[90m"
+        C.red = "\033[31m"
+        C.bold = "\033[1m"
+    else:
+        C.reset = C.green = C.yellow = C.blue = C.gray = C.red = C.bold = ""
+
+
+_init_color()
+
+
+# ---------- discovery ----------
+
+def discover_skills() -> dict[str, Path]:
+    """Map skill name → absolute path to its folder. Errors on cross-root name collision."""
+    found: dict[str, Path] = {}
+    collisions: dict[str, list[Path]] = {}
+    candidates: list[Path] = []
+    for root in SKILL_ROOTS:
+        if not root.exists():
+            continue
+        candidates.extend(sorted(root.iterdir()))
+    for child in candidates:
+        if not child.is_dir():
+            continue
+        if not (child / "SKILL.md").exists():
+            continue
+        name = child.name
+        if name in found:
+            if found[name].resolve() == child.resolve():
+                continue
+            collisions.setdefault(name, [found[name]]).append(child)
+        else:
+            found[name] = child
+    if collisions:
+        msg = ["Skill name collisions across roots:"]
+        for name, paths in collisions.items():
+            msg.append(f"  {name}:")
+            for p in paths:
+                msg.append(f"    - {p}")
+        msg.append("Rename one folder so names are unique.")
+        die("\n".join(msg))
+    return found
+
+
+# ---------- hashing ----------
+
+def _load_skillignore(skill_dir: Path) -> list[str]:
+    f = skill_dir / ".skillignore"
+    if not f.exists():
+        return []
+    return [line.strip() for line in f.read_text().splitlines() if line.strip() and not line.startswith("#")]
+
+
+def _is_ignored(rel: str, patterns: list[str]) -> bool:
+    parts = rel.split("/")
+    if any(p in IGNORE_NAMES for p in parts):
+        return True
+    import fnmatch
+    for pat in [*IGNORE_PATTERNS_BUILTIN, *patterns]:
+        if fnmatch.fnmatch(rel, pat) or any(fnmatch.fnmatch(p, pat) for p in parts):
+            return True
+    return False
+
+
+def hash_skill(skill_dir: Path) -> str:
+    """sha256 over sorted (relative-path, file-contents) tuples.
+
+    Also folds in the content of every shared reference the skill's body files
+    load (resolved recursively, same set the zip step bundles). Without this,
+    editing a file under skills/_shared/references/ changes what gets zipped
+    but leaves every consumer reported `clean` — cloud copies silently stale.
+    """
+    patterns = _load_skillignore(skill_dir)
+    entries: list[tuple[str, bytes]] = []
+    referenced: set[str] = set()
+    for path in sorted(skill_dir.rglob("*")):
+        if not path.is_file():
+            continue
+        rel = path.relative_to(skill_dir).as_posix()
+        if _is_ignored(rel, patterns):
+            continue
+        data = path.read_bytes()
+        entries.append((rel, data))
+        if path.suffix.lower() in SHARED_REF_TEXT_SUFFIXES:
+            referenced |= _scan_shared_refs(data.decode("utf-8", errors="replace"))
+    h = hashlib.sha256()
+    for rel, data in entries:
+        h.update(rel.encode("utf-8"))
+        h.update(b"\x00")
+        h.update(hashlib.sha256(data).digest())
+        h.update(b"\x00")
+    if referenced:
+        resolved, missing = _collect_shared_refs_recursive(
+            referenced, warn=lambda *_args, **_kw: None
+        )
+        for name in sorted(resolved):
+            h.update(f"sharedref:{name}".encode("utf-8"))
+            h.update(b"\x00")
+            h.update(hashlib.sha256(resolved[name].read_bytes()).digest())
+            h.update(b"\x00")
+        for name in sorted(missing):
+            h.update(f"sharedref-missing:{name}".encode("utf-8"))
+            h.update(b"\x00")
+    return h.hexdigest()
+
+
+# ---------- frontmatter ----------
+
+def _read_core_metadata(skill_dir: Path) -> dict[str, str]:
+    """Read the core Agent Skills fields without adding a YAML dependency."""
+    text = (skill_dir / "SKILL.md").read_text(errors="replace")
+    match = re.match(r"^---\r?\n(.*?)\r?\n---(?:\r?\n|$)", text, re.DOTALL)
+    if not match:
+        return {}
+
+    lines = match.group(1).splitlines()
+    metadata: dict[str, str] = {}
+    for index, line in enumerate(lines):
+        name_match = re.match(r"^name:\s*(.*?)\s*$", line)
+        if name_match:
+            metadata["name"] = name_match.group(1).strip("\"'")
+
+        description_match = re.match(r"^description:\s*([>|])[-+]?\s*$", line)
+        if description_match:
+            block_lines = []
+            for candidate in lines[index + 1:]:
+                if candidate and not candidate[0].isspace():
+                    break
+                block_lines.append(candidate)
+            nonempty = [candidate for candidate in block_lines if candidate.strip()]
+            indent = min((len(candidate) - len(candidate.lstrip()) for candidate in nonempty), default=0)
+            dedented = [candidate[indent:] if candidate.strip() else "" for candidate in block_lines]
+            if description_match.group(1) == "|":
+                value = "\n".join(dedented)
+            else:
+                pieces = []
+                paragraph = []
+                blank_count = 0
+                for candidate in dedented:
+                    if candidate:
+                        if blank_count and paragraph:
+                            pieces.extend((" ".join(paragraph), "\n" * blank_count))
+                            paragraph = []
+                        paragraph.append(candidate.strip())
+                        blank_count = 0
+                    elif paragraph:
+                        blank_count += 1
+                if paragraph:
+                    pieces.append(" ".join(paragraph))
+                value = "".join(pieces)
+            metadata["description"] = value.rstrip("\n")
+            continue
+
+        inline_description = re.match(r"^description:\s*(.*?)\s*$", line)
+        if inline_description:
+            metadata["description"] = inline_description.group(1).strip("\"'")
+    return metadata
+
+
+def _validate_cloud_metadata(name: str, skill_dir: Path) -> None:
+    metadata = _read_core_metadata(skill_dir)
+    if not metadata.get("name"):
+        die(f"zip aborted for {name}: SKILL.md is missing frontmatter `name`.")
+    if metadata["name"] != name:
+        die(
+            f"zip aborted for {name}: frontmatter name `{metadata['name']}` "
+            f"does not match folder `{name}`."
+        )
+    description = metadata.get("description", "")
+    if not description:
+        die(f"zip aborted for {name}: SKILL.md is missing frontmatter `description`.")
+    if len(description) > MAX_SKILL_DESCRIPTION_CHARS:
+        over = len(description) - MAX_SKILL_DESCRIPTION_CHARS
+        die(
+            f"zip aborted for {name}: description is {len(description)} characters "
+            f"({over} over the {MAX_SKILL_DESCRIPTION_CHARS}-character maximum)."
+        )
+
+def read_surfaces(skill_dir: Path) -> list[str]:
+    """Read optional `surfaces:` from SKILL.md frontmatter. Default to ALL_SURFACES."""
+    skill_md = skill_dir / "SKILL.md"
+    text = skill_md.read_text(errors="replace")
+    if not text.startswith("---"):
+        return list(ALL_SURFACES)
+    end = text.find("\n---", 3)
+    if end == -1:
+        return list(ALL_SURFACES)
+    fm = text[3:end]
+    # Inline list:  surfaces: [code, cowork]
+    m = re.search(r"^surfaces:\s*\[([^\]]*)\]\s*$", fm, re.MULTILINE)
+    if m:
+        items = [s.strip().strip("\"'") for s in m.group(1).split(",") if s.strip()]
+        return items or list(ALL_SURFACES)
+    # Block list:
+    #   surfaces:
+    #     - code
+    #     - cowork
+    m = re.search(r"^surfaces:\s*\n((?:\s*-\s*.+\n?)+)", fm, re.MULTILINE)
+    if m:
+        items = [re.sub(r"^\s*-\s*", "", line).strip().strip("\"'")
+                 for line in m.group(1).splitlines() if line.strip()]
+        return items or list(ALL_SURFACES)
+    return list(ALL_SURFACES)
+
+
+# ---------- manifest ----------
+
+def load_manifest() -> dict:
+    if not MANIFEST_PATH.exists():
+        return {"skills": {}}
+    try:
+        return json.loads(MANIFEST_PATH.read_text())
+    except json.JSONDecodeError as e:
+        die(f"Manifest is not valid JSON: {e}")
+
+
+def save_manifest(data: dict) -> None:
+    if MANIFEST_PATH.exists():
+        backup = MANIFEST_PATH.with_suffix(".json.bak")
+        shutil.copy2(MANIFEST_PATH, backup)
+    MANIFEST_PATH.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n")
+
+
+def now_iso() -> str:
+    return datetime.now(timezone.utc).astimezone().isoformat(timespec="seconds")
+
+
+# ---------- status ----------
+
+def status_for(name: str, skill_dir: Path, manifest: dict) -> tuple[str, str, str, list[str]]:
+    """Return (status_label, current_hash, uploaded_hash, surfaces)."""
+    current = hash_skill(skill_dir)
+    surfaces = read_surfaces(skill_dir)
+    entry = manifest.get("skills", {}).get(name)
+    uploaded = entry.get("uploaded_hash") if entry else None
+
+    if not UPLOAD_SURFACES.intersection(surfaces):
+        return ("n/a", current, uploaded or "", surfaces)
+    if not entry:
+        return ("new", current, "", surfaces)
+    if not uploaded:
+        return ("never-uploaded", current, "", surfaces)
+    if uploaded == current:
+        return ("clean", current, uploaded, surfaces)
+    return ("drifted", current, uploaded, surfaces)
+
+
+def _status_color(label: str) -> str:
+    return {
+        "clean": C.green,
+        "drifted": C.yellow,
+        "new": C.blue,
+        "never-uploaded": C.gray,
+        "n/a": C.gray,
+    }.get(label, "")
+
+
+def cmd_status(_args) -> int:
+    skills = discover_skills()
+    manifest = load_manifest()
+    if not skills:
+        print("No skills found.")
+        return 0
+
+    rows = []
+    for name, path in sorted(skills.items()):
+        label, current, uploaded, surfaces = status_for(name, path, manifest)
+        rows.append((name, label, current[:8], uploaded[:8] if uploaded else "-", surfaces, path))
+
+    name_w = max(len(r[0]) for r in rows)
+    label_w = max(len(r[1]) for r in rows)
+
+    header = f"{C.bold}{'SKILL':<{name_w}}  {'STATUS':<{label_w}}  {'CURRENT':<8}  {'UPLOADED':<8}  SURFACES{C.reset}"
+    print(header)
+    for name, label, cur, up, surfaces, path in rows:
+        col = _status_color(label)
+        surf_str = ",".join(surfaces) if surfaces != ALL_SURFACES else "all"
+        print(f"{name:<{name_w}}  {col}{label:<{label_w}}{C.reset}  {cur:<8}  {up:<8}  {C.gray}{surf_str}{C.reset}")
+
+    counts: dict[str, int] = {}
+    for _, label, *_ in rows:
+        counts[label] = counts.get(label, 0) + 1
+    summary = "  ".join(f"{_status_color(k)}{v} {k}{C.reset}" for k, v in counts.items())
+    print(f"\n{summary}")
+    return 0
+
+
+# ---------- zip ----------
+
+# Pattern: matches `(../)*_shared/references/<name>.md` in body text. Captures the
+# shared-ref filename in group 2. The leading `../`s vary by file depth — we
+# rewrite to a depth-correct path pointing at the bundled in-zip copy.
+SHARED_REF_PAT = re.compile(r"(?:\.\./)*_shared/references/([\w.-]+\.md)")
+SHARED_REFS_DIR_NAME = "_shared-refs"  # subdir inside the zip's skill root
+SHARED_REF_TEXT_SUFFIXES = {".md", ".txt", ".yaml", ".yml", ".json"}
+
+
+def _shared_refs_source_dir() -> Path:
+    """Where shared refs live in the vault — first SKILL_ROOTS entry that has them."""
+    for root in SKILL_ROOTS:
+        cand = root / "_shared" / "references"
+        if cand.is_dir():
+            return cand
+    return SKILL_ROOTS[0] / "_shared" / "references"
+
+
+def _scan_shared_refs(text: str) -> set[str]:
+    """Return the set of shared-ref filenames referenced in `text`."""
+    return {m.group(1) for m in SHARED_REF_PAT.finditer(text)}
+
+
+def _rewrite_shared_refs(text: str, file_rel: str) -> str:
+    """Rewrite `(../)*_shared/references/<name>.md` to point at the in-zip bundle.
+
+    `file_rel` is the file's path relative to the skill root (POSIX). Depth
+    determines how many `../`s the rewritten path needs to climb to the skill
+    root before descending into `_shared-refs/`.
+    """
+    depth = file_rel.count("/")  # 0 for SKILL.md, 1 for modes/foo.md, etc.
+    prefix = ("../" * depth) + f"{SHARED_REFS_DIR_NAME}/"
+    return SHARED_REF_PAT.sub(lambda m: prefix + m.group(1), text)
+
+
+def _collect_shared_refs_recursive(seed_names: set[str], warn=print) -> tuple[dict[str, Path], list[str]]:
+    """Walk shared-ref dependencies one level deep; warn on deeper chains.
+
+    Returns (resolved {name: source_path}, missing [names]).
+    """
+    src_dir = _shared_refs_source_dir()
+    resolved: dict[str, Path] = {}
+    missing: list[str] = []
+    to_visit = list(seed_names)
+    visited: set[str] = set()
+    depth_of: dict[str, int] = {n: 0 for n in seed_names}
+
+    while to_visit:
+        name = to_visit.pop()
+        if name in visited:
+            continue
+        visited.add(name)
+        candidate = src_dir / name
+        if not candidate.exists():
+            missing.append(name)
+            continue
+        resolved[name] = candidate
+        # Scan this shared ref for further shared-ref loads. Bundle them too,
+        # but warn beyond one level — keeps v0.1 simple while surfacing chains
+        # that should probably be flattened.
+        try:
+            nested = _scan_shared_refs(candidate.read_text(errors="replace"))
+        except OSError:
+            nested = set()
+        for n in nested:
+            new_depth = depth_of.get(name, 0) + 1
+            depth_of[n] = min(depth_of.get(n, new_depth), new_depth)
+            if new_depth > 1 and n not in visited:
+                warn(
+                    f"{C.yellow}warn{C.reset} shared-ref chain >1 level: "
+                    f"{name} → {n}. Bundling, but consider flattening."
+                )
+            if n not in visited:
+                to_visit.append(n)
+    return resolved, missing
+
+
+def _zip_one(name: str, skill_dir: Path) -> Path:
+    _validate_cloud_metadata(name, skill_dir)
+    DIST_DIR.mkdir(exist_ok=True)
+    zip_path = DIST_DIR / f"{name}.zip"
+    if zip_path.exists():
+        zip_path.unlink()
+    patterns = _load_skillignore(skill_dir)
+
+    # First pass: collect every text file we'll write, scan for shared-ref
+    # loads. We need the full set before writing so bundling is consistent.
+    body_files: list[tuple[str, Path]] = []  # (rel, abs)
+    referenced: set[str] = set()
+    referencing_files: dict[str, list[str]] = {}  # name → list of body-file rels that referenced it
+
+    for path in sorted(skill_dir.rglob("*")):
+        if not path.is_file():
+            continue
+        rel = path.relative_to(skill_dir).as_posix()
+        if _is_ignored(rel, patterns):
+            continue
+        body_files.append((rel, path))
+        if path.suffix.lower() in SHARED_REF_TEXT_SUFFIXES:
+            try:
+                content = path.read_text(errors="replace")
+            except OSError:
+                continue
+            for shared_name in _scan_shared_refs(content):
+                referenced.add(shared_name)
+                referencing_files.setdefault(shared_name, []).append(rel)
+
+    bundled, missing = _collect_shared_refs_recursive(referenced) if referenced else ({}, [])
+    if missing:
+        for m in missing:
+            loaders = referencing_files.get(m, [])
+            loader_str = f" (loaded by {', '.join(loaders)})" if loaders else ""
+            print(
+                f"{C.red}error{C.reset} missing shared ref `{m}`{loader_str} "
+                f"— skill body references it but it's not at "
+                f"{_shared_refs_source_dir() / m}. A zip built without it would break on cloud surfaces."
+            )
+        die(f"zip aborted for {name}: {len(missing)} shared ref(s) unresolvable. "
+            f"Fix the reference(s) or add the file(s), then re-run.")
+
+    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+        # Body files — rewritten if they reference shared refs, raw otherwise.
+        for rel, path in body_files:
+            arcname = f"{name}/{rel}"
+            if bundled and path.suffix.lower() in SHARED_REF_TEXT_SUFFIXES:
+                try:
+                    content = path.read_text(errors="replace")
+                except OSError:
+                    zf.write(path, arcname=arcname)
+                    continue
+                rewritten = _rewrite_shared_refs(content, rel)
+                if rewritten != content:
+                    zf.writestr(arcname, rewritten)
+                else:
+                    zf.write(path, arcname=arcname)
+            else:
+                zf.write(path, arcname=arcname)
+        # Bundled shared refs — rewritten so their own outbound shared-ref
+        # paths point at sibling bundles (file_rel pretends they sit at depth 1
+        # under the skill root: `_shared-refs/<name>.md`).
+        for shared_name, src in bundled.items():
+            arcname = f"{name}/{SHARED_REFS_DIR_NAME}/{shared_name}"
+            try:
+                content = src.read_text(errors="replace")
+                rewritten = _rewrite_shared_refs(content, f"{SHARED_REFS_DIR_NAME}/{shared_name}")
+                zf.writestr(arcname, rewritten)
+            except OSError:
+                zf.write(src, arcname=arcname)
+
+    if bundled:
+        print(
+            f"  {C.gray}bundled {len(bundled)} shared-ref"
+            f"{'s' if len(bundled) != 1 else ''}: "
+            f"{', '.join(sorted(bundled.keys()))}{C.reset}"
+        )
+
+    return zip_path.resolve()
+
+
+def cmd_zip(args) -> int:
+    skills = discover_skills()
+    manifest = load_manifest()
+
+    if args.all_drifted:
+        targets = []
+        for name, path in sorted(skills.items()):
+            label, *_ = status_for(name, path, manifest)
+            if label in {"drifted", "new", "never-uploaded"}:
+                targets.append((name, path))
+        if not targets:
+            print("Nothing to zip — every uploadable skill is clean.")
+            return 0
+    else:
+        if not args.name:
+            die("zip requires a skill name or --all-drifted")
+        if args.name not in skills:
+            die(f"Skill not found: {args.name}")
+        targets = [(args.name, skills[args.name])]
+
+    paths = []
+    for name, path in targets:
+        zip_path = _zip_one(name, path)
+        paths.append(zip_path)
+        print(f"{C.green}zipped{C.reset} {name} → {zip_path}")
+    if len(paths) > 1:
+        print(f"\n{len(paths)} zips ready in {DIST_DIR}")
+    return 0
+
+
+# ---------- mark-uploaded ----------
+
+def _mark(name: str, skill_dir: Path, manifest: dict) -> None:
+    current = hash_skill(skill_dir)
+    surfaces = read_surfaces(skill_dir)
+    manifest.setdefault("skills", {})[name] = {
+        "current_hash": current,
+        "uploaded_hash": current,
+        "uploaded_at": now_iso(),
+        "surfaces": surfaces,
+    }
+
+
+def cmd_mark_uploaded(args) -> int:
+    skills = discover_skills()
+    manifest = load_manifest()
+
+    if args.all_zipped:
+        if not DIST_DIR.exists():
+            die("No dist/ directory — nothing zipped.")
+        zipped = sorted(p.stem for p in DIST_DIR.glob("*.zip"))
+        unknown = [n for n in zipped if n not in skills]
+        if unknown:
+            die(f"Zipped names not found as skills: {unknown}")
+        if not zipped:
+            print("No zips in dist/.")
+            return 0
+        for name in zipped:
+            _mark(name, skills[name], manifest)
+            print(f"{C.green}marked{C.reset} {name} as uploaded")
+        save_manifest(manifest)
+        return 0
+
+    if not args.name:
+        die("mark-uploaded requires a skill name or --all-zipped")
+    if args.name not in skills:
+        die(f"Skill not found: {args.name}")
+    _mark(args.name, skills[args.name], manifest)
+    save_manifest(manifest)
+    print(f"{C.green}marked{C.reset} {args.name} as uploaded")
+    return 0
+
+
+# ---------- link ----------
+
+def _selected_target_dirs(target: str) -> list[tuple[str, Path]]:
+    if target == "all":
+        return list(SKILL_TARGET_DIRS.items())
+    canonical_target = LEGACY_TARGET_ALIASES.get(target, target)
+    if target != canonical_target:
+        print(f"{C.yellow}note:{C.reset} --target {target} is a legacy alias; "
+              f"using the Agent Skills standard at {SKILL_TARGET_DIRS[canonical_target]}")
+    return [(canonical_target, SKILL_TARGET_DIRS[canonical_target])]
+
+
+def cmd_link(args) -> int:
+    skills = discover_skills()
+    linked = skipped = conflicts = 0
+    for harness, target_dir in _selected_target_dirs(args.target):
+        target_dir.mkdir(parents=True, exist_ok=True)
+        print(f"{C.bold}{harness}{C.reset} ({target_dir})")
+        for name, path in sorted(skills.items()):
+            target = target_dir / name
+            if target.is_symlink():
+                try:
+                    current_target = target.resolve()
+                except OSError:
+                    current_target = None
+                if current_target == path.resolve():
+                    skipped += 1
+                    continue
+                target.unlink()
+                target.symlink_to(path)
+                print(f"{C.yellow}relinked{C.reset} {name} → {path}")
+                linked += 1
+                continue
+            if target.exists():
+                print(f"{C.red}conflict{C.reset} {target} exists as a real path — skipping. "
+                      f"Remove it manually if you want it replaced with a symlink to {path}.")
+                conflicts += 1
+                continue
+            target.symlink_to(path)
+            print(f"{C.green}linked{C.reset} {name} → {path}")
+            linked += 1
+    print(f"\n{linked} linked, {skipped} already correct, {conflicts} conflicts.")
+    return 0 if conflicts == 0 else 1
+
+
+def cmd_unlink(args) -> int:
+    failures = 0
+    for harness, target_dir in _selected_target_dirs(args.target):
+        target = target_dir / args.name
+        if not target.exists() and not target.is_symlink():
+            print(f"{C.yellow}missing{C.reset} {harness}: no symlink at {target}")
+            failures += 1
+            continue
+        if not target.is_symlink():
+            print(f"{C.red}refusing{C.reset} {target} is not a symlink.")
+            failures += 1
+            continue
+        target.unlink()
+        print(f"{C.green}unlinked{C.reset} {harness}: {args.name}")
+    return 0 if failures == 0 else 1
+
+
+# ---------- entry ----------
+
+def die(msg: str) -> None:
+    print(f"{C.red}error:{C.reset} {msg}", file=sys.stderr)
+    sys.exit(1)
+
+
+def build_parser() -> argparse.ArgumentParser:
+    p = argparse.ArgumentParser(prog="skill-deploy", description="Manage skill deployment across local harnesses and Claude cloud surfaces.")
+    sub = p.add_subparsers(dest="cmd")
+
+    sub.add_parser("status", help="Show sync status of every skill.")
+
+    z = sub.add_parser("zip", help="Zip a skill for upload.")
+    z.add_argument("name", nargs="?")
+    z.add_argument("--all-drifted", action="store_true")
+
+    m = sub.add_parser("mark-uploaded", help="Record current hash as uploaded.")
+    m.add_argument("name", nargs="?")
+    m.add_argument("--all-zipped", action="store_true")
+
+    link = sub.add_parser("link", help="Symlink every skill into a harness skill directory.")
+    link.add_argument("--target", choices=["agents", "claude", "codex", "all"], default="agents",
+                      help="Deployment surface. 'codex' is a legacy alias for 'agents'.")
+
+    u = sub.add_parser("unlink", help="Remove one skill's symlink.")
+    u.add_argument("name")
+    u.add_argument("--target", choices=["agents", "claude", "codex", "all"], default="agents",
+                   help="Deployment surface. 'codex' is a legacy alias for 'agents'.")
+
+    return p
+
+
+def main(argv: list[str]) -> int:
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    cmd = args.cmd or "status"
+    handler = {
+        "status": cmd_status,
+        "zip": cmd_zip,
+        "mark-uploaded": cmd_mark_uploaded,
+        "link": cmd_link,
+        "unlink": cmd_unlink,
+    }[cmd]
+    return handler(args)
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))
