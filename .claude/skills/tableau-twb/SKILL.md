@@ -951,6 +951,10 @@ Tableau Desktop generates this zone hierarchy:
 
 84. **Listing Parameters before the real datasource inside a worksheet's `<datasources>` block fails REST publish** with HTTP 400 `400011` "the worksheet does not have a valid data source". Desktop's order is: real datasource first inside a worksheet, Parameters first inside a dashboard.
 
+85. **Hide every worksheet that is only a dashboard component, or the published tab strip shows all of them.** A generated workbook with 54 component worksheets and 6 dashboards publishes as **60 tabs**. Desktop's Hide Sheet writes `hidden='true'` on the worksheet's `<window>` element (`<window class='worksheet' hidden='true' name='...'>`, confirmed in 11 estate .twb files). Emit it for every worksheet used in a dashboard; leave dashboard windows visible. Verify after publishing with `get-workbook`: the `views` array should list ONLY the dashboards. **`get-view-image` cannot catch this** -- it renders one dashboard's canvas and never shows the tab strip, so a workbook can look perfect in every rendered image and still be unusable to navigate.
+
+86. **The Tableau Cloud web UI URL uses the numeric repository ID, not the LUID.** A link built as `/#/site/<site>/workbooks/<luid>` 404s. Use the `webpageUrl` returned by `get-workbook` (e.g. `/#/site/<site>/workbooks/4539209`) or, better for sharing, the view URL `/#/site/<site>/views/<contentUrl>/<viewUrlName>` which lands the reader on a specific tab. The REST API returns the correct one in the `url` field -- copy it rather than composing your own.
+
 ## Python Dependencies
 
 ```
