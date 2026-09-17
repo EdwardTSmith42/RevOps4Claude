@@ -46,15 +46,29 @@ Read `references/contract-taxonomy.md` for the token lists on both axes, the nam
 
 ## Evidence repositories - check all of them
 
-| Order | Where | Shape |
-|---|---|---|
-| 1 | SharePoint > Legal > Shared Documents > **Provider and Merchant Contracts** | A-Z letter folders by Legal Name; each provider folder has `Contracts Executed` |
-| 2 | Personal OneDrive > **Provider Contracts** | Flat list by Legal Name. Legal's library lags, so recent contracts land here first |
-| 3 | HubSpot | Legal-name resolution and identity only. Holds no usable contract-instance data |
+| Order | Where | Shape | Who can reach it |
+|---|---|---|---|
+| 1 | SharePoint > Legal > Shared Documents > **Provider and Merchant Contracts** | A-Z letter folders by Legal Name; each provider folder has `Contracts Executed` | Anyone with Legal site access |
+| 2 | **A `Provider Contracts` folder on an individual's OneDrive** | Flat list by Legal Name. Legal's library lags, so recent contracts land here first | **Only the owner, plus whoever it is shared with** |
+| 3 | HubSpot | Legal-name resolution and identity only. Holds no usable contract-instance data | Anyone with HubSpot access |
 
 Exact paths, REST recipes, and field names are in `references/lookup-paths.md`.
 
-**Checking only repository 1 produces mass false negatives.** In the RIC-low-cap run, 35 of 51 entities had an empty `Contracts Executed` in Legal; 28 of them had real executed bank-loan agreements sitting in the OneDrive folder. Stopping at Legal would have raised roughly 28 unnecessary contract requests.
+**Checking only repository 1 produces mass false negatives.** In the RIC-low-cap run, 35 of 51 entities had an empty `Contracts Executed` in Legal; 28 of them had real executed bank-loan agreements sitting in repository 2. Stopping at Legal would have raised roughly 28 unnecessary contract requests.
+
+### Repository 2 is not a shared system - resolve it per operator
+
+Repository 2 is a **personal** OneDrive folder, not an org location. As of September 2026 the known copy belongs to **Ed Smith (esmith@gohfd.com)**, at `OneDrive > Provider Contracts`. Do not assume the path, the owner, or that you have access.
+
+At the start of a run, establish which of these you are in:
+
+1. **You own the folder.** Use it directly.
+2. **It is shared with you.** It appears under OneDrive > Shared, or as a shortcut you have added to your own OneDrive. Either way you must resolve its real drive id - see `references/lookup-paths.md`.
+3. **You cannot reach it.** Say so explicitly in the output. Run repositories 1 and 3, and mark everything they cannot settle as `VERIFY` with the reason "second contract repository not accessible to this operator". **Do not silently downgrade those rows to `NEEDS_NEW_CONTRACT`** - that is precisely the error that generates contract requests to providers who already signed.
+
+Ask the operator early rather than guessing: *"Do you have access to a personal `Provider Contracts` OneDrive folder, or a share of one? Without it I can confirm far fewer providers."*
+
+**This is a standing fragility worth naming when it bites.** A contract repository that lives on one person's personal drive is a single point of failure for the whole team, and any run by a different operator is systematically less complete. The durable fix is moving that content into the Legal library or a shared SharePoint site; until then, this skill's coverage varies by who runs it, and the output should say which repositories were actually searched.
 
 ## Decision outcomes
 
@@ -85,7 +99,7 @@ Each of these produced a wrong answer during the build of this skill, and each i
 
 6. **A group can be covered without an umbrella.** Enamel Dentistry has no DSO agreement, but each location signed its own bank-loan agreement under its own entity. Check per-location folders before calling the children uncovered.
 
-7. **Search does not index the personal OneDrive.** A search miss proves nothing about repository 2; enumerate it directly. Verified by control test.
+7. **Search does not index a personal OneDrive.** A search miss proves nothing about repository 2; enumerate it directly. Verified by control test. And if you had no access to repository 2 at all, say so in the output rather than reporting a confident-looking result built on one repository.
 
 8. **Folder naming is `<Legal Name> dba <Practice Name>`.** Because the DBA is often present, Practice Name frequently matches too - so search on both, and treat a Practice-Name-only match as weaker evidence.
 
@@ -98,6 +112,8 @@ A decision table, one row per provider location, plus a by-entity view. Minimum 
 Group the by-entity view by signing entity - that is the list of contracts someone actually has to send, and it is always far shorter than the location list.
 
 Always state the counts for each verdict, and always surface how many rows are `VERIFY` and why. A run that reports only the confident rows is hiding its own error bar.
+
+**Record which repositories were actually searched, and by whom.** Coverage depends on the operator's access to repository 2, so a result is only interpretable alongside that fact. A reader who does not know repository 2 was skipped will read `VERIFY` as "no contract exists" - the exact misreading this skill is built to prevent.
 
 ## Reference Files
 

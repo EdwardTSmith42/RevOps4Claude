@@ -55,26 +55,49 @@ The KQL **must** be wrapped in single quotes inside the URL, or you get HTTP 500
 
 Hits under `/sites/Compliance/...` or `/sites/HFDFraudCases/...` are case copies, not a contract repository. Ignore them as sources of truth.
 
-## Repository 2 - personal OneDrive contract folder
+## Repository 2 - a `Provider Contracts` folder on an individual's OneDrive
 
-```
-OneDrive > Provider Contracts
-```
+**This is a personal drive, not an org system. Never hardcode the owner, the path, or the drive id.**
 
-A flat list of ~1,370 provider folders named by Legal Name, each holding the contract files directly (sometimes one subfolder deep). **This is where recent contracts live while Legal's library catches up.**
+Known copy as of September 2026: **Ed Smith (esmith@gohfd.com)**, `OneDrive > Provider Contracts` — a flat list of ~1,370 provider folders named by Legal Name, each holding contract files directly (sometimes one subfolder deep). **This is where recent contracts live while Legal's library catches up.**
 
-The personal-site `_api/web` and `_api/v2.0/drive` endpoints return 403. The drive-id form works:
+Another operator will hit one of three situations. Establish which before relying on anything here:
+
+| Situation | What to do |
+|---|---|
+| You own the folder | Resolve your own drive id (below) and enumerate |
+| It is shared with you | Find it under OneDrive > Shared, or add a shortcut to your own OneDrive, then resolve the drive id of the **owner's** drive |
+| No access | Report it. Mark unsettled rows `VERIFY` with reason "second contract repository not accessible". Never downgrade them to `NEEDS_NEW_CONTRACT` |
+
+### Resolving the drive id - do not reuse someone else's
+
+The personal-site `_api/web` and `_api/v2.0/drive` endpoints return 403. The drive-id form works, but the id is specific to one person's drive.
+
+Get the id for whichever drive you actually have access to:
 
 ```js
-const D = '<driveId>';   // from _api/v2.0/shares/<shareId>/driveItem, parentReference.driveId
-const H = { headers: { 'Accept': 'application/json' } };
+// Option A - from any sharing link to a file in that drive
+const shareId = 'u!' + btoa('<share URL>').replace(/=+$/,'').replace(/\//g,'_').replace(/\+/g,'-');
+const item = await fetch('/_api/v2.0/shares/' + shareId + '/driveItem',
+  { headers: { Accept: 'application/json' } }).then(r => r.json());
+const D = item.parentReference.driveId;      // <- the drive id
 
-// list a folder
+// Option B - your own drive, from a tab on the -my.sharepoint.com origin
+// browse to the folder in the OneDrive UI and read the driveId out of a network call,
+// or use Option A against any sharing link you hold.
+```
+
+Then enumerate:
+
+```js
+const H = { headers: { 'Accept': 'application/json' } };
 await fetch('/_api/v2.0/drives/' + D + '/root:/Provider Contracts:/children?$select=name,folder&$top=999', H);
 // follow @odata.nextLink to page beyond 999
 ```
 
-Run this from a tab already on the `-my.sharepoint.com` origin so the fetch is same-origin.
+Run it from a tab already on the `-my.sharepoint.com` origin so the fetch is same-origin. If the folder sits at a different path under that drive, adjust the `root:/<path>:` segment — the folder name is a convention, not a guarantee.
+
+**Standing risk:** a contract repository on one person's personal drive means coverage varies by operator and disappears if that person leaves. Flag it when it affects a result; the durable fix is relocating the content to the Legal library or a shared SharePoint site.
 
 ### Reading an .xlsx from SharePoint without a workbook API
 
