@@ -184,6 +184,8 @@ def main():
     ap.add_argument("--skip-revenue", action="store_true")
     ap.add_argument("--full-transcripts", action="store_true",
                     help="re-mine the whole corpus instead of only unmined calls (weekly)")
+    ap.add_argument("--skip-deals", action="store_true",
+                    help="skip the Deals chain; the page keeps the deals it has")
     a = ap.parse_args()
 
     started = dt.datetime.now()
@@ -237,6 +239,34 @@ def main():
             c["refreshed"] = False
         log["steps"].append(s.ok(**c))
 
+        # Deals are owner-scoped, not date-bounded, so extract.py does not touch
+        # them - they come from their own three-script chain. Without this step the
+        # Deals section silently freezes at whatever generatedAtUtc happened to be
+        # committed while every other number on the page rolls forward, which is a
+        # worse failure than an empty table because it looks current.
+        s = Step("deals")
+        if a.skip_deals:
+            log["steps"].append(s.skip("--skip-deals"))
+        else:
+            for script in ("pull_deals.py", "resolve_deals.py", "build_deals.py"):
+                sh([script], s)
+            dj = os.path.join(DATA, "deals.json")
+            if not os.path.exists(dj):
+                raise Gate("the deals chain did not produce data/deals.json")
+            d = json.load(open(dj, encoding="utf-8"))
+            rows = d.get("deals") or []
+            if not rows:
+                raise Gate("data/deals.json has no deals; the page would render an empty "
+                           "Deals section as though the AEs have no open opportunities")
+            gen = (d.get("generatedAtUtc") or "")[:10]
+            today = dt.date.today().isoformat()
+            if gen != today:
+                raise Gate("data/deals.json is stamped %s, not today (%s) - the chain ran but "
+                           "did not rewrite the file" % (gen or "(none)", today))
+            resolved = sum(1 for r in rows if r.get("providerIds"))
+            log["steps"].append(s.ok(deals=len(rows), resolved=resolved,
+                                     unlinked=len(rows) - resolved, generatedAtUtc=d.get("generatedAtUtc")))
+
         s = Step("transcripts")
         if a.skip_transcripts:
             log["steps"].append(s.skip("--skip-transcripts"))
@@ -281,7 +311,12 @@ def main():
             print("  %d new calls staged in %s - mine them, then re-run with "
                   "--skip-extract --skip-revenue" % (pend["staged"], pend["dir"]))
         print("  log: data/refresh_log.json")
-        return 0
+        # Exit 2, not 0: staged-but-unmined is NOT success. 0 means the dashboard is
+        # fully refreshed; 1 means it failed and nothing should publish; 2 means the
+        # page is publishable but transcripts still need a mining pass. A caller that
+        # only tests "exit == 0" would otherwise report success forever while the
+        # themes silently never update.
+        return 2 if pend else 0
 
     except Gate as e:
         if log["steps"] and log["steps"][-1].get("status") == "RUNNING":
