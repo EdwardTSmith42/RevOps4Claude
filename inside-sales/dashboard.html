@@ -1,0 +1,2468 @@
+<title>Inside Sales Signal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --ground:#f7f8fa; --panel:#ffffff; --panel-2:#fbfcfd; --line:#e2e6ee; --line-soft:#eef1f6;
+  --ink:#0d0925; --ink-2:#464f66; --ink-3:#77809a;
+  --brand:#1d49e6; --brand-soft:#eaeeff; --accent:#ee7c1b; --accent-soft:#fdf0e2;
+  --good:#15803d; --good-soft:#e6f4ea; --warn:#b45309; --warn-soft:#fdf3e3;
+  --bad:#c0392f; --bad-soft:#fceceb; --mute:#94a3b8;
+  --c1:#1d49e6; --c2:#ee7c1b; --c3:#00a6a6; --c4:#7c3aed; --c5:#d1436f;
+  --shadow:0 1px 2px rgba(13,9,37,.05),0 4px 14px rgba(13,9,37,.05);
+  --radius:10px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0b0d14; --panel:#141824; --panel-2:#181d2b; --line:#272e40; --line-soft:#1f2534;
+    --ink:#eef1f8; --ink-2:#a7b0c4; --ink-3:#7c869e;
+    --brand:#5b82f5; --brand-soft:#1a2340; --accent:#c97a22; --accent-soft:#2c2113;
+    --good:#4ade80; --good-soft:#12281a; --warn:#fbbf24; --warn-soft:#2a2010;
+    --bad:#f87171; --bad-soft:#2b1616; --mute:#64748b;
+    --c1:#5b82f5; --c2:#c97a22; --c3:#009c96; --c4:#9270f0; --c5:#db4f79;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 16px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0b0d14; --panel:#141824; --panel-2:#181d2b; --line:#272e40; --line-soft:#1f2534;
+  --ink:#eef1f8; --ink-2:#a7b0c4; --ink-3:#7c869e;
+  --brand:#5b82f5; --brand-soft:#1a2340; --accent:#c97a22; --accent-soft:#2c2113;
+  --good:#4ade80; --good-soft:#12281a; --warn:#fbbf24; --warn-soft:#2a2010;
+  --bad:#f87171; --bad-soft:#2b1616; --mute:#64748b;
+  --c1:#5b82f5; --c2:#c97a22; --c3:#009c96; --c4:#9270f0; --c5:#db4f79;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 16px rgba(0,0,0,.3);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:14px; line-height:1.5; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1420px; margin:0 auto; padding:28px 24px 80px}
+h1,h2,h3{font-family:Archivo,"IBM Plex Sans",sans-serif; margin:0; text-wrap:balance}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace; font-variant-numeric:tabular-nums}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---- masthead ---- */
+.mast{display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end; justify-content:space-between;
+  padding-bottom:18px; border-bottom:2px solid var(--ink); margin-bottom:22px}
+.mast h1{font-size:30px; font-weight:700; letter-spacing:-.02em; line-height:1.1}
+.mast .sub{color:var(--ink-2); font-size:13.5px; margin-top:6px; max-width:64ch}
+.stamp{font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); text-align:right}
+.stamp b{display:block; font-size:15px; letter-spacing:0; text-transform:none; color:var(--ink); font-family:"IBM Plex Mono",monospace}
+
+/* ---- section ---- */
+section{margin-top:30px}
+.shead{display:flex; align-items:baseline; gap:12px; margin-bottom:12px; flex-wrap:wrap}
+.shead h2{font-size:16px; font-weight:600; letter-spacing:-.01em}
+.shead .note{font-size:12.5px; color:var(--ink-3)}
+
+/* ---- findings ---- */
+.finds{display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:14px}
+.find{background:var(--panel); border:1px solid var(--line); border-left:3px solid var(--accent);
+  border-radius:var(--radius); padding:16px 18px; box-shadow:var(--shadow)}
+.find .tag{font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); font-weight:600}
+.find h3{font-size:14.5px; margin:7px 0 6px; font-weight:600; line-height:1.35}
+.find p{margin:0; font-size:13px; color:var(--ink-2)}
+.find .big{font-family:"IBM Plex Mono",monospace; font-size:26px; font-weight:600; color:var(--ink);
+  display:block; margin:2px 0 4px; font-variant-numeric:tabular-nums}
+
+/* ---- funnel ---- */
+.funnel{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px}
+.fstep{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+  padding:14px 16px; box-shadow:var(--shadow); position:relative; overflow:hidden}
+.fstep .lab{font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink-3); font-weight:600}
+.fstep .v{font-family:"IBM Plex Mono",monospace; font-size:27px; font-weight:600; margin-top:5px;
+  font-variant-numeric:tabular-nums; letter-spacing:-.02em}
+.fstep .conv{font-size:12px; color:var(--ink-2); margin-top:2px}
+.fstep .bar{position:absolute; left:0; bottom:0; height:3px; background:var(--c1); opacity:.85}
+
+/* ---- table ---- */
+.panel{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+  box-shadow:var(--shadow); overflow:hidden}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse; width:100%; font-size:13px}
+th,td{padding:9px 12px; text-align:left; border-bottom:1px solid var(--line-soft); white-space:nowrap}
+thead th{background:var(--panel-2); font-size:11px; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--ink-3); font-weight:600; position:sticky; top:0; z-index:2; border-bottom:1px solid var(--line)}
+th.s,th.vs{cursor:pointer; user-select:none}
+th.s:hover,th.vs:hover{color:var(--ink)}
+th.s::after{content:"\2195"; opacity:.28; margin-left:5px; font-size:10px}
+th.s.asc::after{content:"\2191"; opacity:1; color:var(--brand)}
+th.s.desc::after{content:"\2193"; opacity:1; color:var(--brand)}
+td.r,th.r{text-align:right; font-variant-numeric:tabular-nums; font-family:"IBM Plex Mono",monospace}
+tbody tr:hover{background:var(--panel-2)}
+tbody tr:last-child td{border-bottom:none}
+.z{color:var(--ink-3); opacity:.5}
+a.rec{color:var(--brand); text-decoration:none; font-weight:500}
+a.rec:hover{text-decoration:underline}
+.who{display:block; font-size:11.5px; color:var(--ink-3); margin-top:1px; white-space:normal; max-width:230px}
+
+/* ---- chips ---- */
+.pill{display:inline-block; padding:1.5px 8px; border-radius:99px; font-size:11px; font-weight:600;
+  letter-spacing:.01em; white-space:nowrap}
+.p-good{background:var(--good-soft); color:var(--good)}
+.p-warn{background:var(--warn-soft); color:var(--warn)}
+.p-bad{background:var(--bad-soft); color:var(--bad)}
+.p-brand{background:var(--brand-soft); color:var(--brand)}
+.p-mute{background:var(--line-soft); color:var(--ink-3)}
+
+/* ---- filters ---- */
+.filters{display:flex; flex-wrap:wrap; gap:9px; align-items:center; margin-bottom:12px}
+.fgrp{display:flex; align-items:center; gap:0; background:var(--panel); border:1px solid var(--line);
+  border-radius:8px; overflow:hidden; box-shadow:var(--shadow)}
+.fgrp button{appearance:none; border:0; background:transparent; color:var(--ink-2);
+  font:inherit; font-size:12.5px; padding:7px 13px; cursor:pointer; border-right:1px solid var(--line-soft)}
+.fgrp button:last-child{border-right:0}
+.fgrp button[aria-pressed="true"]{background:var(--brand); color:#fff; font-weight:600}
+.fgrp button:focus-visible{outline:2px solid var(--brand); outline-offset:-2px}
+select,input[type=search]{font:inherit; font-size:12.5px; padding:7px 11px; border:1px solid var(--line);
+  border-radius:8px; background:var(--panel); color:var(--ink); box-shadow:var(--shadow); max-width:230px}
+input[type=search]{min-width:200px}
+select:focus-visible,input:focus-visible{outline:2px solid var(--brand); outline-offset:1px}
+.count{font-size:12.5px; color:var(--ink-3); margin-left:auto; font-variant-numeric:tabular-nums}
+.pager{display:flex; gap:8px; align-items:center; justify-content:center; padding:12px;
+  border-top:1px solid var(--line-soft); font-size:12.5px; color:var(--ink-2)}
+.pager button{font:inherit; padding:5px 12px; border:1px solid var(--line); background:var(--panel-2);
+  color:var(--ink); border-radius:7px; cursor:pointer}
+.pager button:disabled{opacity:.4; cursor:default}
+
+/* ---- global control bar ---- */
+.controls{position:sticky; top:0; z-index:20; background:var(--ground);
+  padding:10px 0 12px; margin:-10px 0 4px; border-bottom:1px solid var(--line)}
+.fgrp button small{display:block; font-size:10.5px; letter-spacing:.02em; opacity:.72;
+  font-weight:400; margin-top:1px; font-family:"IBM Plex Mono",monospace}
+.fgrp button[aria-pressed="true"] small{opacity:.92}
+.fgrp#period button{padding:6px 13px; text-align:left; line-height:1.25}
+.clearbtn{font:inherit; font-size:12.5px; padding:7px 12px; border:1px solid var(--line);
+  border-radius:8px; background:var(--panel); color:var(--ink-2); cursor:pointer; box-shadow:var(--shadow)}
+.clearbtn:hover{color:var(--ink); border-color:var(--brand)}
+.active{font-size:12.5px; color:var(--ink-2); line-height:1.5}
+.active b{color:var(--ink)}
+.active .chip{display:inline-block; background:var(--brand-soft); color:var(--brand);
+  border-radius:99px; padding:1px 9px; font-size:11.5px; font-weight:600; margin-left:4px}
+.active .warnchip{background:var(--warn-soft); color:var(--warn)}
+
+/* ---- "cannot honour the filter" state ---- */
+.blocked{background:var(--warn-soft); border:1px solid var(--line); border-left:3px solid var(--warn);
+  border-radius:var(--radius); padding:14px 18px; font-size:13px; color:var(--ink-2); margin:0 0 12px}
+.blocked b{color:var(--ink)}
+.fstep.off{opacity:.55}
+.fstep.off .v{color:var(--ink-3) !important}
+.fixedwin{background:var(--panel-2); border:1px solid var(--line); border-left:3px solid var(--c4);
+  border-radius:var(--radius); padding:12px 16px; font-size:12.5px; color:var(--ink-2); margin:0 0 12px}
+.fixedwin b{color:var(--ink)}
+
+/* ---- deals: the closed-won toggle sits at the TOP of the section ---- */
+.dealbar{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:0 0 12px}
+.dealbar #dealwonnote{font-size:12.5px; color:var(--ink-2)}
+.dealbar #dealwonnote b{color:var(--ink)}
+td .guess{font-size:11px; font-weight:600; color:var(--warn)}
+td .flagline{display:block; margin-top:3px; white-space:normal; max-width:250px}
+td.r .sub{display:block; font-size:11px; color:var(--ink-3); font-weight:400}
+
+/* ---- bar cell ---- */
+.bcell{display:flex; align-items:center; gap:8px; justify-content:flex-end}
+.btrack{width:52px; height:6px; background:var(--line-soft); border-radius:3px; overflow:hidden; flex:none}
+.bfill{height:100%; border-radius:3px}
+
+/* ---- split cards ---- */
+.split3{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px}
+.split{display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:14px}
+.mcard{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+  padding:18px; box-shadow:var(--shadow)}
+.mcard h3{font-size:13px; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-3); font-weight:600}
+.mcard .lede{font-family:"IBM Plex Mono",monospace; font-size:24px; font-weight:600; margin:8px 0 2px}
+.mcard p{margin:6px 0 0; font-size:12.5px; color:var(--ink-2)}
+.rows{margin-top:12px; display:flex; flex-direction:column; gap:7px}
+.row{display:grid; grid-template-columns:1fr auto; gap:10px; font-size:12.5px; align-items:center}
+.row .t{width:100%; height:7px; background:var(--line-soft); border-radius:4px; overflow:hidden}
+.row .f{height:100%; border-radius:4px}
+.rlab{display:flex; justify-content:space-between; gap:8px; font-size:12.5px; margin-bottom:3px}
+.rlab b{font-family:"IBM Plex Mono",monospace; font-weight:600; font-variant-numeric:tabular-nums}
+
+/* ---- call-duration distribution ---- */
+.dist{display:flex; flex-direction:column; gap:2px; margin-top:4px}
+.drow{display:grid; grid-template-columns:104px 1fr 132px; gap:12px; align-items:center;
+  padding:5px 0; font-size:12.5px}
+.drow .dlab{color:var(--ink-2); white-space:nowrap}
+.drow.on .dlab{color:var(--ink); font-weight:600}
+.dtrack{height:16px; background:var(--line-soft); border-radius:3px; overflow:hidden}
+.dfill{height:100%; border-radius:3px; min-width:2px}
+.dnum{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums;
+  text-align:right; color:var(--ink); white-space:nowrap}
+.dnum span{color:var(--ink-3); margin-left:7px}
+/* the 3-minute connect bar, drawn between buckets rather than over them */
+.dcut{display:grid; grid-template-columns:104px 1fr 132px; gap:12px; align-items:center;
+  margin:3px 0; font-size:11px; letter-spacing:.05em; text-transform:uppercase;
+  color:var(--c2); font-weight:600}
+.dcut .dline{border-top:2px dashed var(--c2); height:0}
+.dcut .dcap{text-align:right; white-space:nowrap}
+@media (max-width:640px){
+  .drow,.dcut{grid-template-columns:82px 1fr 96px; gap:8px; font-size:11.5px}
+  .dnum{font-size:11.5px}
+}
+
+.caveat{background:var(--warn-soft); border:1px solid var(--line); border-left:3px solid var(--warn);
+  border-radius:var(--radius); padding:14px 18px; font-size:13px; color:var(--ink-2)}
+.caveat b{color:var(--ink)}
+.stalebox{background:var(--bad-soft); border:1px solid var(--line); border-left:4px solid var(--bad);
+  border-radius:var(--radius); padding:14px 18px; font-size:13px; color:var(--ink-2); margin:0 0 14px}
+.stalebox b{color:var(--ink)}
+.stalebox ul{margin:8px 0 0; padding-left:18px} .stalebox li{margin:4px 0}
+.stalebox .tag{display:inline-block; background:var(--bad); color:#fff; border-radius:4px;
+  padding:1px 7px; font-size:11px; letter-spacing:.04em; text-transform:uppercase;
+  font-family:"IBM Plex Mono",monospace; margin-right:8px}
+.caveat ul{margin:8px 0 0; padding-left:18px} .caveat li{margin:4px 0}
+.legend{display:flex; gap:14px; flex-wrap:wrap; font-size:12px; color:var(--ink-2); margin-bottom:10px}
+.legend span{display:flex; align-items:center; gap:6px}
+.sw{width:10px; height:10px; border-radius:2px; flex:none}
+ol.exec{margin:10px 0 0; padding-left:20px; display:flex; flex-direction:column; gap:9px}
+ol.exec li{font-size:13px; color:var(--ink-2); line-height:1.5}
+ol.exec li::marker{color:var(--accent); font-weight:700; font-family:"IBM Plex Mono",monospace}
+.quote{display:block; margin-top:4px; color:var(--ink-2); font-style:italic}
+.callcell a{margin:0 1px}
+a.srcmark{font-family:"IBM Plex Mono",monospace; font-size:9.5px; letter-spacing:.04em;
+  text-transform:uppercase; color:var(--ink-3); text-decoration:none; border:1px solid var(--line);
+  border-radius:4px; padding:0 4px; margin-left:6px; vertical-align:middle; white-space:nowrap}
+a.srcmark:hover{color:var(--brand); border-color:var(--brand)}
+#srctbl td{white-space:normal; vertical-align:top}
+#srctbl td.pred{min-width:300px; font-size:12px; color:var(--ink-2)}
+:target{scroll-margin-top:14px}
+tr.hit{background:var(--brand-soft) !important}
+ul.caveatlist{margin:10px 0 0; padding-left:18px; font-size:12.5px; color:var(--ink-2)}
+ul.caveatlist li{margin:6px 0}
+.vomfoot{font-size:12px; color:var(--ink-3); margin:10px 0 0; max-width:92ch; line-height:1.55}
+#vomtbl td:first-child{white-space:normal; min-width:340px}
+footer{margin-top:40px; padding-top:18px; border-top:1px solid var(--line); font-size:12px; color:var(--ink-3)}
+@media (prefers-reduced-motion:no-preference){.bfill,.f{transition:width .3s ease}}
+
+/* Narrow screens. .fgrp is a single rounded strip with overflow:hidden, which on a
+   phone silently CLIPS the tabs that do not fit - the Last 90 days tab was simply
+   unreachable. Let the strips wrap instead, and stop the control bar sticking: at
+   this width it ate 336px of an 820px screen. */
+@media (max-width:760px){
+  .controls{position:static; margin:0 0 4px}
+  .fgrp{flex-wrap:wrap; overflow:visible}
+  .fgrp button{flex:1 1 44%; border-bottom:1px solid var(--line-soft)}
+  .fgrp#period button{flex:1 1 46%}
+  .wrap{padding:20px 16px 60px}
+  .mast{align-items:flex-start}
+  select,input[type=search]{max-width:none; flex:1 1 160px}
+}
+</style>
+
+<div class="wrap">
+
+  <div class="mast">
+    <div>
+      <h1>Inside Sales Signal</h1>
+      <div class="sub">Every lead Mel's team touched &mdash; calls, meetings, demos, email and enrollment &mdash;
+        at one row per contact. <b>Every metric below is recounted inside the selected period</b>, not
+        carried over from the full window.</div>
+    </div>
+    <div class="stamp">Extract window<b id="win">&mdash;</b></div>
+  </div>
+
+  <div class="controls" id="controls">
+    <div class="filters" style="margin-bottom:8px">
+      <div class="fgrp" id="period" role="group" aria-label="Time period"></div>
+      <select id="fteam" aria-label="Seat"><option value="">All seats</option></select>
+      <select id="frep" aria-label="Rep"><option value="">All reps</option></select>
+      <select id="fseg" aria-label="Segment"><option value="">All segments</option></select>
+      <select id="fout" aria-label="Outcome">
+        <option value="">Any outcome</option>
+        <option value="dialed">Was dialed</option>
+        <option value="connected">Connected on a call (3+ min)</option>
+        <option value="met">Had a meeting</option>
+        <option value="demo">Had a demo</option>
+        <option value="replied">Replied to us</option>
+        <option value="sourced">Enrolled after our outreach</option>
+        <option value="demoConn">Demo connect (10+ min)</option>
+        <option value="demoShort">Demo no-show (under 10 min)</option>
+        <option value="cold">No 3+ min connect, no meeting</option>
+      </select>
+      <input type="search" id="fq" placeholder="Search name, practice, city&hellip;" aria-label="Search">
+      <button type="button" id="fclear" class="clearbtn" hidden>Clear filters</button>
+    </div>
+    <div class="active" id="activeline">&mdash;</div>
+  </div>
+
+  <section>
+    <div class="shead"><h2>Read this first</h2>
+      <span class="note">Three things in the data that change how these numbers should be read.
+      <b>These three describe the whole extract window</b>, not the period you select below &mdash; they are
+      properties of the pipeline, not of a week.</span></div>
+    <div class="finds">
+      <div class="find">
+        <div class="tag">Definition</div>
+        <h3>Connects now run on duration, at two different bars</h3>
+        <span class="big">3 min / 10 min</span>
+        <p>A call connect is a dial of <b>3 minutes or more</b>; a demo connect is a recording of
+          <b>10 minutes or more</b>, and a demo under that is counted a no-show.
+          <b>Approved by Mel Matthews and Ed Smith.</b> The old single 5-minute gate failed
+          because it was applied to both populations at once &mdash; on this window it clears just 8% of
+          real outbound dials but 96% of meeting recordings. Two bars on two populations fixes that.
+          <b>HubSpot's own automation still runs on disposition</b>, so both numbers are
+          reported side by side and neither is a correction of the other.</p>
+      </div>
+      <div class="find">
+         <div class="tag">Coverage</div>
+        <h3>The scraped list is sitting untouched</h3>
+        <span class="big">7,738 &rarr; 0.3%</span>
+        <p>Laura's <span class="mono">CLI_LR</span> scrape load is the portal's largest contact source and is assigned to reps. In a 300-contact sample, 1 had a call and 0 had a task.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="shead"><h2>How to read the period you picked</h2>
+      <span class="note">What each tab does and does not cover.</span></div>
+    <div class="caveat" id="periodcaveat">&mdash;</div>
+  </section>
+
+  <section>
+    <div class="shead"><h2>Funnel</h2><span class="note" id="fnote">&mdash;</span>
+      <span class="note"><b>Contacted means an outbound dial or an outbound email</b> &mdash; nothing else
+      counts as a touch we made. Meetings held includes demos and non-demos. Every step counts the
+      activity <b>dated inside the selected period</b>, not the contact's full-window totals. These six
+      steps are <b>not nested</b>, so each tile reads &ldquo;% of prior step&rdquo;, which is a
+      step-over-step ratio and not a conversion rate; on a small cohort it can exceed 100%.</span></div>
+    <div class="funnel" id="funnel"></div>
+    <p class="caveat" style="margin-top:10px" id="fcaveat">&mdash;</p>
+  </section>
+
+  <section>
+    <div class="shead"><h2>Combined, inbound and outbound</h2>
+      <span class="note">Demos count as inbound. Dials are outbound only and never include demo recordings.
+      Sourced enrollments are distinct practices on all three cards, so the two motions do not sum to Combined.</span></div>
+    <div class="split3" id="motion3"></div>
+    <p class="vomfoot">A demo recording lands in the CALL object with no direction set. It is a
+      <b>meeting</b>, not a dial, and is excluded from every dial and connect figure on this page.</p>
+  </section>
+
+  <section>
+    <div class="shead"><h2>What the sourced providers originated</h2>
+      <span class="note" id="revnote">&mdash;</span></div>
+    <div id="revblock"></div>
+    <div class="funnel" id="revtiles"></div>
+    <div class="split" style="margin-top:14px">
+      <div class="mcard">
+        <h3>Originated volume by month</h3>
+        <div class="rows" id="revmonths"></div>
+        <p style="margin-top:12px" id="revmonthnote">&mdash;</p>
+      </div>
+      <div class="mcard">
+        <h3>Read this before quoting it</h3>
+        <ul class="caveatlist" id="revcaveats"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="shead"><h2>Rep scorecard</h2>
+      <span class="note">Every column is summed from the <b>per-rep daily buckets</b> inside the selected
+      period, so a rep is credited only with what they did in those days. Counted at contact grain, so one
+      activity touching several contacts counts once per contact &mdash; dials read ~27% high here versus
+      the true call-grain totals (2,593 against 2,036 over the full window). Use this table to rank and compare reps, not to quote absolute
+      volumes. Enrollments are company-grain, deduped, and dated on the enrollment.</span>
+      <span class="note"><b>Call connects</b> are dials of 3 minutes or longer and <b>Demo connects</b> are
+      demo recordings of 10 minutes or longer &mdash; the team rules, not the call-outcome picklist.
+      <b>No-shows</b> is Demos minus Demo connects, so those three columns always tie on a row.
+      No-shows are inferred from recording length, not attendance &mdash; do not rank a rep on that
+      column alone.</span>
+      <span class="note" id="repnote2">&mdash;</span></div>
+    <div class="panel scroll">
+      <table id="reptbl"><thead><tr>
+        <th>Rep</th><th>Seat</th><th class="r">Contacts</th><th class="r">Dials</th>
+        <th class="r">Call&nbsp;connects<br><span class="z">3+&nbsp;min</span></th>
+        <th class="r">Reached&nbsp;DM<br><span class="z">call&nbsp;outcome</span></th>
+        <th class="r">Connect&nbsp;rate<br><span class="z">of outbound dials</span></th>
+        <th class="r">Meetings</th><th class="r">Demos</th>
+        <th class="r">Demo&nbsp;connects<br><span class="z">10+&nbsp;min</span></th>
+        <th class="r">No-shows<br><span class="z">under&nbsp;10&nbsp;min</span></th>
+        <th class="r">Email&nbsp;out</th><th class="r">Sourced&nbsp;enroll.</th>
+      </tr></thead><tbody></tbody></table>
+    </div>
+  </section>
+
+  <section>
+    <div class="shead"><h2>Paid-acquisition funnel</h2>
+      <span class="note"><b>Paid acquisition only</b> &mdash; Meta Ads, LinkedIn Ads and Google Ads.
+      No email marketing, no referral programs, no webinars, no organic or unattributed web.
+      A contact qualifies if <i>either</i> its Marketing channel or its Lead source is tagged paid.
+      Same six steps as the main Funnel above, recounted inside the selected period.
+      Every step counts <b>contacts</b>, not practices.
+      Full definitions for all six are in
+      <a href="#sources">Where every number comes from</a>.</span></div>
+    <div class="funnel" id="mktfunnel"></div>
+    <p class="caveat" style="margin-top:10px" id="mktcaveat">&mdash;</p>
+    <div class="split" style="margin-top:14px">
+      <div class="mcard">
+        <h3>Not yet booked a demo</h3>
+        <div class="lede" id="nobookn">&mdash;</div>
+        <p style="margin-top:0;color:var(--ink-3);font-size:12px">paid-acquisition contacts with no demo booked</p>
+        <p>Aged by how long they have been sitting. The oldest bucket is the one that needs a decision:
+          worked, requalified, or retired.</p>
+        <div class="rows" id="nobookage"></div>
+        <p style="color:var(--ink-3);font-size:12px" id="nobooknote">&mdash;</p>
+      </div>
+      <div class="mcard">
+        <h3>Demo &rarr; enrollment</h3>
+        <div class="lede" id="demoenr">&mdash;</div>
+        <p style="margin-top:0;color:var(--ink-3);font-size:12px">of paid-acquisition contacts who held a demo went on to enroll</p>
+        <p>The second half of the funnel, separated because it is a different problem from getting the
+          demo booked in the first place.</p>
+        <div class="rows" id="demoenrrows"></div>
+        <p style="color:var(--ink-3);font-size:12px" id="demoenrnote">&mdash;</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="shead"><h2>Two seats, two jobs</h2>
+      <span class="note">The SDR seat and the Inside Sales seats do different jobs and need different scorecards.</span></div>
+    <div class="split" id="motions"></div>
+  </section>
+<section id="deals">
+    <div class="shead"><h2>Deals across the AE team</h2>
+      <span class="note" id="dealnote">&mdash;</span>
+      <span class="count" id="dealcnt">&mdash;</span></div>
+
+    <div class="fixedwin"><b>This section always shows every open Deal, whatever period tab is
+      selected.</b> A Deal is a standing opportunity, not a periodic activity, so re-cutting it to
+      &#x201C;this week&#x201D; would hide the deals that have been sitting longest &mdash; which are the
+      ones worth coaching on. It works the same way as the <b>Lifetime</b> tile in the originations
+      section above. It <b>does</b> follow the seat and rep filters, because a Deal carries a Deal owner.
+      It ignores the segment, outcome and search filters, which describe contacts and have no meaning on
+      a Deal.</div>
+
+    <div class="dealbar">
+      <div class="fgrp" id="dealwon" role="group" aria-label="Closed won deals">
+        <button type="button" data-w="0" aria-pressed="true">Hide closed won</button>
+        <button type="button" data-w="1" aria-pressed="false">Include closed won</button>
+      </div>
+      <span id="dealwonnote">&mdash;</span>
+    </div>
+
+    <div id="dealblock"></div>
+    <div class="funnel" id="dealtiles"></div>
+
+    <div class="split" style="margin-top:14px">
+      <div class="mcard">
+        <h3>Count and value by stage</h3>
+        <div class="rows" id="dealstages"></div>
+        <p id="dealstagenote">&mdash;</p>
+      </div>
+      <div class="mcard">
+        <h3>How each Deal was matched to a practice</h3>
+        <div class="rows" id="dealroutes"></div>
+        <p id="dealroutenote">&mdash;</p>
+      </div>
+    </div>
+
+    <div class="panel scroll" style="margin-top:14px">
+      <table id="dealtbl"><thead><tr>
+        <th>Deal</th><th>Deal owner</th><th>Deal stage</th><th class="r">Amount</th>
+        <th class="r">Days open</th><th class="r">Days since<br>last edit</th><th>Close date</th>
+        <th>Practice it was matched to</th><th class="r">First 40 days<br>after close <a class="srcmark" href="#src-deals_first40" data-src="deals_first40">src</a></th>
+        <th class="r">Last 30 days <a class="srcmark" href="#src-deals_last30" data-src="deals_last30">src</a></th><th class="r">Companies /<br>contacts</th><th>Next step</th>
+      </tr></thead><tbody></tbody></table>
+    </div>
+    <p class="vomfoot" id="dealfoot">&mdash;</p>
+  </section>
+
+  <section>
+    <div class="shead"><h2>Where the contacts come from</h2>
+      <span class="note">Source is read from the record's own creation trail, not the Lead Source field, which is blank on 82% of these contacts.</span>
+      <span class="note" id="segnote">&mdash;</span></div>
+    <div class="split">
+      <div class="mcard">
+        <h3>Segment mix &mdash; contacts touched</h3>
+        <div class="rows" id="segrows"></div>
+      </div>
+      <div class="mcard">
+        <h3>Which segments actually convert</h3>
+        <p style="margin-bottom:10px">Sourced enrollments per 100 contacts touched. Bars show volume; the number is the rate.</p>
+        <div class="rows" id="segconv"></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="shead"><h2>Contact list</h2>
+      <span class="note">Every contact with activity in the selected period, plus any whose practice
+      enrolled inside it. <b>Every count column is the period total</b>, not the contact's full-window
+      total. Sort, then click a name to open the HubSpot record.</span>
+      <span class="count" id="cnt">&mdash;</span></div>
+    <div class="panel">
+      <div class="scroll" style="max-height:640px; overflow-y:auto">
+        <table id="leadtbl"><thead><tr>
+          <th class="s" data-k="name">Lead</th>
+          <th class="s" data-k="seg">Segment</th>
+          <th class="s" data-k="lead_status">Status</th>
+          <th class="s r" data-k="dials">Dials</th>
+          <th class="s r" data-k="call_connects" title="Outbound dials of 3 minutes or longer - the team's connect rule">Conn&nbsp;3m+</th>
+          <th class="s r" data-k="meetings">Mtgs</th>
+          <th class="s r" data-k="demos">Demo</th>
+          <th class="s r" data-k="demos_under10" title="Demos whose recording ran under 10 minutes - marked as no-shows">No&nbsp;show</th>
+          <th class="s r" data-k="emails_out">Email&nbsp;out</th>
+          <th class="s r" data-k="emails_in">Replies</th>
+          <th class="s r" data-k="touches">Touches</th>
+          <th class="s" data-k="sig">Signal</th>
+          <th class="s" data-k="last_touch">Last touch</th>
+          <th class="s" data-k="sourced">Enrolled</th>
+        </tr></thead><tbody></tbody></table>
+      </div>
+      <div class="pager">
+        <button id="prev">Previous</button>
+        <span id="pinfo" class="mono">&mdash;</span>
+        <button id="next">Next</button>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="shead"><h2>Voice of the market</h2>
+      <span class="note" id="vomnote">&mdash;</span></div>
+
+    <div class="fixedwin" id="vomwin">&mdash;</div>
+
+    <div class="split" style="margin-bottom:14px">
+      <div class="mcard">
+        <h3>What Mel should act on this week</h3>
+        <ol class="exec" id="vomexec"></ol>
+      </div>
+      <div class="mcard">
+        <h3>What changed since the last refresh</h3>
+        <ol class="exec" id="vomchanged"></ol>
+      </div>
+    </div>
+
+    <div class="filters">
+      <div class="fgrp" id="vomcat" role="group" aria-label="Theme category">
+        <button data-c="" aria-pressed="true">All</button>
+        <button data-c="OBJECTION" aria-pressed="false">Objections</button>
+        <button data-c="PRODUCT_IDEA" aria-pressed="false">Product asks</button>
+        <button data-c="FEAR_OR_RISK" aria-pressed="false">Fears</button>
+        <button data-c="WIN_OR_PRAISE" aria-pressed="false">Wins</button>
+        <button data-c="COMPETITOR" aria-pressed="false">Competitors</button>
+        <button data-c="PROCESS_FRICTION" aria-pressed="false">Friction</button>
+      </div>
+      <div class="fgrp" id="vomtrend" role="group" aria-label="Trend">
+        <button data-t="" aria-pressed="true">Any trend</button>
+        <button data-t="RISING" aria-pressed="false">Rising</button>
+        <button data-t="NEW" aria-pressed="false">New</button>
+      </div>
+      <input type="search" id="vomq" placeholder="Search themes and quotes&hellip;" aria-label="Search themes">
+      <span class="count" id="vomcnt">&mdash;</span>
+    </div>
+
+    <div class="panel scroll">
+      <table id="vomtbl"><thead><tr>
+        <th class="vs" data-k="label">Theme</th><th class="vs" data-k="cat">Category</th><th class="vs r" data-k="m30">30&nbsp;days</th><th class="vs r" data-k="m7">Last&nbsp;7</th><th class="vs r" data-k="reps">Reps</th><th class="vs" data-k="trend">Trend</th><th class="vs" data-k="route">Route to</th><th>Calls</th>
+      </tr></thead><tbody></tbody></table>
+    </div>
+    <p class="vomfoot" id="vomfoot">&mdash;</p>
+  </section>
+
+  <section>
+    <div class="shead"><h2>How long the dials actually run</h2>
+      <span class="note">Every outbound dial in the selected period, bucketed on <b>Call
+      duration</b>. Buckets are left-closed and right-open, so each dial lands in exactly
+      one and the seven sum to Outbound dials.</span>
+      <span class="count" id="distcnt">&mdash;</span></div>
+    <div class="panel" style="padding:18px">
+      <div class="dist" id="distrows"></div>
+      <p class="mcard-foot" id="distfoot" style="margin:14px 0 0; font-size:12.5px; color:var(--ink-2)">&mdash;</p>
+    </div>
+  </section>
+
+  <section id="sources">
+    <div class="shead"><h2>Where every number comes from</h2>
+      <span class="note" id="srcnote">&mdash;</span></div>
+    <div class="fixedwin"><b>This table always describes the full 90-day extract window, by design.</b>
+      It is the data dictionary: it documents the system, object, predicate and date field behind each
+      metric, and a definition does not change when you change the tab. <b>Its Value column is therefore
+      the full-window value and will not match a tile above it unless the Last 90 days tab is selected and
+      no other filter is set.</b> The period tabs and the seat / rep / segment / outcome / search filters
+      do not apply here.</div>
+    <p class="vomfoot" style="margin:0 0 12px">Every figure on this page, with the exact system, object,
+      predicate and date field behind it. The <span class="mono">src</span> marks elsewhere on the page jump
+      here. This table is generated by the same run that produced the numbers, so a documented predicate and the value it describes cannot drift apart. <b>Two grains coexist on this page and they are supposed to disagree:</b> rows marked <i>one row per call</i> or <i>per meeting</i> count activity, while the funnel tiles and the contact list count <i>contacts</i> &mdash; one contact can take many dials. Rows here always describe the full 90-day window; the funnel tiles respond to the filters above them.</p>
+    <div class="panel scroll">
+      <table id="srctbl"><thead><tr>
+        <th>Metric</th><th class="r">Value</th><th>System</th><th>Object</th>
+        <th>Predicate</th><th>Date field</th><th>Grain</th>
+      </tr></thead><tbody></tbody></table>
+    </div>
+
+    <div class="split" style="margin-top:14px">
+      <div class="mcard">
+        <h3>How to check each one by hand</h3>
+        <div class="rows" id="srcverify"></div>
+      </div>
+      <div class="mcard">
+        <h3>Known data-quality limits</h3>
+        <div class="rows" id="srcdq"></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="shead"><h2>Before anyone quotes these numbers</h2></div>
+    <div class="caveat">
+      <b>Known limits of this build.</b>
+      <ul>
+        <li><b>A demo is a meeting whose title contains &ldquo;demo&rdquo;.</b> That is the definition behind Laura's existing <i>Demos</i> dashboard (21888050) and it reproduces her numbers. It is not the <span class="mono">hs_activity_type</span> picklist, which is set on only 62 of the 591 demo meetings in this window. <b>The demo count did not move on 2026-09-20</b> &mdash; the 10-minute rule splits it into demo connects and no-shows, it does not filter it.</li>
+        <li><b>No-shows are inferred from recording length, not from attendance.</b> Ed Smith ruled on
+        2026-09-20 that a demo whose recording ran under ten minutes is marked a no-show. That is an
+        <b>interim proxy</b>: nothing in this data records who actually turned up. Laura is building real
+        attendance data from the meeting records and it is <b>not backfilled yet</b>; when it lands it
+        should replace this rule. Until then, read a single rep's no-show count as a signal to go and
+        look at the calendar, never as a fact about a specific prospect. The retired 5-minute
+        &ldquo;performed&rdquo; gate is worse, not better: a recording bot keeps running while the AE
+        waits alone: of the 155 demos whose contact is hand-flagged No Show, 104 ran ten minutes or longer, so the lower five-minute bar would have passed all 104 of them as &ldquo;performed&rdquo;.</li>
+        <li><b><span id="dqNoAssoc">&mdash;</span> calls in this window have no contact association</b> and
+        cannot land on any contact row &mdash; and therefore land in no daily bucket and in no period. Team
+        totals include them; the contact list and every period figure above cannot. Effectively all of them
+        are the SDR's dialer calls.</li>
+        <li><b>Per-contact dial counts are slightly inflated.</b> 23% of calls associate to more than one contact, so a single dial can appear on several contact rows. The rep scorecard and the two-seats cards are <b>also contact grain</b> &mdash; they are summed from the per-rep daily buckets, which hang off contact rows &mdash; so they carry the same inflation, as the note above that table says. Only the call-grain rows in &ldquo;Where every number comes from&rdquo; are unaffected.</li>
+        <li><b>The contact&rarr;company link is unreliable.</b> <span id="dqNoCo">&mdash;</span> of the
+        contacts in this window have no company or are linked to many, and a few are linked to hundreds
+        (one to 621). The primary company is resolved with <span class="mono">associatedcompanyid</span>,
+        which matches HubSpot's own Primary association exactly. Every company-grain figure on this page
+        &mdash; sourced enrollments on the Combined card, the rep scorecard's enrollment column, the
+        revenue cohort &mdash; is capped by this.</li>
+        <li><b>Enrollment is company-grain and week-accurate, not day-accurate.</b> <span class="mono">enrollment_date</span> is stamped from the 06:31&nbsp;CT nightly ELI sync, so it lands a day late &mdash; corrected by &minus;1 day here. 45% of volume still arrives in catch-up batches, so read it weekly or monthly, never daily. It only exists from 2026-05-13.</li>
+        <li><b><span id="dqUnowned2">&mdash;</span> Aloware calls in this window have no owner in HubSpot,
+        and it is two separate causes.</b> (a) <b>Unanswered inbound rings</b> never get an owner, because
+        no agent handled them - structural, and always true. (b) <b>Outbound calls from the newest reps</b>
+        arrive unowned because their Aloware seats are not linked to their HubSpot users. Brandon and
+        Gabrielle, whose seats are linked, have zero unowned outbound. It does not self-heal - old calls
+        are still unowned today. We recover the rep from the call body and, where no name is written, from
+        the rep&#x2019;s own line number; <span id="dqRecov">&mdash;</span>. Whatever is not recovered is
+        Local-Presence outbound where neither the body nor the caller ID names a rep, and it is missing
+        from the per-rep daily buckets that drive the rep scorecard, so that table is a floor per rep.</li>
+        <li><b>46 calls (4.6%) recorded only hold-tone audio.</b> All are long Mel/Gabrielle meeting
+          recordings (11-15 minutes) where the recorder captured touch-tone menu navigation and no speech.
+          They are logged as long connects and will inflate any talk-time metric built on call duration.
+          Root cause looks like a recording defect rather than rep behaviour, and is unconfirmed.</li>
+        <li><b>The previous transcript run over-counted usable calls.</b> Its filter measured raw characters
+          including the speaker-label prefixes, so hold-tone transcripts passed as substantive. 11 of that
+          run's 400 files were below the real bar. This refresh measures speech with labels stripped and
+          verified none remain.</li>
+        <li><b>Email counts are a floor.</b> The search API caps at 10k per query; this pull unions weekly slices to get past it, but a shared thread still attaches to every contact on it.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    Source: HubSpot portal 2520274, pulled via CRM search + v4 associations. Enrollment from
+    <span class="mono">company.enrollment_date</span>; call connects from <span class="mono">hs_call_duration</span>
+    &ge;&nbsp;180000&nbsp;ms and demo connects from <span class="mono">hs_meeting_recording_duration</span>
+    &ge;&nbsp;600000&nbsp;ms &mdash; not from <span class="mono">hs_call_disposition</span>, which is reported
+    separately as HubSpot's own rule; dials isolated by <span class="mono">hs_call_source = INTEGRATIONS_PLATFORM</span>.
+    Contact emails are masked here by design &mdash; open the HubSpot record for full detail.
+  </footer>
+</div>
+
+<script id="leads" type="application/json">/*__DATA__*/</script>
+<script id="vom" type="application/json">/*__VOM__*/</script>
+<script id="rev" type="application/json">/*__REV__*/</script>
+<script id="src" type="application/json">/*__SRC__*/</script>
+<script id="dealdata" type="application/json">/*__DEALS__*/</script>
+<script>
+(function(){
+"use strict";
+var L  = JSON.parse(document.getElementById('leads').textContent);
+var V  = JSON.parse(document.getElementById('vom').textContent);
+var R  = JSON.parse(document.getElementById('rev').textContent);
+var S_ = JSON.parse(document.getElementById('src').textContent);
+var D  = JSON.parse(document.getElementById('dealdata').textContent);
+
+var C = ['var(--c1)','var(--c2)','var(--c3)','var(--c4)','var(--c5)'];
+var SEAT = {'Brandon Slaughter':'SDR','Gabrielle Nurod':'Inside Sales','Mel Matthews':'Inside Sales','Steven Kelly':'Inside Sales','Andrea Chacin':'Inside Sales','Taylor Sloan':'Inside Sales'};
+var DASH = '—', NDASH = '–', MID = '·';
+var fmt = function(n){ return n==null ? DASH : n.toLocaleString('en-US'); };
+var pct = function(a,b){ return b ? Math.round(a/b*100) : 0; };
+var usd = function(n){ return '$' + Math.round(n).toLocaleString('en-US'); };
+function esc(s){ return String(s==null?'':s).replace(/[<>&]/g, function(c){
+  return c==='<'?'&lt;' : c==='>'?'&gt;' : '&amp;'; }); }
+
+// ============================================================================
+// PERIOD MODEL
+// ============================================================================
+// The extract window is the hard floor and ceiling for ACTIVITY: nothing exists
+// outside it, so a period that reaches past it is covered only in part and the
+// page has to say so rather than draw a short bar and let it read as a decline.
+//
+// WIN_HI is yesterday, because extract.py deliberately ends the window at
+// midnight today - no figure on this page sits on a partial day.
+var WIN_LO = S_.window.start;
+var WIN_HI = isoAdd(S_.window.end_exclusive, -1);
+var ANCHOR = S_.window.end_exclusive;   // == today, by the window's own definition
+
+var DOW = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+var MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function isoAdd(iso, n){
+  var d = new Date(iso + 'T00:00:00Z');
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0,10);
+}
+function dow(iso){ return (new Date(iso+'T00:00:00Z').getUTCDay() + 6) % 7; }   // 0 = Monday
+function dlab(iso){
+  var d = new Date(iso + 'T00:00:00Z');
+  return DOW[dow(iso)] + ' ' + d.getUTCDate() + ' ' + MON[d.getUTCMonth()];
+}
+function rangeLab(s, e){ return dlab(s) + ' ' + NDASH + ' ' + dlab(e); }
+function days_between(a, b){
+  return Math.round((new Date(b+'T00:00:00Z') - new Date(a+'T00:00:00Z'))/86400000) + 1;
+}
+
+// Weeks start MONDAY (Ed's rule). Months are calendar months. "Month to date" and
+// "This week" both run through the anchor day inclusive.
+function computePeriods(anchor){
+  var wkStart = isoAdd(anchor, -dow(anchor)), wkEnd = isoAdd(wkStart, 6);
+  var lwStart = isoAdd(wkStart, -7);
+  var mStart  = anchor.slice(0,8) + '01';
+  var lmEnd   = isoAdd(mStart, -1), lmStart = lmEnd.slice(0,8) + '01';
+  return {
+    thisWeek : {label:'This week',     start:wkStart, end:wkEnd},
+    lastWeek : {label:'Last week',     start:lwStart, end:isoAdd(wkStart,-1)},
+    mtd      : {label:'Month to date', start:mStart,  end:anchor},
+    lastMonth: {label:'Last month',    start:lmStart, end:lmEnd},
+    last90   : {label:'Last 90 days',  start:WIN_LO,  end:WIN_HI}
+  };
+}
+
+var PORDER = ['thisWeek','lastWeek','mtd','lastMonth','last90'];
+var PER = computePeriods(ANCHOR);
+
+// The revenue query was cut on its own five ranges. If they ever disagree with the
+// ranges computed here, revenue and activity would be labelled the same and mean
+// different things, so check rather than assume - and show the disagreement if there
+// is one instead of quietly drawing two different periods side by side.
+var PMISMATCH = [];
+PORDER.forEach(function(k){
+  var rp = (R.periods || {})[k], p = PER[k];
+  if (!rp) { PMISMATCH.push(p.label + ': revenue.json carries no range for it'); return; }
+  if (rp.start !== p.start || rp.end !== p.end){
+    PMISMATCH.push(p.label + ': activity ' + p.start + '..' + p.end +
+                   ' vs revenue ' + rp.start + '..' + rp.end);
+  }
+});
+
+// Where the period and the extract window actually overlap. Activity can only be
+// counted here; everything outside is absence of data, not absence of activity.
+PORDER.forEach(function(k){
+  var p = PER[k];
+  p.key   = k;
+  p.aLo   = p.start > WIN_LO ? p.start : WIN_LO;
+  p.aHi   = p.end   < WIN_HI ? p.end   : WIN_HI;
+  p.covered = p.aLo <= p.aHi;
+  p.days     = days_between(p.start, p.end);
+  p.dataDays = p.covered ? days_between(p.aLo, p.aHi) : 0;
+  p.partial  = p.dataDays !== p.days;
+  p.range    = rangeLab(p.start, p.end);
+});
+
+// ============================================================================
+// BUCKET SUMMATION - the whole point of the build
+// ============================================================================
+// Each lead carries days = {"YYYY-MM-DD": {key: count}} and pd = {rep: {day: {key}}}.
+// Summing those inside the selected range is what makes a metric mean "in this
+// period" instead of "this contact's 90-day total, shown under a weekly label".
+var BK = ['d','id','c','dc','m','dm','dp','eo','ei','n','t','mi','cc','dn',
+          'h0','h1','h2','h3','h4','h5','h6'];
+// The seven outbound-dial duration buckets, in order, with the labels the
+// distribution chart prints. Left edge inclusive, right edge exclusive, so a
+// dial lands in exactly one and the seven sum to outbound dials.
+var HB = ['h0','h1','h2','h3','h4','h5','h6'];
+var HLAB = ['Under 30 sec','30 sec - 1 min','1 - 3 min','3 - 5 min','5 - 10 min',
+            '10 - 20 min','20 min +'];
+// Index of the first bucket at or above the 3-minute call-connect bar. The
+// connect rule falls exactly on this boundary, so HB.slice(HCUT) IS the
+// call-connect population and the marked line cannot drift from the rule.
+var HCUT = 3;
+
+function sumDays(r, s, e){
+  var o = {d:0,id:0,c:0,dc:0,m:0,dm:0,dp:0,eo:0,ei:0,n:0,t:0,mi:0,
+           cc:0,dn:0,h0:0,h1:0,h2:0,h3:0,h4:0,h5:0,h6:0,active:0,last:null};
+  var D = r.days || {}, k, v, q;
+  for (k in D){
+    if (k < s || k > e) continue;
+    v = D[k]; o.active++;
+    if (o.last === null || k > o.last) o.last = k;
+    for (q in v) if (o[q] !== undefined) o[q] += v[q];
+  }
+  o.dials   = o.d + o.id;
+  // Same composition extract.py uses for the flat total: dials + meetings +
+  // emails both ways + notes + tasks.
+  o.touches = o.dials + o.m + o.eo + o.ei + o.n + o.t;
+  return o;
+}
+
+function sumRepDays(r, s, e){
+  var out = {}, PD = r.pd || {}, rep, dd, k, v, q, acc;
+  for (rep in PD){
+    dd = PD[rep]; acc = null;
+    for (k in dd){
+      if (k < s || k > e) continue;
+      v = dd[k]; acc = acc || {};
+      for (q in v) acc[q] = (acc[q] || 0) + v[q];
+    }
+    if (acc) out[rep] = acc;
+  }
+  return out;
+}
+
+function inRange(d, s, e){ return !!d && d >= s && d <= e; }
+
+// A period-scoped copy of a lead row. Every count field is overwritten with the
+// in-period sum, so every function further down reads the same field names it
+// always read and gets period numbers without knowing anything about buckets.
+function rowFor(r, s, e){
+  var a = sumDays(r, s, e), o = {}, k;
+  for (k in r) o[k] = r[k];
+  o.out_dials = a.d;   o.in_dials = a.id;  o.dials = a.dials;
+  o.connects  = a.c;   o.dm_connects = a.dc;
+  // THE DURATION RULE (Mel Matthews 2026-09-14, approved by Ed 2026-09-20).
+  // call_connects is the team's connect: an outbound dial of 3 minutes or more.
+  // connects above it is HubSpot's connect, on the call outcome, and is kept as
+  // the secondary line because HubSpot's own automation runs on it.
+  o.call_connects = a.cc;
+  // demos does NOT move - it is still every demo-titled meeting. demo_connects
+  // and demos_under10 SPLIT that same count on the 10-minute recording bar.
+  o.meetings  = a.m;   o.demos = a.dm;     o.demos_performed = a.dp;
+  o.demo_connects = a.dn;
+  o.demos_under10 = a.dm - a.dn;
+  o.hist = [a.h0,a.h1,a.h2,a.h3,a.h4,a.h5,a.h6];
+  o.emails_out= a.eo;  o.emails_in = a.ei;
+  o.notes     = a.n;   o.tasks = a.t;      o.missed_inbound = a.mi;
+  o.touches   = a.touches;
+  o.activeDays = a.active;
+  o.last_touch = a.last;                  // last day with activity INSIDE the period
+  // Enrollment and sourcing filter on the ENROLLMENT DATE, never on activity:
+  // a practice that enrolled this week is this week's enrollment even if the
+  // outreach that earned it happened six weeks ago. r.sourced already carries the
+  // dated rule (first outreach on or before the enrollment date); all this adds
+  // is "and that enrollment date is inside the period in view".
+  o.enrolled_in_window = inRange(r.enrollment_date, s, e);
+  o.sourced = !!r.sourced && o.enrolled_in_window;
+  o.per = sumRepDays(r, s, e);
+  var pr = Object.keys(o.per);
+  // Reps credited in-period come from the per-rep-per-day split, which covers
+  // calls, meetings and emails. Notes and tasks carry no rep split, so a row whose
+  // only in-period activity is a note falls back to the window's rep list.
+  o.reps = pr.length ? pr.sort() : (r.reps || []);
+  var tm = {};
+  o.reps.forEach(function(x){ if (SEAT[x]) tm[SEAT[x]] = 1; });
+  o.teams = pr.length ? Object.keys(tm) : (r.teams || []);
+  return o;
+}
+
+// ---- filter state --------------------------------------------------------
+var S = {p:'thisWeek', team:'', rep:'', seg:'', out:'', q:'', k:'last_touch', dir:-1, page:0, won:false};
+// won:false -> CLOSED WON DEALS ARE HIDDEN BY DEFAULT (Ed, 2026-09-20:
+// "Remove the closed won to start, but add a filter to remove it at the top.")
+var PAGE = 60;
+
+function activeFilters(){
+  var f = [];
+  if (S.team) f.push(['Seat', S.team]);
+  if (S.rep)  f.push(['Rep', S.rep]);
+  if (S.seg)  f.push(['Segment', S.seg]);
+  if (S.out){ var _o = document.getElementById('fout');
+              f.push(['Outcome', _o.options[_o.selectedIndex].text]); }
+  if (S.q)    f.push(['Search', '"' + S.q + '"']);
+  return f;
+}
+
+function match(o){
+  // A contact is in view if it did something inside the period, or its practice
+  // enrolled inside the period. Nothing else puts a row on the page.
+  if (!o.activeDays && !o.enrolled_in_window) return false;
+  if (S.team && (o.teams||[]).indexOf(S.team) < 0) return false;
+  if (S.rep  && (o.reps ||[]).indexOf(S.rep)  < 0) return false;
+  if (S.seg  && o.seg !== S.seg) return false;
+  var q = S.out;
+  if (q==='dialed'    && !(o.out_dials||0)) return false;
+  // Outcome filters run on the TEAM's rule, not on the call outcome: 'connected'
+  // means a dial of 3 minutes or more, which is what Mel asked for on 2026-09-14.
+  if (q==='connected' && !o.call_connects) return false;
+  if (q==='met'       && !o.meetings) return false;
+  if (q==='demo'      && !o.demos) return false;
+  if (q==='demoConn'  && !o.demo_connects) return false;
+  if (q==='demoShort' && !o.demos_under10) return false;
+  if (q==='sourced'   && !o.sourced) return false;
+  if (q==='replied'   && !o.emails_in) return false;
+  if (q==='cold'      && (o.call_connects || o.meetings)) return false;
+  if (S.q){
+    var t = S.q.toLowerCase();
+    if ((o.name+' '+(o.company||'')+' '+(o.city||'')+' '+(o.state||'')+' '+(o.job_title||''))
+        .toLowerCase().indexOf(t) < 0) return false;
+  }
+  return true;
+}
+
+// ---- funnel --------------------------------------------------------------
+// ONE shape, shared by BOTH funnels: the main funnel and the paid-acquisition
+// funnel. Ed's definitions, unchanged - only the window they are counted over
+// has changed.
+//   Contacted     = an outbound dial OR an outbound email IN THE PERIOD. Inbound
+//                   email, meetings, notes and tasks are NOT a touch we made.
+//   Meetings held = ALL meetings in the period, demos and non-demos alike.
+// The six steps are NOT strictly nested - a contact can hold a meeting without
+// ever having been dialed or emailed - so every tile reads "% of prior step",
+// which is a step-over-step ratio and never a conversion rate.
+function CONTACTED(r){ return (r.out_dials||0) > 0 || (r.emails_out||0) > 0; }
+
+function funnelSteps(rows, marks){
+  var n = function(f){ return rows.filter(f).length; };
+  return [
+    ['Contacts',             rows.length,                               C[0], marks[0]],
+    ['Contacted',            n(CONTACTED),                              C[0], marks[1]],
+    // CONNECTED is the 3-minute call-connect bar (Mel, 2026-09-14), not the
+    // call-outcome picklist. The label carries the bar so nobody has to guess.
+    ['Connected (3+ min call)', n(function(r){return (r.call_connects||0)>0;}), C[2], marks[2]],
+    ['Meetings held',        n(function(r){return (r.meetings||0)>0;}), C[3], marks[3]],
+    ['Demos',                n(function(r){return (r.demos||0)>0;}),    C[1], marks[4]],
+    ['Enrolled after outreach', n(function(r){return !!r.sourced;}),    C[4], marks[5]]
+  ];
+}
+
+function renderFunnel(elId, steps){
+  var max = steps[0][1] || 1;
+  document.getElementById(elId).innerHTML = steps.map(function(s, i){
+    // A zero prior step has no ratio. Printing "0% of prior step" next to a
+    // non-zero tile - which is exactly what a divide-by-zero guard returning 0
+    // produces - reads as a collapse when it is really an undefined ratio, and it
+    // is the clearest possible proof that these steps are not nested.
+    var conv = !i ? '<div class="conv">in view</div>'
+             : steps[i-1][1] ? '<div class="conv">' + pct(s[1], steps[i-1][1]) + '% of prior step</div>'
+             : '<div class="conv">prior step is 0' + (s[1] ? ' - no ratio' : '') + '</div>';
+    return '<div class="fstep"><div class="lab">'+s[0]+(s[3]?srcMark(s[3]):'')+
+      '</div><div class="v" style="color:'+s[2]+'">'+
+      fmt(s[1])+'</div>'+conv+'<div class="bar" style="width:'+
+      Math.max(2,Math.round(s[1]/max*100))+'%;background:'+s[2]+'"></div></div>';
+  }).join('');
+  return steps;
+}
+
+function drawFunnel(rows, p){
+  var steps = renderFunnel('funnel', funnelSteps(rows,
+    ['contacts','contacts_contacted','contacts_connected','meetings','demos','contacts_enrolled']));
+  var touched = steps[0][1], enr = steps[5][1];
+  document.getElementById('fnote').textContent =
+    p.label + ' (' + p.range + ') ' + MID + ' ' + fmt(touched) + ' contacts in view ' + MID + ' ' +
+    fmt(enr) + ' enrolled after real outreach from the team';
+  // The non-nesting disclosure, recomputed on the rows in view. It has to move with
+  // the period: on a single week the gaps are a different size, and on a small week
+  // a ratio can cross 100% where the 90-day one does not.
+  var unconn  = rows.filter(function(r){return (r.meetings||0)>0 && !(r.call_connects||0);}).length;
+  var nodemo  = rows.filter(function(r){return r.sourced && !(r.demos||0);}).length;
+  var notouch = rows.filter(function(r){return r.sourced && !CONTACTED(r);}).length;
+  var over    = [];
+  for (var i=1;i<steps.length;i++) if (steps[i-1][1] && steps[i][1] > steps[i-1][1]) over.push(steps[i][0]);
+  var ps = {}; rows.forEach(function(r){ if (r.sourced) ps[_practice(r)] = 1; });
+  var np = Object.keys(ps).length;
+  document.getElementById('fcaveat').innerHTML =
+    '<b>These steps are not nested.</b> In ' + esc(p.label.toLowerCase()) + ', ' +
+    fmt(unconn) + ' of the ' + fmt(steps[3][1]) + ' contacts who held a meeting never had a dial ' +
+    'reach three minutes' + (enr ? ', and ' + fmt(nodemo) + ' of the ' + fmt(enr) + ' enrolled had no demo in ' +
+      'this period' : '') + '. So <b>Meetings held and Enrolled each divide by a set that is missing ' +
+    'part of its own numerator</b>. ' +
+    (over.length
+      ? 'In this period ' + esc(over.join(' and ')) + ' comes out <b>above 100% of the prior step</b> for ' +
+        'exactly that reason - it is a step-over-step ratio, not a conversion rate. '
+      : 'In this period every ratio stays under 100%, which makes them look like conversion rates. ' +
+        'They are not. ') +
+    (enr ? (notouch
+      ? fmt(notouch) + ' of the ' + fmt(enr) + ' enrolled contacts had no outbound dial and no ' +
+        'outbound email inside this period - they qualify on a meeting, on an inbound call somebody ' +
+        'answered, or on outreach made before the period opened, which is why Contacted is not their ' +
+        'parent step. '
+      : 'Every enrolled contact in view also cleared the Contacted step inside this period, but ' +
+        'Enrolled is still not a subset of Demos. ') : '') +
+    'Enrolled is also the only step at contact grain: ' +
+    (enr ? 'these ' + fmt(enr) + ' contacts sit at ' + fmt(np) + ' distinct practices, and it is the ' +
+           'practice count that the Combined card reports. '
+         : 'no practice enrolled inside this period, so the step is zero here - that is an empty period, ' +
+           'not a missing number. ') +
+    '<b>Enrolled and sourced filter on the enrollment date</b>, not on activity, so a practice that ' +
+    'enrolled in this period counts here even when the outreach that earned it landed earlier.';
+  document.getElementById('f1').textContent =
+    fmt(rows.reduce(function(a,r){return a+(r.out_dials||0);},0)) + ' outbound dials';
+}
+
+// ---- two motions ---------------------------------------------------------
+function drawMotions(rows, p){
+  function agg(seat){
+    var a = {leads:0, dials:0, odials:0, conn:0, disp:0, mtg:0, demo:0, src:0}, seen = {};
+    rows.forEach(function(r){
+      var per = r.per || {}, hit = false;
+      Object.keys(per).forEach(function(rep){
+        if (SEAT[rep] !== seat) return;
+        hit = true; var q = per[rep];
+        a.dials += (q.d||0) + (q.id||0); a.odials += q.d||0;
+        a.conn += q.cc||0; a.disp += q.c||0; a.mtg += q.m||0; a.demo += q.dm||0;
+      });
+      // "Sourced enrollments" means the same thing everywhere on this page:
+      // distinct practices, company grain, deduped - never a contact count.
+      if (hit){ a.leads++; if (r.sourced) seen[_practice(r)] = 1; }
+    });
+    a.src = Object.keys(seen).length;
+    return a;
+  }
+  var s_ = agg('SDR'), i = agg('Inside Sales');
+  function card(t, d, blurb, hero, heroLab){
+    var mx = Math.max(d.dials,d.mtg,d.demo,d.src,1);
+    // Call connects here are the TEAM's rule - an outbound dial of 3 minutes or
+    // longer - the same key (cc) the rep scorecard below reads. This card used to
+    // read the call-outcome picklist (bucket key c) while the scorecard read the
+    // duration rule, so the same word carried two definitions several times over
+    // on one page. The outcome figure is still shown, labelled as what it is.
+    var bars = [['Dials',d.dials,C[0]],['Call connects (3+ min)',d.conn,C[2]],['Meetings',d.mtg,C[3]],
+                ['Demos',d.demo,C[1]],['Sourced enrollments',d.src,C[4]]];
+    return '<div class="mcard"><h3>'+t+'</h3><div class="lede">'+hero+'</div>'+
+      '<p style="color:var(--ink-3);font-size:12px;margin-top:0">'+heroLab+'</p>'+
+      '<p>'+blurb+'</p><div class="rows">'+ bars.map(function(b){
+        return '<div><div class="rlab"><span>'+b[0]+'</span><b>'+fmt(b[1])+'</b></div>'+
+          '<div class="t"><div class="f" style="width:'+Math.max(1,Math.round(b[1]/mx*100))+
+          '%;background:'+b[2]+'"></div></div></div>';
+      }).join('') + '</div>' +
+      '<p style="color:var(--ink-3);font-size:12px">All five figures are ' +
+      esc(p.label.toLowerCase()) + ' only (' + esc(p.range) + '), summed from the per-rep daily buckets. ' +
+      '<b>Call connects are dials of 3 minutes or longer</b> ' + DASH + ' the team rule, the same figure ' +
+      'the rep scorecard shows. On HubSpot&#39;s own call-outcome rule the same seat reads ' +
+      fmt(d.disp) + ', because the two are different populations and not two versions of one number.' +
+      (S.team ? ' The seat filter selects contacts, not cards, so a contact worked by both seats appears ' +
+                'under both.' : '') + '</p>' +
+      '</div>';
+  }
+  document.getElementById('motions').innerHTML =
+    card('SDR seat ' + DASH + ' Brandon', s_,
+      'High-volume outbound on the Aloware dialer. Generates reach, not revenue directly. Judge this seat on dials, connect rate and meetings created ' + DASH + ' not on enrollments.',
+      // Denominator is OUTBOUND dials, matching the rep scorecard: the connect rule
+      // is outbound-only, so an answered inbound call must not sit in the denominator.
+      (s_.odials ? pct(s_.conn,s_.odials)+'%' : DASH),
+      'call connects (3+ min) as a share of outbound dials in this period') +
+    card('Inside Sales seats', i,
+      'Conversation and demo work. Almost no dialing happens here ' + DASH + ' these reps run scheduled demos booked by marketing and the SDR. Judge on demos held and enrollments influenced.',
+      fmt(i.src), 'enrollments influenced in this period');
+}
+
+// ---- rep scorecard -------------------------------------------------------
+function drawReps(rows, p){
+  var by = {};
+  rows.forEach(function(r){
+    var per = r.per || {};
+    Object.keys(per).forEach(function(rep){
+      var q = per[rep];
+      var b = by[rep] || (by[rep] = {rep:rep, seat:SEAT[rep]||'', leads:0, dials:0, odials:0,
+        conn:0, dm:0, mtg:0, demo:0, dconn:0, eout:0, src:0, _s:{}});
+      b.leads++;
+      b.dials += (q.d||0) + (q.id||0); b.odials += q.d||0;
+      // conn is now the 3-minute CALL CONNECT (bucket key cc), not the call
+      // outcome. The rate below divides it by OUTBOUND dials, because the rule
+      // is outbound-only - an inbound call somebody answered is demand, not a
+      // connect the rep manufactured, so it must not sit in the denominator.
+      b.conn += q.cc||0; b.dm += q.dc||0; b.mtg += q.m||0;
+      b.demo  += q.dm||0; b.dconn += q.dn||0; b.eout += q.eo||0;
+      // company grain, deduped - as the column caption says, and matching the
+      // Combined card and the revenue section.
+      if (r.sourced) b._s[_practice(r)] = 1;
+    });
+  });
+  Object.keys(by).forEach(function(k){ by[k].src = Object.keys(by[k]._s).length; });
+  var list = Object.keys(by).map(function(k){return by[k];})
+    .sort(function(a,b){return b.src-a.src || b.dials-a.dials;});
+  var mxd = Math.max.apply(null, list.map(function(x){return x.dials;}).concat([1]));
+  var mxs = Math.max.apply(null, list.map(function(x){return x.src;}).concat([1]));
+  document.querySelector('#reptbl tbody').innerHTML = list.map(function(b){
+    var cr = b.odials >= 10 ? pct(b.conn,b.odials)+'%'
+           : (b.odials ? '<span class="z">n=' + b.odials + '</span>' : '<span class="z">'+DASH+'</span>');
+    function bar(v,mx,col){
+      return '<div class="bcell"><span>'+fmt(v)+'</span><span class="btrack"><span class="bfill" style="width:'+
+        Math.round(v/mx*100)+'%;background:'+col+'"></span></span></div>';
+    }
+    return '<tr><td><b>'+esc(b.rep)+'</b></td>'+
+      '<td><span class="pill '+(b.seat==='SDR'?'p-warn':'p-brand')+'">'+(b.seat||DASH)+'</span></td>'+
+      '<td class="r">'+fmt(b.leads)+'</td>'+
+      '<td class="r">'+bar(b.dials,mxd,'var(--c1)')+'</td>'+
+      '<td class="r">'+(b.odials?fmt(b.conn):'<span class="z">0</span>')+'</td>'+
+      '<td class="r">'+(b.dials?fmt(b.dm):'<span class="z">0</span>')+'</td>'+
+      '<td class="r">'+cr+'</td>'+
+      '<td class="r">'+fmt(b.mtg)+'</td><td class="r">'+fmt(b.demo)+'</td>'+
+      '<td class="r">'+fmt(b.dconn)+'</td>'+
+      // No-shows = demos minus demo connects. Derived, not a separate count, so the
+      // two can never disagree with Demos on the same row.
+      '<td class="r">'+fmt(Math.max(0, (b.demo||0) - (b.dconn||0)))+'</td>'+
+      '<td class="r">'+fmt(b.eout)+'</td>'+
+      '<td class="r">'+bar(b.src,mxs,'var(--c5)')+'</td></tr>';
+  }).join('') || '<tr><td colspan="13" style="padding:28px;text-align:center;color:var(--ink-3)">' +
+    'No rep has call, meeting or email activity in ' + esc(p.label.toLowerCase()) + '.</td></tr>';
+  // The rep filter selects CONTACTS, so a co-worked contact still carries the other
+  // reps' activity into this table. That is useful - it is the coverage view - but it
+  // is not what "filtered to Brandon" looks like it should mean, so say which it is.
+  document.getElementById('repnote2').innerHTML =
+    esc(p.label) + ' (' + esc(p.range) + '). A rep appears only if they have activity dated inside it.' +
+    (S.rep ? ' <b>The rep filter selects contacts, not rows.</b> These are every rep’s activity on ' +
+             'the contacts ' + esc(S.rep) + ' touched in this period, so co-worked contacts still show ' +
+             'the other reps. The ' + esc(S.rep) + ' row is the one that answers "what did ' + esc(S.rep) +
+             ' do".' : '') +
+    (S.team ? ' <b>The seat filter likewise selects contacts</b>, so a contact worked by both seats brings ' +
+              'the other seat’s reps in with it.' : '');
+}
+
+// ---- segments ------------------------------------------------------------
+function drawSegs(rows, p){
+  var by = {};
+  rows.forEach(function(r){
+    var b = by[r.seg] || (by[r.seg] = {n:0, src:0});
+    b.n++; if (r.sourced) b.src++;
+  });
+  var ks = Object.keys(by).sort(function(a,b){return by[b].n-by[a].n;});
+  var mx = Math.max.apply(null, ks.map(function(k){return by[k].n;}).concat([1]));
+  document.getElementById('segrows').innerHTML = ks.map(function(k,i){
+    return '<div><div class="rlab"><span>'+esc(k)+'</span><b>'+fmt(by[k].n)+'</b></div>'+
+      '<div class="t"><div class="f" style="width:'+Math.max(1,Math.round(by[k].n/mx*100))+
+      '%;background:'+C[i%5]+'"></div></div></div>';
+  }).join('') || '<p class="z">No contacts in view.</p>';
+  // The n>=15 floor is a noise guard, not a window: on a single week almost no
+  // segment clears it, which is the honest answer rather than a rate built on three
+  // contacts. Say which floor was applied instead of rendering an empty box.
+  var conv = ks.filter(function(k){return by[k].n>=15;})
+    .map(function(k){return {k:k, r:by[k].src/by[k].n*100, n:by[k].n, s:by[k].src};})
+    .sort(function(a,b){return b.r-a.r;});
+  var mr = Math.max.apply(null, conv.map(function(c){return c.r;}).concat([1]));
+  document.getElementById('segconv').innerHTML = conv.length ? conv.map(function(c,i){
+    return '<div><div class="rlab"><span>'+esc(c.k)+' <span class="z">('+fmt(c.n)+')</span></span>'+
+      '<b>'+c.r.toFixed(1)+'</b></div><div class="t"><div class="f" style="width:'+
+      Math.max(1,Math.round(c.r/mr*100))+'%;background:'+C[i%5]+'"></div></div></div>';
+  }).join('') : '<p class="z">No segment reaches 15 contacts in ' + esc(p.label.toLowerCase()) +
+    ', so no rate is shown. A conversion rate off a handful of contacts is noise; widen the period.</p>';
+  document.getElementById('segnote').textContent =
+    p.label + ' (' + p.range + '). Enrollments counted here are those dated inside the period.';
+}
+
+// ---- lead table ----------------------------------------------------------
+function statusPill(r){
+  var s = r.lead_status || '';
+  if (!s) return '<span class="z">'+DASH+'</span>';
+  var cls = 'p-mute';
+  if (s==='DEMO_CLOSED_WON') cls='p-good';
+  else if (s==='Demo Booked') cls='p-brand';
+  else if (s==='DEMO_CLOSED_LOST'||s==='UNQUALIFIED') cls='p-bad';
+  else if (s==='OPEN'||s==='OPEN_DEAL'||s==='IN_PROGRESS') cls='p-warn';
+  return '<span class="pill '+cls+'">'+esc(s.replace(/_/g,' ').toLowerCase()
+    .replace(/\b\w/g,function(c){return c.toUpperCase();}))+'</span>';
+}
+function drawLeads(rows){
+  rows = rows.slice().sort(function(a,b){
+    var x=a[S.k], y=b[S.k];
+    if (typeof x==='boolean'){x=x?1:0; y=y?1:0;}
+    if (x==null) x = typeof y==='number' ? -1 : '';
+    if (y==null) y = typeof x==='number' ? -1 : '';
+    return x<y ? -S.dir : x>y ? S.dir : 0;
+  });
+  var pages = Math.max(1, Math.ceil(rows.length/PAGE));
+  if (S.page >= pages) S.page = pages-1;
+  if (S.page < 0) S.page = 0;
+  var slice = rows.slice(S.page*PAGE, S.page*PAGE+PAGE);
+  document.querySelector('#leadtbl tbody').innerHTML = slice.map(function(r){
+    function n(v){ return v ? fmt(v) : '<span class="z">0</span>'; }
+    var enr = r.sourced ? '<span class="pill p-good">'+esc(r.enrollment_date||'yes')+'</span>'
+            : (r.enrolled_in_window ? '<span class="pill p-mute">'+esc(r.enrollment_date||'in period')+'</span>'
+                                    : '<span class="z">'+DASH+'</span>');
+    return '<tr><td><a class="rec" href="'+esc(r.url)+'" target="_blank" rel="noopener">'+
+      esc(r.name||'(no name)')+'</a><span class="who">'+
+      esc([r.company, r.city&&r.state ? r.city+', '+r.state : (r.city||r.state||'')]
+        .filter(Boolean).join(' '+MID+' ') + (r.reps&&r.reps.length ? ' '+DASH+' '+r.reps.join(', ') : '')) +
+      '</span></td>'+
+      '<td>'+esc(r.seg||DASH)+'</td><td>'+statusPill(r)+'</td>'+
+      '<td class="r">'+n(r.dials)+'</td><td class="r">'+n(r.call_connects)+'</td>'+
+      '<td class="r">'+n(r.meetings)+'</td><td class="r">'+n(r.demos)+'</td>'+
+      '<td class="r">'+n(r.demos_under10)+'</td>'+
+      '<td class="r">'+n(r.emails_out)+'</td><td class="r">'+n(r.emails_in)+'</td>'+
+      '<td class="r">'+n(r.touches)+'</td>'+
+      '<td>'+(r.sig?'<span class="pill p-brand">'+esc(r.sig)+'</span>':'<span class="z">'+DASH+'</span>')+'</td>'+
+      '<td class="mono">'+(r.last_touch||'<span class="z">'+DASH+'</span>')+'</td><td>'+enr+'</td></tr>';
+  }).join('') || '<tr><td colspan="13" style="padding:28px;text-align:center;color:var(--ink-3)">No contacts match these filters in this period.</td></tr>';
+  document.getElementById('pinfo').textContent = 'Page '+(S.page+1)+' of '+pages;
+  document.getElementById('prev').disabled = S.page===0;
+  document.getElementById('next').disabled = S.page>=pages-1;
+  document.getElementById('cnt').textContent = fmt(rows.length)+' contacts';
+}
+
+// ---- combined / inbound / outbound -----------------------------------------
+// Ed's rules: demos are INBOUND; dials are OUTBOUND and never include demo
+// recordings (those have no direction and live under HUBSPOT_MEETINGS).
+// PAID ACQUISITION ONLY for the funnel below: a contact qualifies on EITHER
+// attribution field, so a contact tagged on one and not the other still counts.
+// The cohort's composition is a property of whichever window was extracted and it
+// moves on every refresh, so it is MEASURED here rather than quoted from a previous
+// run - a hard-coded "127 contacts" silently becomes a lie the first time the
+// window rolls.
+var PAID_CHANNEL = {'Meta Ads':1, 'LinkedIn Ads':1, 'Google Ads':1};
+var PAID_SOURCE  = {'Paid Social':1, 'Paid Search':1};
+function isPaid(r){
+  return !!(PAID_CHANNEL[r.mkt_channel || ''] || PAID_SOURCE[r.lead_source || '']);
+}
+var PAIDMIX = (function(){
+  var chan = {}, src = {}, nC = 0, nS = 0, both = 0, uni = 0;
+  L.forEach(function(r){
+    var c = !!PAID_CHANNEL[r.mkt_channel || ''], t = !!PAID_SOURCE[r.lead_source || ''];
+    if (c){ nC++; chan[r.mkt_channel] = (chan[r.mkt_channel]||0) + 1; }
+    if (t){ nS++; src[r.lead_source] = (src[r.lead_source]||0) + 1; }
+    if (c && t) both++;
+    if (c || t) uni++;
+  });
+  function lab(o){ return Object.keys(o).sort(function(a,b){return o[b]-o[a];})
+    .map(function(k){ return k + ' ' + o[k]; }).join(', '); }
+  return {nC:nC, nS:nS, both:both, uni:uni, chanLab:lab(chan), srcLab:lab(src),
+          srcOnly:uni-nC, chanOnly:uni-nS};
+})();
+
+// Sourced enrollments are counted at COMPANY grain and deduped: revenue is one row
+// per provider, and a practice with four contacts on it is still one enrollment.
+// Deduping also means out.src + inb.src does NOT add up to all.src.
+function _practice(r){ return r.practice_key || r.location_key || r.company_id ||
+                              ('contact:' + r.contact_id); }
+// A LOCATION is the company record itself - what the comp plan pays on. A PRACTICE
+// is the business behind it, after extract.py joined records sharing a Provider ID
+// or a corroborated Legal Business Name / Practice Name / Doing Business As /
+// Company name (Ed, 2026-09-20). Locations >= practices, always.
+function _location(r){ return r.location_key || r.company_id || ('contact:' + r.contact_id); }
+
+function motionAgg(rows){
+  var a = {out:{dials:0,connects:0,emails:0,contacts:0,src:0},
+           inb:{calls:0,demos:0,replies:0,meetings:0,contacts:0,src:0},
+           all:{contacts:rows.length, touches:0, demos:0, src:0, loc:0}};
+  // aS keys on the PRACTICE, aL on the LOCATION (the company record). Mel asked
+  // for both: AEs are paid on locations, while every other enrollment figure on
+  // this page - and the revenue cohort - runs at practice grain.
+  var oS = {}, iS = {}, aS = {}, aL = {};
+  rows.forEach(function(r){
+    var od = r.out_dials||0, idl = r.in_dials||0;
+    a.all.touches += r.touches||0; a.all.demos += r.demos||0;
+    if (r.sourced){ aS[_practice(r)] = 1; aL[_location(r)] = 1; }
+    if (od || r.emails_out){
+      a.out.contacts++; a.out.dials += od; a.out.connects += r.call_connects||0;
+      a.out.emails += r.emails_out||0; if (r.sourced) oS[_practice(r)] = 1;
+    }
+    if (idl || r.demos || r.emails_in || r.meetings){
+      a.inb.contacts++; a.inb.calls += idl; a.inb.demos += r.demos||0;
+      a.inb.replies += r.emails_in||0; a.inb.meetings += r.meetings||0;
+      if (r.sourced) iS[_practice(r)] = 1;
+    }
+  });
+  a.all.src = Object.keys(aS).length;
+  a.all.loc = Object.keys(aL).length;
+  a.out.src = Object.keys(oS).length;
+  a.inb.src = Object.keys(iS).length;
+  // Combined is NOT Outbound + Inbound minus their overlap. A sourced practice whose
+  // only recorded activity in the period is a note - or none at all, because it is in
+  // view on its enrollment date - clears neither bucket's test, so it appears in
+  // Combined and nowhere else. Both effects are stated on the card.
+  var uni = {};
+  Object.keys(oS).forEach(function(k){ uni[k] = 1; });
+  Object.keys(iS).forEach(function(k){ uni[k] = 1; });
+  a.all.srcEither  = Object.keys(uni).length;
+  a.all.srcBoth    = a.out.src + a.inb.src - a.all.srcEither;
+  a.all.srcNeither = a.all.src - a.all.srcEither;
+  return a;
+}
+
+function drawMotion3(rows, p){
+  var a = motionAgg(rows);
+  function card(title, hero, heroLab, blurb, bars, col, foot){
+    var mx = Math.max.apply(null, bars.map(function(b){return b[1];}).concat([1]));
+    return '<div class="mcard"><h3>' + title + '</h3><div class="lede" style="color:' + col + '">' +
+      hero + '</div><p style="margin-top:0;color:var(--ink-3);font-size:12px">' + heroLab + '</p>' +
+      '<p>' + blurb + '</p><div class="rows">' + bars.map(function(b){
+        return '<div><div class="rlab"><span>' + b[0] + '</span><b>' + fmt(b[1]) + '</b></div>' +
+          '<div class="t"><div class="f" style="width:' + Math.max(1,Math.round(b[1]/mx*100)) +
+          '%;background:' + col + '"></div></div></div>';
+      }).join('') + '</div>' +
+      (foot ? '<p style="color:var(--ink-3);font-size:12px">' + foot + '</p>' : '') + '</div>';
+  }
+  var per = esc(p.label.toLowerCase()) + ' (' + esc(p.range) + ')';
+  document.getElementById('motion3').innerHTML =
+    card('Combined', fmt(a.all.contacts), 'contacts in view, any channel',
+      'Everything the team did in ' + per + ', inbound and outbound together.',
+      [['Total touches',a.all.touches],['Demos',a.all.demos],
+       ['Locations enrolled',a.all.loc],['Practices enrolled',a.all.src]], C[3],
+      '<b>Two grains, both shown because Mel asked for both.</b> <b>Locations enrolled</b> (' +
+      fmt(a.all.loc) + ') counts company records ' + DASH + ' what the AE comp plan pays on. ' +
+      '<b>Practices enrolled</b> (' + fmt(a.all.src) + ') counts distinct businesses, after records ' +
+      'sharing a Provider ID or a corroborated Legal Business Name, Practice Name or Doing Business ' +
+      'As are joined into one. Practices is the grain the revenue section above uses, and it is ' +
+      'always the smaller of the two. Both are counted on the enrollment date falling inside this ' +
+      'period, and neither includes the parent group records credited by the rollup, because a ' +
+      'parent carries no contacts of its own and so cannot be filtered by activity ' + DASH + ' the ' +
+      'data dictionary carries the full-window figure that does include them. ' +
+      'Each motion below is deduped on its own, so Inbound + Outbound does not sum to Combined: ' +
+      fmt(a.all.srcBoth) + ' practices were worked on both motions in this period and are counted once ' +
+      'in each. ' +
+      (a.all.srcNeither
+        ? 'A further ' + fmt(a.all.srcNeither) + ' of the ' + fmt(a.all.src) + ' sit in <b>neither</b> ' +
+          'motion - no dial, no email either way, no meeting inside this period - so the two motions ' +
+          'together cover only ' + fmt(a.all.srcEither) + ' of ' + fmt(a.all.src) + '. That gap grows ' +
+          'as the period narrows: the enrollment lands in the period, the outreach that earned it often ' +
+          'does not. '
+        : 'Every sourced practice in this period lands in at least one motion, so the two cards together ' +
+          'cover all ' + fmt(a.all.src) + '. ') +
+      'Do not read Combined as the union of the two cards below it.') +
+    card('Inbound', fmt(a.inb.demos), 'demos held in this period',
+      'Demand that came to us: demos, replies to our email, and calls that came in. This is where the Inside Sales seats live.',
+      [['Demos',a.inb.demos],['Meetings',a.inb.meetings],['Replies received',a.inb.replies],
+       ['Inbound calls',a.inb.calls],['Sourced enrollments',a.inb.src]], C[2]) +
+    card('Outbound', fmt(a.out.dials), 'dials placed in this period (demo recordings excluded)',
+      'Demand we went and created: dialer activity and cold email. Today this is essentially one seat.',
+      [['Dials',a.out.dials],['Connects (3+ min)',a.out.connects],['Emails sent',a.out.emails],
+       ['Sourced enrollments',a.out.src]], C[1]);
+}
+
+// ---- paid-acquisition funnel ------------------------------------------------
+function drawMarketing(rows, p){
+  var mk = rows.filter(isPaid);
+  var booked  = mk.filter(function(r){ return r.demos>0 || r.demo_booking_status==='Booked' ||
+                                              r.demo_booking_status==='No Show'; });
+  var held    = mk.filter(function(r){ return r.demos>0; });
+  var enrolled= mk.filter(function(r){ return r.sourced; });
+  // Same six steps as the main Funnel, same definitions, same renderer.
+  var st = renderFunnel('mktfunnel', funnelSteps(mk, ['mkt_contacts','mkt_contacted','mkt_connected',
+    'mkt_meetings','mkt_demos','mkt_enrolled']));
+
+  // Every number in this caveat is recomputed for the period in view - the old
+  // hard-coded "45 of the 53" was a full-window fact quoted under a weekly tab.
+  var unconn = mk.filter(function(r){ return (r.meetings||0)>0 && !(r.call_connects||0); }).length;
+  var nodemo = enrolled.filter(function(r){ return !(r.demos||0); }).length;
+  var nobook = enrolled.filter(function(r){ return booked.indexOf(r) < 0; }).length;
+  var over = [];
+  for (var i=1;i<st.length;i++) if (st[i-1][1] && st[i][1] > st[i-1][1]) over.push(st[i][0]);
+  var ps = {}; enrolled.forEach(function(r){ ps[_practice(r)] = 1; });
+  var srcOnly = mk.filter(function(r){ return !PAID_CHANNEL[r.mkt_channel||'']; }).length;
+  document.getElementById('mktcaveat').innerHTML =
+    '<b>Read these steps carefully ' + DASH + ' they are not a clean funnel.</b> ' +
+    'Counted over ' + esc(p.label.toLowerCase()) + ' (' + esc(p.range) + '). ' +
+    'The six steps are <b>not nested</b>: a contact can hold a meeting without ever having been dialed ' +
+    'or emailed, and ' + fmt(unconn) + ' of the ' + fmt(st[3][1]) + ' who held a meeting were never ' +
+    'connected on a dial. So each tile reads "% of prior step" ' + DASH + ' a step-over-step ratio, not ' +
+    'a conversion rate' +
+    (over.length ? ', and in this period it goes <b>above 100%</b> at ' + esc(over.join(' and ')) +
+       ' for exactly that reason. ' : '. ') +
+    (enrolled.length
+      ? '<b>Enrolled is not a subset of Demos</b> ' + DASH + ' ' + fmt(nodemo) + ' of the ' +
+        fmt(enrolled.length) + ' had no demo in this period and ' + fmt(nobook) + ' never booked one. ' +
+        'Enrolled is also the only step at contact grain rather than practice grain; these ' +
+        fmt(enrolled.length) + ' contacts sit at ' + fmt(Object.keys(ps).length) + ' distinct practices. '
+      : 'No paid contact enrolled inside this period, so the last step is zero ' + DASH + ' an empty ' +
+        'period, not a missing number. ') +
+    '<b>Demos still means a meeting whose title contains "demo"</b>, inferred from the title and never ' +
+    'from attendance, so a no-show that was never cancelled still counts in this step. The demo ' +
+    'no-show split sits in the contact list and the data dictionary, not in this funnel. ' +
+    'And the cohort is small ' + DASH + ' ' + fmt(mk.length) + ' contacts in this period ' + DASH + ' so ' +
+    'read the steps as direction, not as rates. ' + fmt(srcOnly) + ' of them arrive on Lead source alone, ' +
+    'with no paid value on Marketing channel; both fields are hand- and integration-set and neither is ' +
+    'enforced, so a mistagged ad lead is invisible here.';
+
+  // the not-yet-booked pool, aged from TODAY (the anchor), not from the period end:
+  // "how long has this been sitting" is a question about now, not about the tab.
+  var nb = mk.filter(function(r){ return booked.indexOf(r) < 0; });
+  document.getElementById('nobookn').textContent = fmt(nb.length);
+  var today = new Date(ANCHOR + 'T00:00:00Z');
+  var buckets = [['0-7 days',0],['8-30 days',0],['31-90 days',0],['90+ days',0]];
+  nb.forEach(function(r){
+    if (!r.created) { buckets[3][1]++; return; }
+    var d = Math.round((today - new Date(r.created + 'T00:00:00Z')) / 86400000);
+    if (d <= 7) buckets[0][1]++; else if (d <= 30) buckets[1][1]++;
+    else if (d <= 90) buckets[2][1]++; else buckets[3][1]++;
+  });
+  var bmax = Math.max.apply(null, buckets.map(function(b){return b[1];}).concat([1]));
+  document.getElementById('nobookage').innerHTML = buckets.map(function(b,i){
+    return '<div><div class="rlab"><span>' + b[0] + '</span><b>' + fmt(b[1]) + '</b></div>' +
+      '<div class="t"><div class="f" style="width:' + Math.max(1,Math.round(b[1]/bmax*100)) +
+      '%;background:' + C[i%5] + '"></div></div></div>';
+  }).join('');
+  document.getElementById('nobooknote').textContent =
+    'Pool is the paid contacts in view for ' + p.label.toLowerCase() + '; the age buckets are measured ' +
+    'from today (' + dlab(ANCHOR) + ') against the contact record’s create date, so they do not ' +
+    'move when you change the tab.';
+
+  document.getElementById('demoenr').textContent = held.length ? pct(enrolled.length, held.length) + '%' : DASH;
+  var rowsOut = [['Demos held', held.length, C[2]], ['Enrolled after demo', enrolled.length, C[4]],
+                 ['Still open', Math.max(held.length - enrolled.length, 0), C[0]]];
+  var rmax = Math.max.apply(null, rowsOut.map(function(x){return x[1];}).concat([1]));
+  document.getElementById('demoenrrows').innerHTML = rowsOut.map(function(x){
+    return '<div><div class="rlab"><span>' + x[0] + '</span><b>' + fmt(x[1]) + '</b></div>' +
+      '<div class="t"><div class="f" style="width:' + Math.max(1,Math.round(x[1]/rmax*100)) +
+      '%;background:' + x[2] + '"></div></div></div>';
+  }).join('');
+  document.getElementById('demoenrnote').textContent = held.length
+    ? 'Both figures are ' + p.label.toLowerCase() + ' only. The demo and the enrollment do not have to ' +
+      'fall in the same period, so on a short tab this ratio is unstable - read it on Last 90 days.'
+    : 'No paid demo was held in ' + p.label.toLowerCase() + ', so there is no ratio to show.';
+}
+
+// ---- revenue (warehouse-sourced; HubSpot cannot window money) ---------------
+// Revenue is COMPANY grain over the sourced-practice cohort. It follows the period
+// tab, because revenue.json carries all five periods cut from one day-by-provider
+// result set. It CANNOT follow a seat, rep, segment, outcome or search filter:
+// there is no rep or segment on a contract row. Rather than print a cohort-wide
+// number next to filtered activity and let someone read them as the same
+// population, the figures are withheld and the reason is stated.
+function drawRevenue(p){
+  var rp = (R.periods || {})[S.p];
+  var blockers = activeFilters();
+  var block = document.getElementById('revblock');
+  var tiles, note, months;
+
+  if (!rp){
+    block.innerHTML = '<div class="blocked"><b>No revenue figures for ' + esc(p.label) + '.</b> ' +
+      'revenue.json carries five named periods and this is not one of them, so nothing is shown here ' +
+      'rather than a figure cut on a different range.</div>';
+    tiles = null;
+  } else if (blockers.length){
+    block.innerHTML = '<div class="blocked">' +
+      '<b>Revenue cannot honour the filters you have set, so it is not shown.</b> ' +
+      'Active: ' + blockers.map(function(f){ return esc(f[0]) + ' = ' + esc(f[1]); }).join(', ') + '. ' +
+      'These dollars come from the warehouse at <b>contract grain</b> ' + DASH + ' one row per contract, ' +
+      'carrying a provider and a date and nothing else. There is no rep, no seat, no segment and no ' +
+      'contact on a contract row, so the figure cannot be narrowed to the population you are looking at. ' +
+      'Showing the whole-cohort number next to filtered activity would invite exactly the wrong reading. ' +
+      '<b>The period tab does work here</b> ' + DASH + ' clear the other filters to see ' +
+      esc(p.label.toLowerCase()) + '.</div>';
+    tiles = null;
+  } else {
+    block.innerHTML = '';
+    tiles = [
+      ['Originated volume', usd(rp.value), esc(p.label.toLowerCase()) + ', ' + esc(p.range), C[0], 1],
+      ['Contracts', fmt(rp.contracts), 'signed in this period', C[4]],
+      ['Average ticket', rp.contracts ? usd(rp.value / rp.contracts) : DASH, 'per contract, this period', C[1]],
+      ['Providers producing', rp.producingProviders + ' of ' + R.sourcedProviders,
+       'originated in this period, of the ' + R.sourcedProviders + '-practice sourced cohort', C[2]],
+      ['Lifetime', usd(R.lifetime), 'all time, whole cohort ' + DASH + ' does not follow the tab', C[3]]
+    ];
+  }
+
+  document.getElementById('revtiles').innerHTML = (tiles || [
+    ['Originated volume', DASH, 'withheld', C[0], 1],
+    ['Contracts', DASH, 'withheld', C[4]],
+    ['Average ticket', DASH, 'withheld', C[1]],
+    ['Providers producing', DASH, 'withheld', C[2]],
+    ['Lifetime', DASH, 'withheld', C[3]]
+  ]).map(function(t){
+    return '<div class="fstep' + (tiles ? '' : ' off') + '"><div class="lab">' + t[0] +
+      (t[4]?srcMark('revenue'):'') + '</div><div class="v" style="color:' + t[3] +
+      ';font-size:22px">' + t[1] + '</div><div class="conv">' + t[2] + '</div></div>';
+  }).join('');
+
+  var mx = Math.max.apply(null, R.monthly.map(function(m){return m.value;}).concat([1]));
+  document.getElementById('revmonths').innerHTML = tiles ? R.monthly.map(function(m,i){
+    return '<div><div class="rlab"><span>' + esc(m.m) + ' <span class="z">(' + m.providers +
+      ' providers)</span></span><b>' + usd(m.value) + '</b></div>' +
+      '<div class="t"><div class="f" style="width:' + Math.max(1,Math.round(m.value/mx*100)) +
+      '%;background:' + C[i%5] + '"></div></div></div>';
+  }).join('') : '<p class="z">Withheld while a seat, rep, segment, outcome or search filter is active ' +
+      DASH + ' see the note above.</p>';
+  var _l90 = (R.periods || {}).last90 || {};
+  var _pre = R.lifetime - (_l90.value || R.trailing90d || 0);
+  document.getElementById('revmonthnote').innerHTML =
+    '<b>This series covers the whole extract window and does not follow the period tab</b> ' + DASH +
+    ' it is the breakdown the tab cuts across, so re-windowing it would just hide the comparison. It is ' +
+    'cut on the same days as the Last 90 days tab' + (_l90.range ? ' (' + esc(_l90.range) + ')' : '') +
+    ', so <b>the bars sum to that figure and not to Lifetime</b>: the first and last bars sit on the ' +
+    'window edges and are part-months, not full ones' +
+    (_pre > 0 ? ', and the ' + usd(_pre) + ' this cohort originated before the window opened appears in ' +
+      'the Lifetime tile only' : '') +
+    '. Every provider in the cohort was sourced inside the extract window, so it is a ramp, not ' +
+    'a trend: each month adds providers as well as volume.';
+
+  document.getElementById('revnote').textContent =
+    R.source + ' ' + MID + ' as of ' + R.asOf + ' ' + MID + ' follows the period tab, not the other filters';
+  document.getElementById('revcaveats').innerHTML =
+    R.caveats.map(function(c){ return '<li>' + esc(c) + '</li>'; }).join('') +
+    (rp && rp.note ? '<li><b>' + esc(p.label) + ':</b> ' + esc(rp.note) + '</li>' : '') +
+    '<li><b>These dollars follow the period tab but cannot follow the seat, rep, segment, outcome or ' +
+    'search filters.</b> A contract row carries a provider and a date, nothing else. When one of those ' +
+    'filters is set the figures are withheld rather than shown at cohort width next to filtered ' +
+    'activity.</li>';
+
+  // Every word of this banner comes from data/revenue.json, so re-running the
+  // warehouse query and flipping stale back to false is the only edit needed to clear it.
+  var old = document.getElementById('stalebox'); if (old) old.remove();
+  if (R.stale){
+    var c = R.staleCohort || {};
+    var w = document.createElement('div');
+    w.className = 'stalebox'; w.id = 'stalebox';
+    w.innerHTML = '<span class="tag">Cohort mismatch</span>' +
+      '<b>These dollars are computed on the previous ' + fmt(c.inRevenue) + '-practice cohort, not ' +
+      'the ' + fmt(c.current) + ' the rest of this page now uses.</b><br>' + esc(R.staleReason) +
+      '<br><br><b>Still inside the revenue figures, no longer counted as sourced anywhere else on ' +
+      'this page (' + fmt(c.dropped) + ' practices):</b><ul>' +
+      (R.staleDropped || []).map(function(d){
+        return '<li>' + esc(d.practice) + (d.loanVolume
+          ? ' ' + DASH + ' $' + Math.round(d.loanVolume).toLocaleString('en-US') + ' total loan volume'
+          : ' ' + DASH + ' no loan volume yet') + '</li>';
+      }).join('') + '</ul>' +
+      (R.staleDroppedNote ? '<div style="margin-top:8px;font-size:12px">' + esc(R.staleDroppedNote) +
+        '</div>' : '');
+    block.appendChild(w);
+  }
+}
+
+// ---- provenance: one table row per number on the page ----------------------
+// Deliberately NOT period-scoped and deliberately NOT filtered: this is the data
+// dictionary. Its job is to document the predicate behind each metric, and a
+// predicate does not change when you change the tab. Drawn once.
+// Day-summed bucket totals, computed from the shipped payload rather than typed
+// in, so the data dictionary cannot quote a window it no longer describes.
+function _bucketTotals(){
+  var LAB = {d:'out-dials', id:'inbound dials', c:'connects (disposition)',
+             dc:'decision-maker connects', m:'meetings', dm:'demos',
+             dp:'demos performed (retired 5-min gate)', eo:'emails out', ei:'emails in',
+             n:'notes', t:'tasks', mi:'missed inbound',
+             cc:'call connects (3+ min)', dn:'demo connects (10+ min)'};
+  var tot = {}, i, k, d, v;
+  for (i=0;i<L.length;i++){
+    var D = L[i].days || {};
+    for (d in D){ v = D[d]; for (k in v) tot[k] = (tot[k]||0) + v[k]; }
+  }
+  var out = [];
+  for (k in LAB) out.push(LAB[k] + ' ' + fmt(tot[k]||0));
+  var hs = [];
+  for (i=0;i<HB.length;i++) hs.push(HLAB[i] + ' ' + fmt(tot[HB[i]]||0));
+  return out.join(', ') + '; call-duration buckets ' + hs.join(', ');
+}
+
+(function drawSources(){
+  var _all = L;  // unfiltered, full-window population
+  var _cg = function(f){ return _all.filter(f).length; };
+  var _mk = _all.filter(isPaid);
+  var _mkn = function(f){ return _mk.filter(f).length; };
+  var _bk = function(r){ return (r.demos||0)>0 || r.demo_booking_status==='Booked'
+                                || r.demo_booking_status==='No Show'; };
+  var mx = S_.metrics.concat([{
+    id:'contacts_contacted', label:'Contacted (funnel step)',
+    value:_cg(CONTACTED),
+    system:'Derived from the CALL + EMAIL pulls', object:'CONTACT',
+    predicate:'contacts with at least one OUTBOUND DIAL or at least one OUTBOUND EMAIL '
+      + '(out_dials greater than 0 OR emails_out greater than 0). Inbound email, meetings, notes and '
+      + 'tasks are deliberately NOT counted - this is a touch the team made, not a touch it received. '
+      + 'NOT the same as the Outbound dials row above, which counts calls: one contact can take many dials',
+    dateProperty:'hs_timestamp on the call / email', grain:'one row per contact',
+    verify:'This is the VP definition and it is used by both funnels on this page and by the Outbound '
+      + 'card in Combined, inbound and outbound. The VALUE HERE IS THE FULL 90-DAY WINDOW. The funnel '
+      + 'tile with the same name re-counts the same predicate inside the selected period, from the '
+      + 'per-day buckets, so the two agree only on the Last 90 days tab with no other filter set. Email '
+      + 'counts are a floor (the search API caps at 10k per query), so Contacted is a floor too.'
+  },{
+    id:'contacts_connected', label:'Contacts connected on a 3+ min call (funnel step)',
+    value:_cg(function(r){return (r.call_connects||0)>0;}),
+    system:'Derived from the CALL pull', object:'CONTACT',
+    predicate:'contacts with at least one OUTBOUND DIAL whose Call duration reached 3 minutes '
+      + '(180000 ms) - the team rule Mel Matthews set on 2026-09-14, NOT the call-outcome picklist',
+    dateProperty:'hs_timestamp on the call', grain:'one row per contact',
+    verify:'Contact grain, full window. This is what the Connected tile in both funnels counts, and '
+      + 'the funnel tile re-counts the same predicate inside the selected period. It is deliberately '
+      + 'NOT the disposition figure: compare it against the Connects (HubSpot disposition rule) row '
+      + 'to see the two populations side by side. Always the smaller of the two here.'
+  },{
+    id:'period_buckets', label:'Per-day activity buckets (how the tabs work)',
+    value:BK.length + ' keys',
+    system:'extract.py, from the same CALL / MEETING / EMAIL / NOTE / TASK pulls',
+    object:'CONTACT.days and CONTACT.pd',
+    predicate:'every engagement is counted into a bucket keyed by the UTC calendar date of its '
+      + 'hs_timestamp, under the SAME predicate as its full-window total (is_dial, is_missed_inbound, '
+      + 'the connected and decision-maker disposition sets, the demo title test, the 3-minute call-connect '
+      + 'rule, the 10-minute demo-connect rule and the seven call-duration buckets). days is per contact; '
+      + 'pd is the same split per rep. Selecting a period sums the buckets whose date falls inside it',
+    dateProperty:'hs_timestamp, sliced to YYYY-MM-DD', grain:'one object per contact-day, and per rep-day',
+    verify:'This is what makes every tile above period-accurate instead of showing a contact’s full '
+      + '90-day totals under a weekly label. It is checked, not asserted: extract.py sums every bucket '
+      + 'key across every day and refuses to write the file unless it equals the flat 90-day total '
+      + 'exactly, for all ' + BK.length + ' keys on all contacts, and does the same for the per-rep split '
+      + 'against the per-rep totals. The duration keys ride that same check, so no period tab can show a '
+      + 'call-connect, demo-connect or distribution figure that disagrees with the window total. '
+      + 'Day-summed totals over the full window, computed from the payload on this page right now: '
+      + _bucketTotals() + '. To check one by hand, filter a '
+      + 'contact’s activity in HubSpot to a single day and compare it with that day’s row.'
+  },{
+    id:'mkt_contacts', label:'Paid contacts (funnel step)',
+    value:_mkn(function(r){return true;}),
+    system:'Derived from the CONTACT pull', object:'CONTACT',
+    predicate:"Marketing channel is one of Meta Ads, LinkedIn Ads, Google Ads OR Lead source is one of "
+      + "Paid Social, Paid Search - the UNION of the two attribution fields. Paid acquisition only: no "
+      + "email marketing, no referral programs, no webinars, no organic or unattributed web",
+    dateProperty:'Activity date on the touch', grain:'one row per contact, not per practice',
+    verify:'Measured on the full window of THIS extract, not quoted from a previous one: Marketing '
+      + 'channel alone gives ' + PAIDMIX.nC + ' (' + PAIDMIX.chanLab + '), Lead source alone gives '
+      + PAIDMIX.nS + ' (' + PAIDMIX.srcLab + '), union ' + PAIDMIX.uni + ', overlap ' + PAIDMIX.both
+      + ' - the two fields agree almost perfectly, and ' + PAIDMIX.srcOnly + ' contact(s) arrive on Lead '
+      + 'source alone. The paid funnel above applies this same test to the contacts in view for the '
+      + 'SELECTED PERIOD, so its first tile is smaller than ' + PAIDMIX.uni + ' on every tab but Last 90 '
+      + 'days. Both fields are hand- and integration-set with no validation, so a mistagged ad lead is '
+      + 'invisible. A paid lead nobody worked is also invisible - this is not a count of leads marketing '
+      + 'delivered.'
+  },{
+    id:'mkt_contacted', label:'Paid: Contacted (funnel step)',
+    value:_mkn(CONTACTED),
+    system:'Derived from the CALL + EMAIL pulls', object:'CONTACT',
+    predicate:'paid contacts with at least one outbound dial or at least one outbound email',
+    dateProperty:'hs_timestamp on the call / email', grain:'one row per contact',
+    verify:'Identical definition to the Contacted row above, applied to the paid cohort, over the full '
+      + 'window. Nearly every paid contact clears it, so this step is close to flat by construction - '
+      + 'the drop-off worth reading starts at Connected.'
+  },{
+    id:'mkt_connected', label:'Paid: Connected on a 3+ min call (funnel step)',
+    value:_mkn(function(r){return (r.call_connects||0)>0;}),
+    system:'Derived from the CALL pull', object:'CONTACT',
+    predicate:'paid contacts with at least one OUTBOUND DIAL of 3 minutes or longer (180000 ms) - '
+      + 'the team duration rule, not the call-outcome picklist',
+    dateProperty:'hs_timestamp on the call', grain:'one row per contact',
+    verify:'Duration, not disposition - this step moved to the 3-minute bar on 2026-09-20 with the '
+      + 'rest of the page, so it matches the Connected tile above it. Note '
+      + 'that Meetings held can be LARGER than Connected on this cohort: a paid lead can book straight '
+      + 'from the ad without a rep ever reaching them on the phone. That is real, not a bug, and it is '
+      + 'why these tiles say "% of prior step" rather than a conversion rate.'
+  },{
+    id:'mkt_meetings', label:'Paid: Meetings held (funnel step)',
+    value:_mkn(function(r){return (r.meetings||0)>0;}),
+    system:'Derived from the MEETING pull', object:'CONTACT',
+    predicate:'paid contacts with at least one meeting in the window - ALL meetings, demos and '
+      + 'non-demos alike',
+    dateProperty:'Activity date on the meeting', grain:'one row per contact; several meetings collapse to one row',
+    verify:'This is the VP wording: "Meeting held (demos and non-demos)". It is a superset of Demos '
+      + 'below. It is not attendance: a booked meeting that nobody joined still leaves a meeting record, '
+      + 'so both this and Demos count a never-cancelled no-show as held.'
+  },{
+    id:'mkt_demos', label:'Paid: Demos (funnel step)',
+    value:_mkn(function(r){return (r.demos||0)>0;}),
+    system:'Derived from the MEETING pull', object:'CONTACT',
+    predicate:"paid contacts with at least one meeting whose Meeting name contains 'demo', dated in the window",
+    dateProperty:'Activity date on the meeting', grain:'one row per contact; several demos collapse to one row',
+    verify:'Held is inferred from the meeting TITLE, never from attendance. Title matching is deliberate '
+      + '- it reproduces the existing Demos dashboard (21888050) - and the 2026-09-20 duration ruling did '
+      + 'NOT change it: the demo count is unchanged, the 10-minute bar only splits it. So a no-show that '
+      + 'was never cancelled still counts in THIS step; the split is reported separately as Demo connects '
+      + 'and Demo no-shows. The old hand-set No-show step stays removed from this funnel: that field is a '
+      + 'radio with no workflow behind it and no date, which is exactly why it was replaced.'
+  },{
+    id:'mkt_enrolled', label:'Paid: Enrolled after outreach (funnel step)',
+    value:_mkn(function(r){return r.sourced;}),
+    system:'COMPANY.enrollment_date + our touch history', object:'CONTACT',
+    predicate:"the contact's practice enrolled in the window AND, on or before that enrollment date, "
+      + "the team made a real outreach touch to the contact: an outbound call, an outbound email, a "
+      + "meeting, or an inbound call somebody answered. A note, a task, an inbound email we never "
+      + "replied to, and an inbound call nobody picked up do NOT qualify",
+    dateProperty:'Enrollment date on the practice, shifted back one day',
+    grain:'one row per CONTACT - see the defect',
+    verify:'TWO CAVEATS. (1) Not a subset of Demos, so "% of prior step" divides by a set that is '
+      + 'missing part of its own numerator. It is a parallel outcome drawn as a funnel step. (2) Grain: '
+      + 'this is CONTACT grain, while the Sourced enrollments figure on the Combined card and the '
+      + 'sourced-provider count in the revenue section are COMPANY grain. To validate, use '
+      + 'audit/enrollments_validation.csv, which is one row per company. When a period tab is selected '
+      + 'the funnel tile keeps this predicate and adds one clause: the enrollment date must fall inside '
+      + 'the period. It filters on the ENROLLMENT date, never on activity, so a practice that enrolled '
+      + 'this week counts this week even though the outreach that earned it was weeks earlier.'
+  },{
+    id:'mkt_booked', label:'Paid: demo booked (card denominator)',
+    value:_mkn(_bk),
+    system:'Derived from MEETING + contact property', object:'CONTACT',
+    predicate:"has a meeting whose Meeting name contains 'demo', OR Demo Booking Status is Booked or No Show",
+    dateProperty:'Activity date on the meeting', grain:'one row per contact, not per demo booked',
+    verify:'Not a funnel step any more - it only feeds the "Not yet booked a demo" card, which is this '
+      + 'set subtracted from the paid cohort. An OR across two kinds of evidence that disagree: Demo '
+      + 'Booking Status is a hand-set radio with no workflow behind it and no date, so it is current-state '
+      + 'and overwritten - a contact re-set later drops out of an earlier period retroactively. Because '
+      + 'it has no date it cannot be re-windowed at all: the meeting half of the OR follows the period, '
+      + 'the radio-button half is always current state.'
+  },{
+    id:'contacts_enrolled', label:'Enrolled after outreach (funnel step)',
+    value:_cg(function(r){return !!r.sourced;}),
+    system:'COMPANY.enrollment_date + our touch history', object:'CONTACT',
+    predicate:"the contact's practice enrolled in the window AND, on or before that enrollment date, "
+      + "the team made a real outreach touch to the contact: an outbound call, an outbound email, a "
+      + "meeting, or an inbound call somebody answered. A note, a task, an inbound email we never "
+      + "replied to, and an inbound call nobody picked up do NOT qualify",
+    dateProperty:'Enrollment date on the practice, shifted back one day', grain:'one row per CONTACT',
+    verify:'WHY THE RULE TIGHTENED (VP decision, 2026-09-13): it used to be enough that the team had ANY '
+      + 'activity on the record first, and contacts cleared that bar on activity that was not outreach '
+      + 'at all - an internal staff-to-staff note ("Enrollment Spreadsheet", "@Tia Bel This is for '
+      + '4 locations"), an inbound email from the prospect with no outbound email ever sent, an inbound '
+      + 'call nobody answered. The clearest case: Colesville Dental Center rang Gabrielle '
+      + "Nurod's line FIVE times, every ring 0 seconds with no call outcome logged, and we were claiming "
+      + 'we had sourced them. To check one by hand, open the practice in HubSpot and look at its '
+      + 'contacts activity before the enrollment date: you need at least one call with Direction = '
+      + 'Outbound, or an email with Direction = Sent, or a meeting, or an inbound call with a Call '
+      + 'outcome set. First touch date in the lead table is UNCHANGED and still means the first activity '
+      + 'of any kind, so a row can show a first touch that does not qualify here. '
+      + 'CONTACT grain, deliberately different from the Sourced enrollments row above, which is '
+      + 'COMPANY grain and reads ' + fmt(S_.metrics.filter(function(m){return m.id==="enrolled";})
+        .map(function(m){return m.value;})[0]) + '. Several contacts at the same practice each get a '
+      + 'row here, one enrollment there. The Combined card and the revenue section both use the '
+      + 'company-grain figure; only the two funnel tiles are contact grain. Under a period tab the tile '
+      + 'adds one clause - the enrollment date must fall inside the period - and filters on that date, '
+      + 'never on activity.'
+  },{
+    id:'revenue', label:'Originated volume (by period)',
+    value: Math.round(((R.periods||{}).last90||{}).value || R.trailing90d),
+    system: R.system, object:'dw.FactContract',
+    predicate: "Contract status is not Cancelled AND Contract created is inside the selected period AND "
+      + "the contract's provider is one of the " + R.sourcedProviders + " practices in the sourced cohort. "
+      + "All five periods are re-aggregated from ONE day-by-provider result set, so they cannot disagree "
+      + "with each other or with the monthly series",
+    dateProperty: R.dateProperty, grain: R.grain,
+    verify: (R.stale ? 'STALE COHORT. ' + R.staleReason + ' ' : '')
+      + 'Value shown here is the Last 90 days figure; the tiles above switch with the period tab. Run '
+      + 'the SQL in revenue.json against HFDSQLFinance. Join key: ' + R.joinKey +
+      '. Not computable in HubSpot - every money property there is a lifetime total or a fixed calendar '
+      + 'snapshot. It is CONTRACT grain: there is no rep, seat or segment on a contract row, which is '
+      + 'why the revenue section withholds its figures when one of those filters is active instead of '
+      + 'showing a cohort-wide number beside filtered activity.'
+  },{
+    id:'deals', label:'Deals in view (AE team)',
+    value: D.deals.length,
+    system:'HubSpot CRM search API', object:'DEAL',
+    predicate:'Deal owner is one of ' + D.owners.join(', ')
+      + '. ALL pipelines, and NO date filter at all - a Deal is a standing opportunity, so the 90-day '
+      + 'extract window and the period tabs do not apply to it',
+    dateProperty:'none - the population is not date-bounded',
+    grain:'one row per Deal record, NOT per practice',
+    verify:'In HubSpot go to Sales then Deals, set the view to All pipelines and filter Deal owner to '
+      + 'the four AEs; the count is ' + D.deals.length + '. Deal grain is why the two duplicated Deals '
+      + 'each count: the duplicate is in the CRM and hiding it here would hide the data-quality problem. '
+      + 'The tile on the page shows the count AFTER the seat / rep filters and the closed-won toggle, so '
+      + 'it reads lower than this row unless no filter is set and closed won is included.'
+  },{
+    id:'deals_open', label:'Open Deals, and their stated value',
+    value: D.deals.filter(function(d){ return !d.closed; }).length,
+    system:'HubSpot CRM search API', object:'DEAL',
+    predicate:'the Deal stage is one whose stage setting "Deal is closed" is off. Value is the sum of '
+      + 'the Amount property over those Deals, and Deals with a blank Amount contribute nothing',
+    dateProperty:'none', grain:'one row per Deal record',
+    verify:'HubSpot returns that stage setting as the TEXT "true" or "false", never as a boolean. It is '
+      + 'compared as text here and in the extract; compared as a boolean, every non-empty string is '
+      + 'truthy and EVERY stage reads as closed. To check by hand, open the pipeline settings and read '
+      + 'the "Deal is closed" box on each stage. Open plus closed equals the row above.'
+  },{
+    id:'deals_noamount', label:'Deals with no Amount',
+    value: D.deals.filter(function(d){ return d.amount == null; }).length,
+    system:'HubSpot CRM search API', object:'DEAL',
+    predicate:'the Amount property is empty on the Deal',
+    dateProperty:'none', grain:'one row per Deal record',
+    verify:'Add the Amount column to the Deals list and sort ascending; the blanks come first. These '
+      + 'Deals cannot be forecast and contribute nothing to any value figure on this page, which is why '
+      + 'the by-stage card orders stages by value and by count differently.'
+  },{
+    id:'deals_linked', label:'Deals matched to a practice',
+    value: D.deals.filter(function(d){ return d.linked; }).length,
+    system:'HubSpot associations and company search', object:'DEAL to COMPANY',
+    predicate:'the Deal reached at least one COMPANY record carrying a Provider ID, by the first of '
+      + 'these routes that produced one: (a) Deal-to-company association; (b) Deal-to-contact-to-company '
+      + 'association; (c) name match against the company record on Company name, Legal Business Name, '
+      + 'Doing Business As or Practice Name. A company record with no Provider ID does not count as '
+      + 'matched - it identifies a company but cannot reach the warehouse',
+    dateProperty:'none', grain:'one row per Deal record',
+    verify:'THE ROUTE IS PRINTED ON EVERY ROW and route (c) is labelled a name match, because it is a '
+      + 'guess. Name search is only a candidate generator: HubSpot CONTAINS_TOKEN matches tokens, not '
+      + 'phrases, so searching "Dental Smiles" returns 100 companies including "Healthy Smiles Dental '
+      + 'Care". Every candidate is re-checked by requiring the cleaned Deal name to appear as a '
+      + 'CONTIGUOUS run of words inside the cleaned value of the field that matched - that is what '
+      + 'rejects "Lee’s Summit Family & Cosmetic Dental Care" for a Deal named "Summit Family '
+      + 'Dental". Both sides are cleaned first: the trailing " - <provider id>" and "- Parent -" are '
+      + 'stripped from company names, " - New Deal" from Deal names, then case, punctuation and legal '
+      + 'suffixes (LLC, PA, DDS, DMD, Corp, Inc, PC, PLLC) are dropped. Where several name-matched '
+      + 'records do not share a Legal Business Name they are DIFFERENT businesses, the row is marked '
+      + '"several candidates" and NO dollars are shown. Where several records reached by association do '
+      + 'share one, they are the locations of one group and are summed.'
+  },{
+    id:'deals_last30', label:'Originated by matched practices, last 30 days',
+    value: Math.round(Object.keys(D.providerLast30).reduce(function(s,p){
+      return s + (D.deals.some(function(d){ return d.linked && d.providerIds.indexOf(p) >= 0; })
+                  ? D.providerLast30[p].value : 0); }, 0)),
+    system:'Analytics warehouse', object:'dw.FactContract',
+    predicate:'Contract status is not Cancelled AND Contract created falls in the 30 complete days '
+      + D.last30.start + ' through ' + D.last30.end + ' (end exclusive) AND the contract’s '
+      + 'ContractProviderKey is one of the Provider IDs the Deals in view resolved to',
+    dateProperty:'ContractCreated', grain:'one row per contract, rolled up to the practice',
+    verify:'Same table, same status filter and the SAME date column as the originations section above, '
+      + 'so the two cannot mean different things on one page. The window ends at midnight today, like '
+      + 'every window here, so no figure sits on a partial day. It is summed over DISTINCT Provider IDs, '
+      + 'not over Deal rows: the two duplicated Deals point at the same practice and adding their rows '
+      + 'would book the same dollars twice. Practices that could not be matched are excluded, not '
+      + 'counted as zero - the table renders them "not linked" for exactly that reason.'
+  },{
+    id:'deals_first40', label:'Originated in the first 40 days after close',
+    value: D.deals.filter(function(d){ return d.first40; }).length + ' deals computable',
+    system:'Analytics warehouse', object:'dw.FactContract',
+    predicate:'Contract status is not Cancelled AND Contract created falls in [Close date, Close date + '
+      + D.first40Days + ' days) AND ContractProviderKey is one of the Deal’s matched Provider IDs',
+    dateProperty:'ContractCreated, against the Deal’s Close date',
+    grain:'one row per contract, rolled up to the Deal',
+    verify:'THIS IS THE COMP METRIC - AEs are paid on "% of first 40-days funding" - which is why the '
+      + 'window is 40 days and not a round number. Two honesty flags ride on it. A window that has not '
+      + 'finished yet prints how many of the 40 days have elapsed, because a running total is not a '
+      + 'result. And on an OPEN Deal the Close date is HubSpot’s FORECAST date, not a date the Deal '
+      + 'reached, so the column says "from a forecast close date" - it is a projection, not earned '
+      + 'funding. A Deal with no Close date shows "no close date" rather than a zero.'
+  },{
+    id:'deals_coverage', label:'Deal coverage: AEs with any Deal',
+    value: D.owners.filter(function(o){
+      return D.deals.some(function(d){ return d.owner === o; }); }).length + ' of ' + D.owners.length,
+    system:'HubSpot CRM search API', object:'DEAL',
+    predicate:'distinct Deal owners among the four AEs who own at least one Deal in any pipeline',
+    dateProperty:'none', grain:'one row per AE',
+    verify:'This row exists so the imbalance is documented rather than discovered. Deals are how HFD '
+      + 'tracks opportunities of eight or more locations, so an AE with no Deals either is not working '
+      + 'large opportunities or is not logging them. The page says so in words above the table instead '
+      + 'of letting a nearly empty section read as a rendering fault.'
+  }]);
+  document.querySelector('#srctbl tbody').innerHTML = mx.map(function(m){
+    return '<tr id="src-' + m.id + '"><td><b>' + esc(m.label) + '</b></td>' +
+      '<td class="r">' + fmt(m.value) + '</td>' +
+      '<td>' + esc(m.system) + '</td>' +
+      '<td class="mono">' + esc(m.object) + '</td>' +
+      '<td class="pred"><code>' + esc(m.predicate) + '</code></td>' +
+      '<td class="mono" style="font-size:11.5px">' + esc(m.dateProperty) + '</td>' +
+      '<td style="font-size:12px">' + esc(m.grain) + '</td></tr>';
+  }).join('');
+  document.getElementById('srcverify').innerHTML = mx.map(function(m){
+    return '<div><div class="rlab"><span><b>' + esc(m.label) + '</b></span></div>' +
+      '<span class="who" style="max-width:none">' + esc(m.verify) + '</span></div>';
+  }).join('');
+  document.getElementById('srcdq').innerHTML = (S_.dataQuality||[]).map(function(d){
+    var v = fmt(d.value) + (d.recovered !== undefined ? ' (' + fmt(d.recovered) + ' recovered)' : '');
+    return '<div><div class="rlab"><span>' + esc(d.label) + '</span><b>' + v + '</b></div>' +
+      '<span class="who" style="max-width:none">' + esc(d.note) + '</span></div>';
+  }).join('');
+  document.getElementById('srcnote').textContent =
+    S_.window.start + ' → ' + S_.window.end_exclusive + ' exclusive ' + MID + ' ' + S_.window.note;
+})();
+
+// clicking a src mark highlights the row it points at
+function srcMark(id){
+  return '<a class="srcmark" href="#src-' + id + '" data-src="' + id + '">src</a>';
+}
+document.addEventListener('click', function(e){
+  var a = e.target.closest('a.srcmark'); if (!a) return;
+  document.querySelectorAll('#srctbl tr.hit').forEach(function(r){r.classList.remove('hit');});
+  var row = document.getElementById('src-' + a.dataset.src);
+  if (row) row.classList.add('hit');
+});
+
+// ---- the period control ---------------------------------------------------
+// Each tab states the range it covers, so nobody has to work out what "this week"
+// means on a Sunday.
+document.getElementById('period').innerHTML = PORDER.map(function(k){
+  var p = PER[k];
+  return '<button type="button" data-p="' + k + '" aria-pressed="' + (k===S.p) + '">' +
+    esc(p.label) + '<small>' + esc(p.range) + '</small></button>';
+}).join('');
+
+function drawPeriodCaveat(p){
+  var bits = [];
+  bits.push('<b>' + esc(p.label) + ': ' + esc(p.range) + '</b> ' + DASH + ' ' + p.days +
+    (p.days===1?' day':' days') + ', weeks starting Monday. Today is ' + dlab(ANCHOR) + '.');
+  var li = [];
+  if (p.key === 'thisWeek' && dow(ANCHOR) === 6){
+    li.push('Today is the <b>Sunday that closes the week</b>, so this is a complete Mon' + NDASH +
+      'Sun week and is directly comparable to Last week. That is true of this run only - on a weekday ' +
+      'this tab is a partial week and Last week is not its equal.');
+  } else if (p.key === 'thisWeek'){
+    li.push('This is a <b>partial week</b>: it runs to today, ' + dlab(ANCHOR) + ', which is day ' +
+      (dow(ANCHOR)+1) + ' of 7. Do not compare its totals with Last week without pro-rating.');
+  }
+  if (p.key === 'mtd'){
+    li.push('<b>Partial month</b> ' + DASH + ' ' + p.days + ' days of ' +
+      new Date(Date.UTC(+p.start.slice(0,4), +p.start.slice(5,7), 0)).getUTCDate() +
+      '. Do not compare its total with Last month without pro-rating.');
+  }
+  if (p.key === 'lastMonth' || p.key === 'lastWeek'){
+    li.push('A <b>complete</b> ' + (p.key==='lastWeek' ? 'Mon' + NDASH + 'Sun week' : 'calendar month') +
+      ', so it is the fair comparison for the tab above it.');
+  }
+  if (p.key === 'last90'){
+    li.push('This is the <b>whole extract window</b>, the widest view the data supports. Every ' +
+      'full-window figure elsewhere on the page - the provenance table, the known-limits list - is ' +
+      'counted over exactly these days.');
+  }
+  if (p.partial){
+    li.push('<b>Activity data covers ' + esc(rangeLab(p.aLo, p.aHi)) + '</b>, ' + p.dataDays + ' of the ' +
+      p.days + ' days in this period. The extract ends at midnight today so that no figure sits on a ' +
+      'partial day, which means <b>today itself contributes nothing</b> to any activity count here. ' +
+      'Revenue is cut on the full ' + esc(p.range) + '.');
+  }
+  li.push('<b>What follows this tab:</b> the funnel, the paid-acquisition funnel, Combined / inbound / ' +
+    'outbound, the two-seats cards, the rep scorecard, the segment cards, the contact list, and the ' +
+    'revenue tiles. <b>What does not:</b> Voice of the market, which is a fixed mined corpus over its ' +
+    'own 30-day window; the monthly revenue series, which is the breakdown this tab cuts across; and ' +
+    '"Where every number comes from", which documents definitions over the full window by design. Each ' +
+    'of those says so where it sits.');
+  if (PMISMATCH.length){
+    li.push('<b>Range mismatch:</b> the revenue file was cut on different dates from the activity ' +
+      'periods computed here (' + esc(PMISMATCH.join('; ')) + '). Treat the dollars and the activity as ' +
+      'covering different days until that is fixed.');
+  } else {
+    li.push('Activity and revenue are cut on <b>identical dates</b> for all five tabs - checked on load ' +
+      'against the ranges stored in the revenue file, not assumed.');
+  }
+  document.getElementById('periodcaveat').innerHTML = bits.join(' ') +
+    '<ul><li>' + li.join('</li><li>') + '</li></ul>';
+}
+
+function drawActiveLine(p, n){
+  var f = activeFilters();
+  var html = '<b>Showing:</b> <span class="chip">' + esc(p.label) + ' ' + MID + ' ' + esc(p.range) +
+    '</span>' + (f.length
+      ? f.map(function(x){ return '<span class="chip warnchip">' + esc(x[0]) + ': ' + esc(x[1]) + '</span>'; }).join('')
+      : '<span class="chip">All seats, reps, segments and outcomes</span>') +
+    ' &nbsp; ' + fmt(n) + ' contacts in view.' +
+    (f.length ? ' Revenue is withheld while these filters are set (see that section).' : '') +
+    ' Voice of the market and the provenance table keep their own fixed windows.';
+  document.getElementById('activeline').innerHTML = html;
+  document.getElementById('fclear').hidden = !f.length;
+}
+
+// ---- call-duration distribution -------------------------------------------
+// Ed, 2026-09-20: "Maybe add at the end a distribution of the calls by time over
+// the time period?"
+//
+// Built from the SAME per-day buckets as everything else on the page (h0..h6 in
+// r.days), so it re-counts inside the selected period and obeys every filter
+// rather than showing a fixed 90-day shape under a weekly tab. The payload ships
+// bucket COUNTS per day, never raw durations.
+//
+// The 3-minute call-connect bar falls exactly on the h3 boundary, so the buckets
+// at and above HCUT ARE the call-connect population. The dashed line is drawn
+// between h2 and h3 from that same index - it cannot drift from the rule.
+function drawDuration(rows, p){
+  var h = [0,0,0,0,0,0,0], i;
+  for (i=0;i<rows.length;i++){
+    var hh = rows[i].hist || [];
+    for (var b=0;b<7;b++) h[b] += hh[b]||0;
+  }
+  var tot = 0, over = 0;
+  for (i=0;i<7;i++){ tot += h[i]; if (i>=HCUT) over += h[i]; }
+  var mx = Math.max.apply(null, h.concat([1]));
+  var pc = function(n){ return tot ? (n/tot*100) : 0; };
+
+  var out = [];
+  for (i=0;i<7;i++){
+    if (i === HCUT){
+      out.push('<div class="dcut"><div>&nbsp;</div><div class="dline"></div>' +
+        '<div class="dcap">3-min connect bar</div></div>');
+    }
+    // Below the bar is muted, at or above it takes the connect colour, so the
+    // share of dials that clears three minutes is readable without the legend.
+    out.push('<div class="drow' + (i>=HCUT ? ' on' : '') + '">' +
+      '<div class="dlab">' + esc(HLAB[i]) + '</div>' +
+      '<div class="dtrack"><div class="dfill" style="width:' +
+        Math.max(1, Math.round(h[i]/mx*100)) + '%;background:' +
+        (i>=HCUT ? C[2] : 'var(--ink-3)') + ';opacity:' + (i>=HCUT ? '.95' : '.45') + '"></div></div>' +
+      '<div class="dnum">' + fmt(h[i]) + '<span>' + pc(h[i]).toFixed(1) + '%</span></div></div>');
+  }
+  document.getElementById('distrows').innerHTML = out.join('');
+  document.getElementById('distcnt').textContent = fmt(tot) + ' dials';
+
+  var foot;
+  if (!tot){
+    foot = 'No outbound dial in ' + esc(p.label.toLowerCase()) + ' (' + esc(p.range) +
+      ') under the filters set, so there is no distribution to draw. An empty period, not a missing number.';
+  } else {
+    foot = '<b>' + fmt(over) + ' of ' + fmt(tot) + ' dials (' + pc(over).toFixed(1) +
+      '%) ran three minutes or longer</b> and therefore count as call connects, over ' +
+      esc(p.label.toLowerCase()) + ' (' + esc(p.range) + '). ' +
+      'The seven buckets sum to ' + fmt(tot) + ', which is the Outbound dials figure for the ' +
+      'same period and filters - every dial is in exactly one bucket. ' +
+      'Meeting recordings that surface as calls are excluded, so a two-hour demo recording ' +
+      'never lands in the 20 min + bucket.' +
+      // The per-rep daily split carries no duration buckets, so this chart can only
+      // ever sum whole contact rows. Under a rep filter that is every rep's dials on
+      // that rep's contacts, exactly as the rep scorecard warns about itself - say so
+      // here too rather than let a co-worked contact read as one rep's call pattern.
+      ((S.rep || S.team)
+        ? ' <b>A filter is set, and this chart sums whole contact rows.</b> The daily buckets carry ' +
+          'call duration per contact, not per rep, so these are <b>every</b> rep&#39;s dials on the ' +
+          'contacts ' + esc(S.rep || S.team) + ' touched in this period. On a co-worked contact that ' +
+          'is not one rep&#39;s call pattern. The Rep scorecard above splits dials and call connects ' +
+          'by rep correctly; only this duration shape cannot be.'
+        : '');
+  }
+  document.getElementById('distfoot').innerHTML = foot;
+}
+
+// ---- render --------------------------------------------------------------
+// ============================================================================
+// DEALS ACROSS THE AE TEAM
+// ============================================================================
+// Mel Matthews asked for "a line of sight into all Deals across the AE team, for
+// coaching/support etc." on the four AE seats. Deals are how anything with eight
+// or more locations is tracked, so this is the large-opportunity view.
+//
+// IT DOES NOT FOLLOW THE PERIOD TABS, deliberately. A Deal is a standing
+// opportunity; re-cutting it to "this week" would hide the ones that have been
+// sitting longest, which are exactly the ones a coaching conversation is about.
+// It does follow the seat and rep filters, because a Deal carries a Deal owner.
+//
+// The two originations columns come from the warehouse and are joined by
+// PROVIDER ID, which most of these Deals do not carry an association to. The
+// route that reached each practice is printed in the row: an association is the
+// CRM's own statement, a name match is a guess and is labelled as one.
+function dealsInView(){
+  return D.deals.filter(function(d){
+    if (S.rep && d.owner !== S.rep) return false;
+    if (S.team && (SEAT[d.owner] || '') !== S.team) return false;
+    if (!S.won && d.won) return false;
+    return true;
+  });
+}
+
+function dmoney(o){
+  // $0 and "we could not identify the practice" are different facts and must not
+  // render the same way. A deal with no reachable Provider ID says so.
+  if (!o) return '<span class="z">not linked</span>';
+  return usd(o.value) + '<span class="sub">' + o.contracts +
+    (o.contracts === 1 ? ' contract' : ' contracts') + '</span>';
+}
+
+function drawDeals(){
+  var all = D.deals, rows = dealsInView();
+  var wonAll = all.filter(function(d){ return d.won; });
+  var open = rows.filter(function(d){ return !d.closed; });
+  var sumAmt = function(a){ return a.reduce(function(s,d){ return s + (d.amount||0); }, 0); };
+
+  // The rollup sums over the UNION of provider ids, not over deal rows: two of
+  // these Deals are duplicates pointing at the same practice, and adding their
+  // rows together would book the same dollars twice.
+  var pids = {}, linked = 0;
+  rows.forEach(function(d){
+    if (d.linked){ linked++; d.providerIds.forEach(function(p){ pids[p] = 1; }); }
+  });
+  var l30v = 0, l30c = 0;
+  Object.keys(pids).forEach(function(p){
+    var x = D.providerLast30[p]; if (!x) return;
+    l30v += x.value; l30c += x.contracts;
+  });
+
+  var noAmt = rows.filter(function(d){ return d.amount == null; }).length;
+  var dupes = rows.filter(function(d){ return d.duplicateOf.length; }).length;
+
+  document.getElementById('dealtiles').innerHTML = [
+    ['Deals in view', fmt(rows.length), rows.length === all.length
+      ? 'every Deal owned by the four AEs' : 'of ' + all.length + ' owned by the four AEs', C[0], 'deals'],
+    ['Open', fmt(open.length), usd(sumAmt(open)) + ' of stated amount', C[1], 'deals_open'],
+    ['Without an amount', fmt(noAmt), noAmt ? 'no value can be forecast for these' : 'all deals carry an amount', C[4], 'deals_noamount'],
+    ['Matched to a practice', fmt(linked) + ' of ' + rows.length,
+      Object.keys(pids).length + ' distinct Provider IDs', C[2], 'deals_linked'],
+    ['Originated, last 30 days', usd(l30v),
+      l30c + ' contracts ' + MID + ' ' + D.last30.start + ' ' + NDASH + ' ' + D.last30.end +
+      ', matched practices only', C[3], 'deals_last30']
+  ].map(function(t){
+    return '<div class="fstep"><div class="lab">' + t[0] + srcMark(t[4]) + '</div>' +
+      '<div class="v" style="color:' + t[3] + ';font-size:22px">' + t[1] + '</div>' +
+      '<div class="conv">' + t[2] + '</div></div>';
+  }).join('');
+
+  // ---- the finding, said out loud ----------------------------------------
+  var byOwner = {};
+  D.owners.forEach(function(o){ byOwner[o] = 0; });
+  all.forEach(function(d){ byOwner[d.owner] = (byOwner[d.owner]||0) + 1; });
+  var zero = D.owners.filter(function(o){ return !byOwner[o]; });
+  var block = document.getElementById('dealblock');
+  block.innerHTML = zero.length ? '<div class="blocked"><b>' +
+    (D.owners.length - zero.length) + ' of the ' + D.owners.length +
+    ' AEs has any Deal at all.</b> All ' + all.length + ' Deals belong to ' +
+    esc(D.owners.filter(function(o){ return byOwner[o]; }).join(', ')) + '. ' +
+    esc(zero.join(', ')) + ' have <b>none</b> ' + DASH +
+    ' not zero value, no Deal records. This section is not mis-rendering and it has not been ' +
+    'padded to look fuller: a "line of sight across the AE team" that contains one person is ' +
+    'itself the finding. Either large opportunities are not being logged as Deals by the other ' +
+    'three, or they are not being worked. That is the first question to ask, before any number ' +
+    'below it.</div>' : '';
+
+  // ---- count and value by stage ------------------------------------------
+  var st = {};
+  rows.forEach(function(d){
+    var k = d.stageLabel || 'No stage';
+    st[k] = st[k] || {n:0, v:0, closed:d.closed, won:d.won, pipe:d.pipelineLabel};
+    st[k].n++; st[k].v += (d.amount || 0);
+  });
+  var keys = Object.keys(st).sort(function(a,b){ return st[b].v - st[a].v || st[b].n - st[a].n; });
+  var mx = Math.max.apply(null, keys.map(function(k){ return st[k].n; }).concat([1]));
+  document.getElementById('dealstages').innerHTML = keys.length ? keys.map(function(k,i){
+    var s = st[k];
+    return '<div><div class="rlab"><span>' + esc(k) +
+      ' <span class="z">(' + esc(s.pipe || '') + ')</span></span><b>' + s.n +
+      (s.v ? ' ' + MID + ' ' + usd(s.v) : ' ' + MID + ' <span class="z">no amount</span>') +
+      '</b></div><div class="t"><div class="f" style="width:' +
+      Math.max(3, Math.round(s.n/mx*100)) + '%;background:' + C[i%5] + '"></div></div></div>';
+  }).join('') : '<p class="z">No Deals match the filters you have set.</p>';
+  document.getElementById('dealstagenote').innerHTML =
+    'Bars are the <b>count</b> of Deals; the figure beside each is count then total <b>Amount</b>. ' +
+    'Stage names are the HubSpot stage labels exactly as they read in the pipeline, spelling and all. ' +
+    'Stages carrying no Amount contribute nothing to the value, which is why the two orders differ.';
+
+  // ---- how each deal was matched -----------------------------------------
+  var RT = {a:'Deal ' + NDASH + ' company association',
+            b:'Deal ' + NDASH + ' contact ' + NDASH + ' company association',
+            c:'Name match on the company record'};
+  var rt = {a:0, b:0, c:0};
+  var unres = 0, amb = 0;
+  rows.forEach(function(d){
+    if (d.ambiguous){ amb++; return; }
+    if (d.route && d.linked) rt[d.route]++; else unres++;
+  });
+  var rmx = Math.max(rt.a, rt.b, rt.c, unres, amb, 1);
+  document.getElementById('dealroutes').innerHTML =
+    [['a', RT.a, rt.a, C[2]], ['b', RT.b, rt.b, C[1]], ['c', RT.c, rt.c, C[4]],
+     ['x', 'Several candidates, none picked', amb, C[3]],
+     ['y', 'No practice found at all', unres, C[0]]].map(function(t){
+    return '<div><div class="rlab"><span>' + t[1] + '</span><b>' + t[2] + '</b></div>' +
+      '<div class="t"><div class="f" style="width:' + Math.max(3, Math.round(t[2]/rmx*100)) +
+      '%;background:' + t[3] + '"></div></div></div>';
+  }).join('');
+  document.getElementById('dealroutenote').innerHTML =
+    '<b>A name match is a guess and the table says so.</b> Every name-matched row names the company ' +
+    'record it landed on and which of the four name fields produced the match ' + DASH +
+    ' Company name, Legal Business Name, Doing Business As or Practice Name ' + DASH +
+    ' so it can be checked by eye rather than taken on trust. A practice routinely trades under a ' +
+    'name that is not its legal entity: <b>Han Choi DDS</b> and <b>SV Services LLC</b> are both ' +
+    'matched on <b>Legal Business Name</b> to companies whose Company name is something else ' +
+    'entirely, and searching Company name alone would have found neither.';
+
+  // ---- the table ----------------------------------------------------------
+  // Sorted by Amount descending, then by days since last edit descending, exactly
+  // as Ed asked. Fixed, not click-sortable: this order is the coaching order.
+  document.querySelector('#dealtbl tbody').innerHTML = rows.length ? rows.map(function(d){
+    var flags = [];
+    if (d.duplicateOf.length) flags.push('<span class="pill p-bad">duplicate record</span>');
+    if (d.amount == null) flags.push('<span class="pill p-warn">no amount</span>');
+    if (d.route === 'c' && d.linked) flags.push('<span class="pill p-warn">name match</span>');
+    if (d.ambiguous) flags.push('<span class="pill p-warn">several candidates</span>');
+    if (!d.linked && !d.ambiguous) flags.push('<span class="pill p-mute">no practice found</span>');
+    if (d.won) flags.push('<span class="pill p-good">closed won</span>');
+
+    var status = d.won ? '<span class="pill p-good">Closed won</span>'
+      : d.closed ? '<span class="pill p-bad">Closed</span>'
+      : '<span class="pill p-brand">Open</span>';
+
+    var match = d.linked ? d.matches.map(function(m){
+      return esc(m.company) + (m.providerId ? ' <span class="z">(' + esc(m.providerId) + ')</span>' : '');
+    }).slice(0,3).join('<br>') + (d.matches.length > 3 ?
+      '<br><span class="z">and ' + (d.matches.length - 3) + ' more locations</span>' : '') +
+      '<span class="who">matched on <b>' + esc(d.matches[0].field) + '</b>' +
+      (d.matches[0].field !== 'Association' ? ': ' + esc(d.matches[0].value) : '') +
+      (d.locations > 1 ? ' ' + MID + ' ' + d.locations + ' locations, summed' : '') + '</span>'
+      : '<span class="z">' + (d.ambiguous ? 'several candidates, none picked' : 'not linked') +
+        '</span>' + (d.notes.length ? '<span class="who">' + esc(d.notes.join(' ')) + '</span>' : '');
+
+    var f40 = d.first40
+      ? dmoney(d.first40) + '<span class="sub">' + d.first40.start + ' ' + NDASH + ' ' +
+        d.first40.end + (d.first40.partial ? ', ' + d.first40.daysElapsed + ' of 40 days so far' : '') +
+        (d.first40.forecastDate ? ', from a forecast close date' : '') + '</span>'
+      : (d.linked ? '<span class="z">no close date</span>' : '<span class="z">not linked</span>');
+
+    return '<tr><td><b>' + esc(d.name) + '</b>' +
+      (flags.length ? '<span class="flagline">' + flags.join(' ') + '</span>' : '') + '</td>' +
+      '<td>' + esc(d.owner) + '</td>' +
+      '<td>' + esc(d.stageLabel) + ' ' + status +
+        '<span class="who">' + esc(d.pipelineLabel) + '</span></td>' +
+      '<td class="r">' + (d.amount == null ? '<span class="z">' + DASH + '</span>' : usd(d.amount)) + '</td>' +
+      '<td class="r">' + fmt(d.daysOpen) + '</td>' +
+      '<td class="r">' + fmt(d.daysStale) + '</td>' +
+      '<td>' + (d.closeDate ? esc(d.closeDate) + (d.closed ? '' :
+        '<span class="who">forecast ' + DASH + ' the Deal is still open</span>') :
+        '<span class="z">none set</span>') + '</td>' +
+      '<td>' + match + '</td>' +
+      '<td class="r">' + f40 + '</td>' +
+      '<td class="r">' + dmoney(d.last30) + '</td>' +
+      '<td class="r">' + d.companyCount + ' / ' + d.contactCount + '</td>' +
+      '<td>' + (d.nextStep ? esc(d.nextStep) : '<span class="z">blank</span>') + '</td></tr>';
+  }).join('') : '<tr><td colspan="12" class="z">No Deals match the filters you have set.</td></tr>';
+
+  document.getElementById('dealcnt').textContent = rows.length + ' of ' + all.length + ' deals';
+  document.getElementById('dealnote').innerHTML =
+    'HubSpot Deals ' + MID + ' Deal owner is one of ' + esc(D.owners.join(', ')) + ' ' + MID +
+    ' all pipelines ' + MID + ' as of ' + esc(D.generatedAtUtc.slice(0,10)) +
+    ' ' + MID + ' does not follow the period tab';
+  document.getElementById('dealwonnote').innerHTML = wonAll.length
+    ? (S.won ? '<b>Showing</b> the ' + wonAll.length + ' closed-won Deal' +
+        (wonAll.length===1?'':'s') + ' (' + esc(wonAll.map(function(d){return d.name;}).join(', ')) + ').'
+      : '<b>' + wonAll.length + ' closed-won Deal' + (wonAll.length===1?' is':'s are') +
+        ' hidden</b> (' + esc(wonAll.map(function(d){return d.name;}).join(', ')) + ').')
+    : 'There are <b>no</b> closed-won Deals on these four seats, so this toggle changes nothing today.';
+
+  document.getElementById('dealfoot').innerHTML =
+    '<b>Closed won is read from the Deal, not from the stage.</b> Neither pipeline in play here sets ' +
+    'the closed-won flag on any stage ' + DASH + ' only the closed flag ' + DASH + ' so a stage-only ' +
+    'reading would call a won deal lost. The rows use the Deal property and the stage probability ' +
+    'agrees with it. Separately, HubSpot returns that stage flag as the <i>text</i> "true" or "false", ' +
+    'and every non-empty string is truthy, so it is compared as text ' + DASH + ' read as a boolean, ' +
+    'every stage in the portal reads as closed. ' +
+    '<b>Two Deals are duplicated</b> (' +
+    esc(all.filter(function(d){return d.duplicateOf.length;})
+         .map(function(d){return d.name;})
+         .filter(function(v,i,a){return a.indexOf(v)===i;}).join(', ')) +
+    ') ' + DASH + ' each exists twice with the same owner, stage and create date. The duplicates are ' +
+    'shown rather than merged, because the fix belongs in HubSpot; the Originated tile above sums over ' +
+    'distinct Provider IDs so they are not counted twice there, but the Deals-in-view and Open counts ' +
+    'do count both records. <b>Next step is blank on all ' + all.length + ' Deals.</b>';
+}
+
+function render(){
+  var p = PER[S.p] || PER.last90;
+  var rows = [];
+  for (var i=0;i<L.length;i++){
+    var o = rowFor(L[i], p.start, p.end);
+    if (match(o)) rows.push(o);
+  }
+  drawFunnel(rows, p); drawMotion3(rows, p); drawRevenue(p); drawMarketing(rows, p);
+  drawMotions(rows, p); drawReps(rows, p); drawSegs(rows, p); drawLeads(rows);
+  drawDuration(rows, p);
+  drawDeals();
+  drawPeriodCaveat(p); drawActiveLine(p, rows.length);
+}
+
+// ---- populate selects ----------------------------------------------------
+function fill(id, vals){
+  var el = document.getElementById(id);
+  vals.sort().forEach(function(v){
+    var o = document.createElement('option'); o.value = v; o.textContent = v; el.appendChild(o);
+  });
+}
+var reps={}, teams={}, segs={};
+L.forEach(function(r){
+  (r.reps||[]).forEach(function(x){reps[x]=1;});
+  (r.teams||[]).forEach(function(x){teams[x]=1;});
+  if (r.seg) segs[r.seg]=1;
+});
+fill('frep', Object.keys(reps)); fill('fteam', Object.keys(teams)); fill('fseg', Object.keys(segs));
+
+// ---- window stamp --------------------------------------------------------
+document.getElementById('win').textContent = WIN_LO + ' → ' + WIN_HI;
+
+// ---- events --------------------------------------------------------------
+document.getElementById('period').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if(!b) return;
+  [].forEach.call(this.querySelectorAll('button'), function(x){
+    x.setAttribute('aria-pressed', String(x===b));
+  });
+  S.p = b.dataset.p; S.page = 0; render();
+});
+[['frep','rep'],['fteam','team'],['fseg','seg'],['fout','out']].forEach(function(p){
+  document.getElementById(p[0]).addEventListener('change', function(){
+    S[p[1]] = this.value; S.page = 0; render();
+  });
+});
+// The closed-won toggle. It sits at the TOP of the Deals section and is the only
+// control in it: the section's own filter, independent of the page filters.
+document.getElementById('dealwon').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if(!b) return;
+  [].forEach.call(this.querySelectorAll('button'), function(x){
+    x.setAttribute('aria-pressed', String(x===b));
+  });
+  S.won = b.dataset.w === '1';
+  drawDeals();
+});
+var t;
+document.getElementById('fq').addEventListener('input', function(){
+  var v = this.value; clearTimeout(t);
+  t = setTimeout(function(){ S.q = v; S.page = 0; render(); }, 160);
+});
+document.getElementById('fclear').addEventListener('click', function(){
+  S.team = S.rep = S.seg = S.out = S.q = ''; S.page = 0;
+  ['fteam','frep','fseg','fout','fq'].forEach(function(id){ document.getElementById(id).value = ''; });
+  render();
+});
+document.querySelectorAll('#leadtbl th.s').forEach(function(th){
+  th.addEventListener('click', function(){
+    var k = th.dataset.k;
+    if (S.k === k) S.dir = -S.dir; else { S.k = k; S.dir = -1; }
+    document.querySelectorAll('#leadtbl th.s').forEach(function(x){x.classList.remove('asc','desc');});
+    th.classList.add(S.dir === 1 ? 'asc' : 'desc');
+    S.page = 0; render();
+  });
+});
+document.getElementById('prev').addEventListener('click', function(){ if(S.page>0){S.page--; render();} });
+document.getElementById('next').addEventListener('click', function(){ S.page++; render(); });
+
+// ---- voice of the market -------------------------------------------------
+// A FIXED mined corpus over its OWN 30-day window. The themes were extracted from
+// transcripts in that window and cannot be re-cut to a different one, so this
+// section is deliberately outside the period control and says so.
+var VS = {cat:'', trend:'', q:'', k:'m7', dir:-1};
+var CATLAB = {OBJECTION:'Objection', PRODUCT_IDEA:'Product ask', FEAR_OR_RISK:'Fear / risk',
+  WIN_OR_PRAISE:'Win', COMPETITOR:'Competitor', PRICING_SIGNAL:'Pricing',
+  PROCESS_FRICTION:'Friction', BUYING_SIGNAL:'Buying signal'};
+var TRENDCLS = {RISING:'p-bad', NEW:'p-warn', STEADY:'p-mute', FADING:'p-mute'};
+var ROUTECLS = {PRODUCT:'p-brand', PRICING:'p-brand', MARKETING:'p-mute',
+  OPS:'p-warn', REP_COACHING:'p-good'};
+
+function drawVom(){
+  var rows = V.themes.filter(function(t){
+    if (VS.cat && t.cat !== VS.cat) return false;
+    if (VS.trend && t.trend !== VS.trend) return false;
+    if (VS.q){
+      var q = VS.q.toLowerCase();
+      var hay = (t.label + ' ' + t.desc + ' ' + (t.q||[]).join(' ') + ' ' + t.cat + ' ' + t.route).toLowerCase();
+      if (hay.indexOf(q) < 0) return false;
+    }
+    return true;
+  });
+  rows = rows.slice().sort(function(a,b){
+    var x=a[VS.k], y=b[VS.k];
+    if (typeof x === 'string'){ x=x.toLowerCase(); y=(y||'').toLowerCase(); }
+    return x<y ? -VS.dir : x>y ? VS.dir : 0;
+  });
+  document.querySelector('#vomtbl tbody').innerHTML = rows.map(function(t){
+    var q = (t.q || []).length
+      ? '<span class="quote">&ldquo;' + esc(t.q[0]) + '&rdquo;</span>' : '';
+    var links = (t.ids || []).map(function(id, i){
+      return '<a class="rec" target="_blank" rel="noopener" href="https://app.hubspot.com/calls/2520274/review/' +
+             encodeURIComponent(id) + '">' + (i+1) + '</a>';
+    }).join('<span class="z"> ' + MID + ' </span>') || '<span class="z">'+DASH+'</span>';
+    return '<tr><td><b>' + esc(t.label) + '</b><span class="who" style="max-width:520px">' +
+      esc(t.desc) + ' ' + q + '</span></td>' +
+      '<td>' + esc(CATLAB[t.cat] || t.cat) + '</td>' +
+      '<td class="r">' + t.m30 + '</td><td class="r"><b>' + t.m7 + '</b></td>' +
+      '<td class="r">' + t.reps + '</td>' +
+      '<td><span class="pill ' + (TRENDCLS[t.trend]||'p-mute') + '">' + esc(t.trend.toLowerCase()) + '</span></td>' +
+      '<td><span class="pill ' + (ROUTECLS[t.route]||'p-mute') + '">' +
+        esc(t.route.replace('_',' ').toLowerCase()) + '</span></td>' +
+      '<td class="mono callcell">' + links + '</td></tr>';
+  }).join('') || '<tr><td colspan="8" style="padding:28px;text-align:center;color:var(--ink-3)">No themes match.</td></tr>';
+  document.getElementById('vomcnt').textContent = rows.length + ' themes';
+}
+document.querySelectorAll('#vomtbl th.vs').forEach(function(th){
+  th.addEventListener('click', function(){
+    var k = th.dataset.k;
+    if (VS.k === k) VS.dir = -VS.dir; else { VS.k = k; VS.dir = (k==='label'||k==='cat'||k==='trend'||k==='route') ? 1 : -1; }
+    document.querySelectorAll('#vomtbl th.vs').forEach(function(x){x.classList.remove('asc','desc');});
+    th.classList.add(VS.dir === 1 ? 'asc' : 'desc');
+    drawVom();
+  });
+});
+var vt;
+document.getElementById('vomq').addEventListener('input', function(){
+  var v=this.value; clearTimeout(vt);
+  vt=setTimeout(function(){ VS.q=v; drawVom(); }, 150);
+});
+document.getElementById('vomnote').textContent =
+  V.stats.itemsExtracted + ' moments pulled from ' + V.stats.callsAnalyzed +
+  ' transcribed calls, clustered into ' + V.themes.length + ' themes.';
+document.getElementById('vomwin').innerHTML =
+  '<b>Fixed 30-day mining window: ' + esc(rangeLab(V.stats.windowStart, V.stats.windowEnd)) + ' (' +
+  V.stats.windowStart + ' to ' + V.stats.windowEnd + '). ' +
+  'This section does NOT follow the period tabs and does not respond to the seat, rep, segment, ' +
+  'outcome or search filters.</b> The themes are a mined transcript corpus: the clustering, the ' +
+  'counts, the trend labels and the quotes were all computed once against these ' +
+  V.stats.callsAnalyzed + ' calls and cannot be re-cut to a different range without re-mining. ' +
+  'The <b>30 days</b> and <b>Last 7</b> columns are windows <i>inside that corpus</i>, ending ' +
+  V.stats.windowEnd + ' ' + DASH + ' they are not the period you selected above, and the Last 7 ' +
+  'column ends before the extract window does. Read this as standing market commentary next to the ' +
+  'numbers, never as the selected period’s voice.';
+document.getElementById('vomfoot').innerHTML =
+  'Mined from ' + fmt(V.stats.callsAnalyzed) + ' call transcripts dated ' + V.stats.windowStart +
+  ' to ' + V.stats.windowEnd + ', clustered into ' + V.themes.length + ' themes from ' +
+  fmt(V.stats.itemsExtracted) + ' extracted moments. Quotes are capped at 25 words and de-identified ' +
+  '— names replaced with roles, no patient detail. Counts are item-level, so one call can ' +
+  'contribute more than one mention to a theme; the <b>Reps</b> column is the honest measure of how ' +
+  'widespread a theme is — a theme raised twenty times by one person is a coaching item, the same ' +
+  'theme from five reps is a decision. Ranked by last-7-day mentions, so what is moving now sits at the ' +
+  'top. Sort any column; the <b>Calls</b> column links straight to each recorded call in HubSpot. ' +
+  '<b>Read the trend column with care:</b> the last-7 window inside this corpus is dominated by SDR ' +
+  'dials, so demo-derived themes (pricing, product asks) drop mechanically rather than because they ' +
+  'stopped being said. Some mined calls are served from HubSpot’s AI summary rather than a ' +
+  'verbatim transcript, because their transcript held almost no speech — those are evidence that a ' +
+  'theme came up, not quotable rep or prospect language. <b>None of this moves with the period tabs</b> ' +
+  '— see the band above.';
+document.getElementById('vomexec').innerHTML =
+  (V.exec||[]).map(function(e){ return '<li>' + esc(e) + '</li>'; }).join('');
+document.getElementById('vomchanged').innerHTML =
+  (V.changed||[]).map(function(e){ return '<li>' + esc(e) + '</li>'; }).join('')
+  || '<li class="z">First run - nothing to compare against yet.</li>';
+[['vomcat','cat','c'],['vomtrend','trend','t']].forEach(function(g){
+  document.getElementById(g[0]).addEventListener('click', function(e){
+    var b = e.target.closest('button'); if(!b) return;
+    [].forEach.call(this.querySelectorAll('button'), function(x){
+      x.setAttribute('aria-pressed', String(x===b));
+    });
+    VS[g[1]] = b.dataset[g[2]]; drawVom();
+  });
+});
+drawVom();
+
+// ---- bind the full-window data-quality figures ---------------------------
+// These used to be typed into the prose. Every one of them moved when the 90-day
+// window rolled, which is exactly how a page ends up contradicting its own data
+// dictionary two sections further down. Read them from that dictionary instead.
+(function bindDQ(){
+  var dq = {};
+  (S_.dataQuality || []).forEach(function(d){ dq[d.label] = d; });
+  function get(frag){
+    for (var k in dq) if (k.toLowerCase().indexOf(frag) >= 0) return dq[k];
+    return null;
+  }
+  function put(id, txt){ var el = document.getElementById(id); if (el) el.textContent = txt; }
+  var un = get('no owner'), na = get('no contact association'), co = get('no company');
+  if (un){
+    put('dqUnowned',  fmt(un.value));
+    put('dqUnowned2', fmt(un.value));
+    put('dqRecov', un.recovered
+      ? fmt(un.recovered) + ' of ' + fmt(un.value) + ' recovered (' +
+        pct(un.recovered, un.value) + '%)'
+      : 'in this window the body named no rep on any of them, so none were recovered');
+  }
+  if (na) put('dqNoAssoc', fmt(na.value));
+  if (co) put('dqNoCo', fmt(co.value) + ' of ' + fmt(L.length) + ' (' + pct(co.value, L.length) + '%)');
+})();
+
+// ---- self-check ----------------------------------------------------------
+// The buckets must reproduce the flat 90-day totals the extract wrote, or every
+// period number above is quietly wrong. extract.py asserts this before writing;
+// this repeats it in the browser against the shipped payload, so a bad build is
+// visible in the console rather than only in a log nobody opens.
+(function selfCheck(){
+  // The two duration-rule keys and the seven histogram buckets are in here on
+  // purpose. They are the keys the 2026-09-20 build added, so they are the ones a
+  // slimming step could silently drop from the payload - and they are what the
+  // call-connect, demo-connect and distribution figures are summed from. Checking
+  // only the twelve older keys would have passed a payload with no duration data
+  // in it at all.
+  var bad = 0, n = 0, F = {d:'out_dials', id:'in_dials', c:'connects', dc:'dm_connects', m:'meetings',
+                    dm:'demos', dp:'demos_performed', eo:'emails_out', ei:'emails_in',
+                    n:'notes', t:'tasks', mi:'missed_inbound',
+                    cc:'call_connects', dn:'demo_connects'};
+  for (var i=0;i<L.length;i++){
+    var r = L[i], a = sumDays(r, WIN_LO, WIN_HI), h = r.hist || [], j, s3 = 0, st = 0;
+    for (var k in F){ n++; if (a[k] !== (r[F[k]]||0)) bad++; }
+    for (j=0;j<HB.length;j++){
+      n++; if (a[HB[j]] !== (h[j]||0)) bad++;
+      st += h[j]||0; if (j >= HCUT) s3 += h[j]||0;
+    }
+    // The histogram must sum to outbound dials, and the buckets at or above the
+    // 3-minute bar must BE the call connects, or the line drawn on the
+    // distribution chart no longer matches the rule printed beside it.
+    n += 2;
+    if (st !== (r.out_dials||0)) bad++;
+    if (s3 !== (r.call_connects||0)) bad++;
+  }
+  if (bad) console.error('BUCKET MISMATCH on ' + bad + ' of ' + n + ' checks - period figures, the ' +
+    'call-connect and demo-connect counts and the duration distribution are all unreliable');
+  else console.log('bucket self-check OK: ' + L.length + ' contacts x ' +
+    (Object.keys(F).length + HB.length) + ' keys sum to their 90-day totals, ' +
+    'the seven duration buckets sum to outbound dials, and the buckets at or above ' +
+    'the 3-minute bar equal the call connects');
+})();
+
+render();
+})();
+</script>

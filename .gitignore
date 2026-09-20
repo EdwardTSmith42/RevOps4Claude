@@ -2,3 +2,24 @@ __pycache__/
 *.pyc
 .DS_Store
 *.log
+# --- inside-sales dashboard pipeline ---
+inside-sales/dashboard_built.html
+inside-sales/dashboard.html.bak*
+inside-sales/*.bak
+inside-sales/*.bak-*
+inside-sales/audit/
+inside-sales/baseline_*/
+inside-sales/data/leads.json
+inside-sales/data/leads_slim.json
+inside-sales/data/raw_*.jsonl
+inside-sales/data/calls_*.jsonl
+inside-sales/data/transcript_cache.jsonl
+inside-sales/data/transcripts/
+inside-sales/data/transcripts_new/
+inside-sales/data/transcripts_new_manifest.jsonl
+inside-sales/data/transcripts_stage.json
+inside-sales/data/vom_delta.json
+inside-sales/data/vom_delta.applied.json
+inside-sales/data/refresh_log.json
+inside-sales/data/deals_raw.json
+inside-sales/data/deals_resolved.json

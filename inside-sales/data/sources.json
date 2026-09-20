@@ -1,0 +1,391 @@
+{
+  "window": {
+    "start": "2026-06-22",
+    "end_exclusive": "2026-09-20",
+    "note": "90 complete days ending yesterday. Today is excluded so no figure sits on a partial day."
+  },
+  "generatedAtUtc": "2026-09-20T22:38:03Z",
+  "team": {
+    "80632115": "Brandon Slaughter",
+    "84616314": "Mel Matthews",
+    "88456783": "Gabrielle Nurod",
+    "96412054": "Taylor Sloan",
+    "96412056": "Steven Kelly",
+    "96412059": "Andrea Chacin"
+  },
+  "metrics": [
+    {
+      "id": "contacts",
+      "label": "Contacts touched",
+      "value": 6191,
+      "system": "HubSpot CRM search API",
+      "object": "CONTACT",
+      "predicate": "Distinct contacts associated to any CALL / MEETING / EMAIL / NOTE / TASK owned by [80632115, 84616314, 88456783, 96412054, 96412056, 96412059] inside the window",
+      "dateProperty": "hs_timestamp on the engagement",
+      "grain": "one row per contact",
+      "verify": "Sum of the Contacts column in the rep scorecard will exceed this - a contact touched by two reps counts once here and once per rep there."
+    },
+    {
+      "id": "dials",
+      "label": "Outbound dials",
+      "value": 2036,
+      "system": "HubSpot CRM search API",
+      "object": "CALL",
+      "predicate": "hs_call_source = 'INTEGRATIONS_PLATFORM' AND hs_call_direction = 'OUTBOUND'",
+      "dateProperty": "hs_timestamp",
+      "grain": "one row per call (engagement grain)",
+      "verify": "HubSpot > Calls index > filter Call source = Integrations Platform, Direction = Outbound, Activity date in range. Owner filter will UNDER-count: see the unowned-calls note below."
+    },
+    {
+      "id": "call_connects",
+      "label": "Call connects (3+ minutes)",
+      "value": 330,
+      "system": "HubSpot CRM search API",
+      "object": "CALL",
+      "predicate": "Call source = Integrations Platform AND Direction = Outbound AND Call duration >= 180000 ms (3 minutes)",
+      "dateProperty": "Activity date (hs_timestamp)",
+      "grain": "one row per outbound dial",
+      "verify": "THIS IS THE TEAM'S DEFINITION, set by Mel Matthews on 2026-09-14: 'A call connect and a demo connect need to be different lengths IMO. Call connect: >=3 minutes. Demo connect: >=10 minutes.' It is a strict subset of Outbound dials, so it can never exceed them: 330 of 2036 (16.2%). Reproduce it in HubSpot: Calls index, Call source = Integrations Platform, Direction = Outbound, Call duration is greater than or equal to 3 minutes, Activity date in range. It does NOT match HubSpot's own connected count - see the next row for why."
+    },
+    {
+      "id": "connects",
+      "label": "Connects on call outcome (HubSpot's rule, secondary)",
+      "value": 1281,
+      "system": "HubSpot CRM search API",
+      "object": "CALL",
+      "predicate": "a dial whose Call outcome is Connected (f240bbac-87c9-4f6e-bf70-924b57d47db7), Meeting booked (2e7360c1-6b71-40e9-ab2b-30ae98a4678c) or Left live message (a4c4c377-d246-4b32-a13b-75a56a4cd0ff)",
+      "dateProperty": "Activity date (hs_timestamp)",
+      "grain": "one row per dial",
+      "verify": "KEPT ON PURPOSE as a second line, not as the headline. HubSpot's own automation runs on the outcome, not on duration - the Connected call count property, workflow 1662944670 and the SDR pipeline all read it - so a reader comparing this dashboard to a HubSpot report needs both numbers to see why they differ. Left live message is inside it on purpose: despite the name it means a gatekeeper answered, and 116 of 116 sampled transcripts had two speakers. The duration rule and the outcome rule are different populations, not a corrected and an uncorrected version of one number."
+    },
+    {
+      "id": "dm",
+      "label": "Reached decision maker",
+      "value": 1019,
+      "system": "HubSpot CRM search API",
+      "object": "CALL",
+      "predicate": "a dial dispositioned Connected or Meeting booked (excludes Left live message)",
+      "dateProperty": "hs_timestamp",
+      "grain": "one row per call",
+      "verify": "Always <= Connects. The gap is the gatekeeper population."
+    },
+    {
+      "id": "demos",
+      "label": "Demos",
+      "value": 591,
+      "system": "HubSpot CRM search API",
+      "object": "MEETING_EVENT",
+      "predicate": "'demo' appears in hs_meeting_title (case-insensitive)",
+      "dateProperty": "hs_timestamp",
+      "grain": "one row per meeting",
+      "verify": "This is Laura's definition from dashboard 21888050 (report 345792699). HubSpot's CONTAINS is case-insensitive, so her three-variant list is one predicate. Do NOT use hs_activity_type = 'Demo' - it is set on only about a third of demo meetings."
+    },
+    {
+      "id": "demo_connects",
+      "label": "Demo connects (10+ minutes)",
+      "value": 446,
+      "system": "HubSpot CRM search API",
+      "object": "MEETING_EVENT",
+      "predicate": "'demo' appears in the Meeting name (case-insensitive) AND Meeting recording duration >= 600000 ms (10 minutes)",
+      "dateProperty": "Activity date (hs_timestamp)",
+      "grain": "one row per meeting",
+      "verify": "Mel Matthews, 2026-09-14: demo connect = 10 minutes. This does NOT change the Demos count above it - Demos is still every demo-titled meeting, Laura's house definition. The 10-minute bar splits that count: 446 of 591 demos (75.5%) cleared it. Reproduce it in HubSpot: Meetings index, Meeting name contains demo, Meeting recording duration >= 10 minutes, Activity date in range."
+    },
+    {
+      "id": "perf",
+      "label": "Demos performed on the retired 5-minute gate (prior definition)",
+      "value": 568,
+      "system": "HubSpot CRM search API",
+      "object": "MEETING_EVENT",
+      "predicate": "demo-titled AND Meeting recording duration > 300000 ms (5 minutes)",
+      "dateProperty": "Activity date (hs_timestamp)",
+      "grain": "one row per meeting",
+      "verify": "RETIRED as a headline on 2026-09-20 and kept only as a documented prior definition. The audit established that this gate counts no-shows as performed - the recorder keeps running while the AE waits alone, and 88 of 97 known no-shows cleared 5 minutes. That is precisely the defect the 10-minute rule fixes. It is still carried so our number ties to Laura's report 345792760 and so the move from a 5-minute to a 10-minute bar is visible rather than silent. Do not use it to judge demo attendance."
+    },
+    {
+      "id": "dur_dist",
+      "label": "Outbound dials by call duration",
+      "value": 2036,
+      "system": "HubSpot CRM search API",
+      "object": "CALL",
+      "predicate": "every outbound dialer call, bucketed on Call duration; buckets are left-closed and right-open so each dial lands in exactly one",
+      "dateProperty": "Activity date (hs_timestamp)",
+      "grain": "one row per outbound dial",
+      "verify": "The seven buckets sum to Outbound dials by construction, and the top four (3 min and over) ARE the Call connects row - the 3-minute connect line falls on a bucket boundary, so the marked line on the chart and the connect rule cannot drift apart. On this window: Under 30 sec 573 (28.1%); 30-60 sec 516 (25.3%); 1-3 min 617 (30.3%); 3-5 min 169 (8.3%); 5-10 min 91 (4.5%); 10-20 min 39 (1.9%); 20 min+ 31 (1.5%)."
+    },
+    {
+      "id": "meetings",
+      "label": "Meetings",
+      "value": 611,
+      "system": "HubSpot CRM search API",
+      "object": "MEETING_EVENT",
+      "predicate": "hubspot_owner_id IN [80632115, 84616314, 88456783, 96412054, 96412056, 96412059]",
+      "dateProperty": "hs_timestamp",
+      "grain": "one row per meeting",
+      "verify": "For these reps demos and meetings are nearly the same population."
+    },
+    {
+      "id": "noshow",
+      "label": "Demo no-shows (under 10 minutes)",
+      "value": 145,
+      "system": "HubSpot CRM search API",
+      "object": "MEETING_EVENT",
+      "predicate": "'demo' appears in the Meeting name (case-insensitive) AND Meeting recording duration < 600000 ms (10 minutes). This is exactly Demos minus Demo connects.",
+      "dateProperty": "Activity date (hs_timestamp)",
+      "grain": "one row per meeting",
+      "verify": "Ed Smith ruled on 2026-09-20 that a demo whose recording ran under ten minutes IS a no-show, so these 145 are marked, not flagged as candidates. Reproduce it in HubSpot: Meetings index, Meeting name contains demo, Meeting recording duration less than 10 minutes, Activity date in range. INTERIM PROXY, NOT GROUND TRUTH: duration stands in for attendance because attendance is not recorded yet. Laura is building real attendance data from the meeting records and it is not backfilled; when it lands it should replace this rule. EVIDENCE FOR THE RULE: against the hand-set Demo Booking Status field these 145 break down as Booked 47, Cancelled 1, No Show 51, Not Booked 1, Not set (blank) 1, Occurred 30, Unclassified 14 - 51 the field already flagged No Show, 77 it called Booked or Occurred, 1 blank. The 77 it called Booked or Occurred are where the hand-set field was overstating attendance."
+    },
+    {
+      "id": "noshow_field_retired",
+      "label": "No-shows on the retired Demo Booking Status field (prior definition)",
+      "value": 150,
+      "system": "HubSpot CRM search API",
+      "object": "CONTACT",
+      "predicate": "Demo Booking Status = 'No Show'",
+      "dateProperty": "n/a - the field carries no timestamp",
+      "grain": "one row per contact",
+      "verify": "REPLACED on 2026-09-20 by the duration rule above and kept only as a documented prior definition. Three reasons it was replaced: it is typed by hand by the reps (232 of 232 writes are CRM_UI), it is blank on a large share of records, and it is CURRENT STATE with no timestamp, so a later edit silently rewrites history. It is also contact grain, not meeting grain, so it is not comparable to the demo counts one for one. Laura's automated detector, workflow 1870876825, is enabled but broken at 1.1%% precision. Duration is measured; this was typed. Do not rank reps on it."
+    },
+    {
+      "id": "enrolled",
+      "label": "Sourced enrollments",
+      "value": 166,
+      "system": "HubSpot CRM search API",
+      "object": "COMPANY",
+      "predicate": "Enrollment date on the practice falls inside the window (minus 1 day) AND, on or before that date, someone on the team made a REAL OUTREACH TOUCH to an associated contact: an outbound call, an outbound email, a meeting, or an inbound call somebody answered. A note, a task, an inbound email we never replied to, and an inbound call nobody picked up do NOT qualify.",
+      "dateProperty": "Enrollment date on the practice, shifted back one day",
+      "grain": "one distinct company",
+      "verify": "WHY THE RULE TIGHTENED (VP decision, 2026-09-13). It used to be enough that the team had ANY activity on the record first. Fifteen contacts cleared that bar on activity that was not outreach at all: 10 on an internal staff-to-staff note ('Enrollment Spreadsheet', '@Tia Bel This is for 4 locations'), 3 on an inbound email from the prospect with no outbound email ever sent, and 2 on an inbound call nobody answered. The clearest case: Colesville Dental Center rang Gabrielle Nurod's line FIVE times, every ring 0 seconds with no call outcome logged, and we were claiming we had sourced them. Ten practices dropped out, 144 to 134; at contact grain, 157 to 142. To check one by hand, open the practice in HubSpot and look at the activity on its contacts before the enrollment date: you need at least one call with Direction = Outbound, or an email with Direction = Sent, or a meeting, or an inbound call with a Call outcome set. First touch date in the lead table is UNCHANGED and still means the first activity of any kind, so a row can show a first touch that does not qualify here. The minus-one-day is real: the stamping workflow 1820099735 fires off the 06:31 CT nightly ELI sync, so the raw value lands a day late (zero Mondays, 243 Saturdays in the raw data). Read weekly or monthly, never daily - 45% arrives in catch-up batches. Parent/child is COMPANY.parent_provider - the child holds the parent's Provider ID - NOT HubSpot's native parent/child association, which is populated on only 4.5% of real pairs here, and NOT the '- Parent -' name suffix, which 26.1% of real parents do not carry. summary.parent_rollup lists every parent added, the child that pulled it in, and the parents that could NOT be counted because they did not enroll in the window."
+    },
+    {
+      "id": "locations",
+      "label": "Locations enrolled (sourced)",
+      "value": 186,
+      "system": "HubSpot CRM search API",
+      "object": "COMPANY",
+      "predicate": "every credited company record: each sourced practice record (167) plus each parent group record the rollup credits (19)",
+      "dateProperty": "Enrollment date on the record, shifted back one day",
+      "grain": "one row per enrolled company record",
+      "verify": "Mel Matthews, 2026-09-14: 'AEs are paid on total number of locations enrolled AND % of first 40-days funding. Seeing the total number of locations enrolled would be ideal (it would be great if we could see both).' This is the LARGER of the two: a group that enrols a parent record and three treating locations is four records here. The parent records are listed one by one in summary.parent_rollup.parents_added, each with the sourced child that pulled it in. THIS ROW IS THE FULL WINDOW AND INCLUDES THE PARENT RECORDS. The Locations enrolled figure on the Combined card is smaller (167) and always will be: a parent group record carries no contacts of its own, so it cannot appear on a contact row and cannot be re-counted inside a selected period. The card counts the 167 records the team actually worked."
+    },
+    {
+      "id": "practices",
+      "label": "Practices enrolled (sourced)",
+      "value": 179,
+      "system": "HubSpot CRM search API",
+      "object": "COMPANY",
+      "predicate": "the distinct BUSINESSES behind those same credited records. Two records are one practice when they share a Provider ID, or when a normalised name matches on any of Company name, Legal Business Name, Practice Name or Doing Business As AND that name also appears in both records' Company name",
+      "dateProperty": "Enrollment date on the practice, shifted back one day",
+      "grain": "one distinct practice (business), not one company record",
+      "verify": "The SMALLER of the two and always <= Locations enrolled; the 7 in the gap are extra records for a business already counted. Ed Smith, 2026-09-20: 'Be sure to check legalname, practice name and dba when matching.' Name matching lowercases, folds '&' and punctuation, and strips entity suffixes and credentials (Inc, LLC, PLLC, PC, PA, DDS, DMD, MD), so 'Perla Dental PC' and 'Perla Dental' are one name. A name is IGNORED when every token in it is a category word (dental, family, care, center, smile), because that describes an industry and not a business. A name must also be CORROBORATED - it only joins records whose own Company name contains it - because Practice Name is a defaulted field here: 48 unrelated records carry 'Children's Choice Dental Care Stockton'. Real brands still join, because their locations are named after them ('Bayou Orthodontics - Harvey', '- Baton Rouge'). Parent/child is deliberately NOT used: that is one owner, not one practice, and it is what Locations already rolls up. Deduping on Provider ID alone would give 186. Every record this joined is listed group by group in summary.practice_identity, with the Provider IDs and names, so each merge can be checked by hand. THIS ROW IS THE FULL WINDOW AND INCLUDES THE PARENT RECORDS, for the same reason as the row above it, so the Practices enrolled figure on the Combined card is smaller. Compare the pair on the card against each other, and this pair against each other - never one from the card against one from here."
+    },
+    {
+      "id": "missed",
+      "label": "Missed inbound calls",
+      "value": 271,
+      "system": "HubSpot CRM search API",
+      "object": "CALL",
+      "predicate": "hs_call_direction = 'INBOUND' AND hs_call_disposition is empty AND hs_call_duration = 0",
+      "dateProperty": "hs_timestamp",
+      "grain": "one row per call",
+      "verify": "An inbound ring nobody picked up. This is demand, not rep activity, so it is deliberately excluded from dials and connects and reported on its own. Attributed by the rep's own line number, since no name is written when nobody answers."
+    },
+    {
+      "id": "segment",
+      "label": "Segment",
+      "value": 35,
+      "system": "HubSpot CRM search API",
+      "object": "CONTACT",
+      "predicate": "grouped on hs_object_source_detail_1, falling back to hs_object_source_label",
+      "dateProperty": "n/a - set at record creation",
+      "grain": "one row per contact",
+      "verify": "Not lead_source, which is 96% empty on recent contacts. Scrape = 'CLI_LR' (Laura's Clay pipeline). pb_last_scraped_at is a dead PhantomBuster field, 0% filled."
+    },
+    {
+      "id": "signal",
+      "label": "Inbound engagement signal",
+      "value": 2732,
+      "system": "HubSpot CRM search API",
+      "object": "CONTACT",
+      "predicate": "hs_last_sales_activity_type is set",
+      "dateProperty": "hs_last_sales_activity_date",
+      "grain": "one row per contact",
+      "verify": "HubSpot-maintained, inbound-only enum: EMAIL_REPLY, EMAIL_OPEN, EMAIL_CLICK, MEETING_BOOKED, FORM_SUBMITTED, HUBSPOT_REVISIT."
+    }
+  ],
+  "parentRollup": [
+    {
+      "company_id": "56473957157",
+      "name": "Metro Dental Health - Parent - 38933",
+      "enrollment_date": "2026-07-06",
+      "via": [
+        "57899653388"
+      ]
+    },
+    {
+      "company_id": "56520522560",
+      "name": "Implants 4 Life - Parent - 38912",
+      "enrollment_date": "2026-07-07",
+      "via": [
+        "57880018549"
+      ]
+    },
+    {
+      "company_id": "56605411184",
+      "name": "Kids Integrative - Parent - 39033",
+      "enrollment_date": "2026-07-15",
+      "via": [
+        "57181320801"
+      ]
+    },
+    {
+      "company_id": "56960300927",
+      "name": "Prostho Endo Dental Group - Parent - 39018",
+      "enrollment_date": "2026-07-23",
+      "via": [
+        "57909420853"
+      ]
+    },
+    {
+      "company_id": "57074982990",
+      "name": "Be Dental - Parent - 39206",
+      "enrollment_date": "2026-07-27",
+      "via": [
+        "57171601511"
+      ]
+    },
+    {
+      "company_id": "57267198573",
+      "name": "Embrace Family Orthodontics - Parent - 39391",
+      "enrollment_date": "2026-08-04",
+      "via": [
+        "57294901560"
+      ]
+    },
+    {
+      "company_id": "57531972183",
+      "name": "Cramer Orthodontics - Parent - 39394",
+      "enrollment_date": "2026-08-04",
+      "via": [
+        "57288525643"
+      ]
+    },
+    {
+      "company_id": "57300662168",
+      "name": "Smile HQ - Parent - 39410",
+      "enrollment_date": "2026-08-05",
+      "via": [
+        "57296924835"
+      ]
+    },
+    {
+      "company_id": "57702195729",
+      "name": "Copper Canyon Dentistry - Parent - 39748",
+      "enrollment_date": "2026-08-21",
+      "via": [
+        "57680044332"
+      ]
+    },
+    {
+      "company_id": "57812566344",
+      "name": "First Choice Dental Center - Parent - 39766",
+      "enrollment_date": "2026-08-25",
+      "via": [
+        "57801949992"
+      ]
+    },
+    {
+      "company_id": "57799216942",
+      "name": "Ason Oral Surgery - Parent - 39781",
+      "enrollment_date": "2026-08-26",
+      "via": [
+        "57837996827"
+      ]
+    },
+    {
+      "company_id": "57967374695",
+      "name": "Dr Martin's Wellness Center - Corporate - 39957",
+      "enrollment_date": "2026-09-01",
+      "via": [
+        "57960003620"
+      ]
+    },
+    {
+      "company_id": "57985654651",
+      "name": "Shared Practices Group - Parent  - 39207",
+      "enrollment_date": "2026-09-02",
+      "via": [
+        "58008200518"
+      ]
+    },
+    {
+      "company_id": "57996601948",
+      "name": "Mon Dental Associates - Parent - 39966",
+      "enrollment_date": "2026-09-02",
+      "via": [
+        "57990287896"
+      ]
+    },
+    {
+      "company_id": "58010483002",
+      "name": "Duval Orthodontics - Parent - 39960",
+      "enrollment_date": "2026-09-02",
+      "via": [
+        "57996755491"
+      ]
+    },
+    {
+      "company_id": "58304749837",
+      "name": "Rigby Dental Partners, PLLC - Corporate - 39994",
+      "enrollment_date": "2026-09-09",
+      "via": [
+        "58301394040"
+      ]
+    },
+    {
+      "company_id": "58296677217",
+      "name": "Agame Beaute - Corporate - 40226",
+      "enrollment_date": "2026-09-10",
+      "via": [
+        "58417733986"
+      ]
+    },
+    {
+      "company_id": "58326982921",
+      "name": "Gangi Dental Care of Manatee - Parent - 39995",
+      "enrollment_date": "2026-09-10",
+      "via": [
+        "58418663477"
+      ]
+    },
+    {
+      "company_id": "58461360035",
+      "name": "Liberty Dental Arts - Parent - 40337",
+      "enrollment_date": "2026-09-18",
+      "via": [
+        "58477719827"
+      ]
+    }
+  ],
+  "dataQuality": [
+    {
+      "id": "unowned",
+      "label": "Dialer calls with no owner in HubSpot",
+      "value": 62,
+      "recovered": 0,
+      "note": "HubSpot leaves hubspot_owner_id null on many Aloware calls. The body names the rep and their line, so we parse `Line: Sales- <Rep>` and re-attribute. Any owner-filtered report understates every rep who dials from their own line."
+    },
+    {
+      "id": "orphan_calls",
+      "label": "Calls with no contact association",
+      "value": 267,
+      "note": "Included in team totals, absent from the contact list - they cannot land on a row."
+    },
+    {
+      "id": "fanout",
+      "label": "Contacts with no company / many companies",
+      "value": 752,
+      "note": "Primary company resolved via associatedcompanyid, which matches HubSpot's own Primary association exactly. Caps every company-grain figure."
+    }
+  ]
+}
