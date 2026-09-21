@@ -1,29 +1,29 @@
 {
   "window": {
-    "start": "2026-06-22",
-    "end": "2026-09-20"
+    "start": "2026-06-23",
+    "end": "2026-09-21"
   },
-  "unowned_calls": 62,
+  "unowned_calls": 60,
   "recovered_calls": 0,
-  "generated_at_utc": "2026-09-20T23:52:53Z",
+  "generated_at_utc": "2026-09-21T12:14:13Z",
   "counts": {
-    "calls": 2824,
-    "meetings": 611,
-    "emails": 16040,
-    "notes": 68,
-    "tasks": 1067,
-    "leads": 6191,
-    "companies": 5247
+    "calls": 2787,
+    "meetings": 606,
+    "emails": 15974,
+    "notes": 67,
+    "tasks": 1066,
+    "leads": 6175,
+    "companies": 5240
   },
   "unassociated": {
-    "calls": 267,
+    "calls": 262,
     "meetings": 0,
     "emails": 7
   },
   "by_rep": {
     "Mel Matthews": {
       "team": "Inside Sales",
-      "leads_touched": 255,
+      "leads_touched": 253,
       "dials": 5,
       "out_dials": 5,
       "in_dials": 0,
@@ -45,14 +45,14 @@
       ],
       "conversations_2min": 4,
       "talk_hours": 0.6,
-      "meetings": 96,
-      "demos": 94,
-      "demos_performed": 91,
-      "demo_connects": 71,
-      "demos_under10": 23,
-      "meeting_recordings": 125,
-      "emails_out": 757,
-      "emails_in": 1136,
+      "meetings": 92,
+      "demos": 90,
+      "demos_performed": 87,
+      "demo_connects": 68,
+      "demos_under10": 22,
+      "meeting_recordings": 121,
+      "emails_out": 740,
+      "emails_in": 1118,
       "enrolled_companies_touched": 52,
       "sourced_enrollments": 51
     },
@@ -86,18 +86,18 @@
       "demo_connects": 69,
       "demos_under10": 9,
       "meeting_recordings": 62,
-      "emails_out": 2280,
-      "emails_in": 461,
+      "emails_out": 2284,
+      "emails_in": 463,
       "enrolled_companies_touched": 23,
       "sourced_enrollments": 23
     },
     "Gabrielle Nurod": {
       "team": "Inside Sales",
-      "leads_touched": 1553,
+      "leads_touched": 1550,
       "dials": 164,
       "out_dials": 161,
       "in_dials": 3,
-      "missed_inbound": 122,
+      "missed_inbound": 121,
       "connects": 122,
       "dm_connects": 121,
       "call_connects": 49,
@@ -120,10 +120,10 @@
       "demos_performed": 270,
       "demo_connects": 204,
       "demos_under10": 80,
-      "meeting_recordings": 412,
-      "emails_out": 3225,
-      "emails_in": 1860,
-      "enrolled_companies_touched": 109,
+      "meeting_recordings": 411,
+      "emails_out": 3215,
+      "emails_in": 1851,
+      "enrolled_companies_touched": 108,
       "sourced_enrollments": 100
     },
     "Andrea Chacin": {
@@ -156,8 +156,8 @@
       "demo_connects": 45,
       "demos_under10": 9,
       "meeting_recordings": 33,
-      "emails_out": 2063,
-      "emails_in": 498,
+      "emails_out": 2067,
+      "emails_in": 499,
       "enrolled_companies_touched": 14,
       "sourced_enrollments": 13
     },
@@ -191,68 +191,68 @@
       "demo_connects": 57,
       "demos_under10": 24,
       "meeting_recordings": 73,
-      "emails_out": 2312,
-      "emails_in": 654,
+      "emails_out": 2314,
+      "emails_in": 656,
       "enrolled_companies_touched": 26,
       "sourced_enrollments": 25
     },
     "Brandon Slaughter": {
       "team": "SDR",
-      "leads_touched": 974,
-      "dials": 1640,
-      "out_dials": 1638,
+      "leads_touched": 966,
+      "dials": 1609,
+      "out_dials": 1607,
       "in_dials": 2,
-      "missed_inbound": 53,
-      "connects": 998,
-      "dm_connects": 738,
-      "call_connects": 206,
-      "dm_rate": 0.45,
-      "connect_rate": 0.609,
+      "missed_inbound": 52,
+      "connects": 975,
+      "dm_connects": 720,
+      "call_connects": 203,
+      "dm_rate": 0.447,
+      "connect_rate": 0.606,
       "call_connect_rate": 0.126,
       "hist": [
-        480,
-        424,
-        528,
-        136,
-        68,
+        474,
+        419,
+        511,
+        134,
+        67,
         2,
         0
       ],
-      "conversations_2min": 357,
-      "talk_hours": 38.4,
-      "meetings": 11,
+      "conversations_2min": 348,
+      "talk_hours": 37.5,
+      "meetings": 10,
       "demos": 0,
       "demos_performed": 0,
       "demo_connects": 0,
       "demos_under10": 0,
-      "meeting_recordings": 53,
-      "emails_out": 134,
-      "emails_in": 660,
+      "meeting_recordings": 52,
+      "emails_out": 129,
+      "emails_in": 638,
       "enrolled_companies_touched": 7,
       "sourced_enrollments": 3
     }
   },
   "by_segment": {
-    "Manually created": 118,
-    "Web form (Zite)": 548,
+    "Other (Bcc_To_Crm)": 170,
+    "Manually created": 115,
     "Inbound chat/conversation": 96,
     "Other (Extension)": 41,
-    "Other (revops intake)": 5,
-    "Referral (Referral Rock)": 49,
+    "Web form (Zite)": 546,
     "Other (microsoft teams)": 5,
-    "Other (Bcc_To_Crm)": 172,
+    "Other (revops intake)": 5,
     "Scrape (Clay)": 4008,
-    "Other (Meetings)": 51,
-    "List import": 488,
+    "Referral (Referral Rock)": 49,
+    "Other (Meetings)": 50,
+    "List import": 483,
     "Other (modern patient options dental ebook (v.03.14.23))": 12,
     "Other (livestorm)": 126,
-    "Dialer-created (Aloware)": 135,
+    "Dialer-created (Aloware)": 133,
     "Other (Email_Integration)": 36,
     "Other (livestorm webinars)": 23,
     "Other (Integration)": 22,
     "Web form (other)": 66,
     "Web form (Contact us)": 86,
-    "Other (Form)": 22,
+    "Other (Form)": 21,
     "Other (account manager contact request)": 15,
     "Unknown": 5,
     "Other (incentive 2)": 32,
@@ -270,9 +270,9 @@
     "Other (book a demo v2)": 1
   },
   "totals_company_grain": {
-    "distinct_enrolled_companies_touched": 202,
+    "distinct_enrolled_companies_touched": 201,
     "distinct_sourced_enrollments": 186,
-    "distinct_enrolled_companies_touched_direct": 183,
+    "distinct_enrolled_companies_touched_direct": 182,
     "distinct_sourced_enrollments_direct": 167
   },
   "parent_rollup": {
@@ -280,8 +280,8 @@
     "mechanism": "child COMPANY.parent_provider == parent COMPANY.provider_unique_key",
     "sourced_direct": 167,
     "sourced_rolled_up": 186,
-    "touched_direct": 183,
-    "touched_rolled_up": 202,
+    "touched_direct": 182,
+    "touched_rolled_up": 201,
     "parents_added": [
       {
         "company_id": "56473957157",
@@ -536,10 +536,10 @@
     "not_parent_provider": "the parent link is deliberately NOT used. Amulet Management LLC parents 48 records including Williams Orthodontics (Gilbert AZ) and Jensen Orthodontics (Las Cruces NM): one owner, not one practice. Joining on it would collapse a DSO footprint to a single practice and make the locations/practices gap meaningless.",
     "runaway_backstop": "a name that would still join more than 25 records is rejected outright; every rejection is listed below",
     "over_all_company_records": {
-      "company_records": 5251,
-      "practices": 4754,
-      "multi_record_practices": 407,
-      "name_joins_used": 501,
+      "company_records": 5244,
+      "practices": 4749,
+      "multi_record_practices": 406,
+      "name_joins_used": 499,
       "rejected_names": [
         {
           "normalised_name": "access dental smile",
@@ -760,13 +760,12 @@
         },
         {
           "normalised_name": "bayou orthodontics lafayette",
-          "company_records": 4,
-          "distinct_provider_ids": 4,
+          "company_records": 3,
+          "distinct_provider_ids": 3,
           "reason": "not corroborated - the shared name does not appear in the Company name of two or more of these records, so it is a copied or defaulted value, not evidence of one business",
           "company_names": [
             "Bayou Braces - New Iberia - 20217",
             "Bayou Braces - Orthodontist Laplace - 31089",
-            "Bayou Orthodontics - Baton Rouge - 20389",
             "Bayou Orthodontics - Lafayette - 20390"
           ]
         },
@@ -1220,16 +1219,6 @@
           "company_names": [
             "Dentaluxe - 39088",
             "Smile So Big Dental - 39087"
-          ]
-        },
-        {
-          "normalised_name": "denti",
-          "company_records": 2,
-          "distinct_provider_ids": 1,
-          "reason": "not corroborated - the shared name does not appear in the Company name of two or more of these records, so it is a copied or defaulted value, not evidence of one business",
-          "company_names": [
-            "Denti - 20499",
-            "Nunez Dental Services"
           ]
         },
         {
@@ -3239,20 +3228,6 @@
           ]
         },
         {
-          "practice_key": "17955039053",
-          "company_records": [
-            "17955039053",
-            "18004010604"
-          ],
-          "provider_ids": [
-            "18932"
-          ],
-          "names": [
-            "Nunez Dental Services",
-            "Nunez Dental Services  - 18932"
-          ]
-        },
-        {
           "practice_key": "18001681551",
           "company_records": [
             "18001681551",
@@ -3419,20 +3394,17 @@
           ]
         },
         {
-          "practice_key": "18674528611",
+          "practice_key": "18674532753",
           "company_records": [
-            "18674528611",
             "18674532753",
             "19614918694"
           ],
           "provider_ids": [
-            "20389",
             "20390",
             "21085"
           ],
           "names": [
             "Bayou Orthodontics - Alexandria - 21085",
-            "Bayou Orthodontics - Baton Rouge - 20389",
             "Bayou Orthodontics - Lafayette - 20390"
           ]
         },
@@ -9125,10 +9097,10 @@
       "practice_records_without_provider_id": 0
     },
     "touched": {
-      "locations": 202,
-      "practices": 194,
-      "practices_if_deduped_on_provider_id_only": 202,
-      "direct_company_records": 183,
+      "locations": 201,
+      "practices": 193,
+      "practices_if_deduped_on_provider_id_only": 201,
+      "direct_company_records": 182,
       "parent_records_credited": 19,
       "practice_records_without_provider_id": 0
     }
@@ -9136,22 +9108,22 @@
   "demo_split": {
     "rule": "Demos is UNCHANGED (every demo-titled meeting). The 10-minute bar splits it: at or above 10 minutes is a demo connect, under 10 minutes IS a no-show.",
     "ruling": "Ed Smith, 2026-09-20: 'I think we should mark them as no shows for the ones under [10 minutes].'",
-    "demos": 591,
-    "demo_connects_10min": 446,
-    "no_shows_under_10min": 145,
-    "demos_performed_5min_old_gate": 568,
+    "demos": 587,
+    "demo_connects_10min": 443,
+    "no_shows_under_10min": 144,
+    "demos_performed_5min_old_gate": 564,
     "old_no_show_metric_demo_booking_status_contacts": 150,
     "no_shows_by_demo_booking_status": {
       "Booked": 47,
       "Cancelled": 1,
-      "No Show": 51,
+      "No Show": 50,
       "Not Booked": 1,
       "Not set (blank)": 1,
       "Occurred": 30,
       "Unclassified": 14
     },
     "demo_connects_by_demo_booking_status": {
-      "Booked": 162,
+      "Booked": 159,
       "Cancelled": 1,
       "No Show": 104,
       "Not Booked": 3,

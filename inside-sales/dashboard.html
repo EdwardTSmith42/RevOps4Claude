@@ -996,8 +996,6 @@ function drawFunnel(rows, p){
            'not a missing number. ') +
     '<b>Enrolled and sourced filter on the enrollment date</b>, not on activity, so a practice that ' +
     'enrolled in this period counts here even when the outreach that earned it landed earlier.';
-  document.getElementById('f1').textContent =
-    fmt(rows.reduce(function(a,r){return a+(r.out_dials||0);},0)) + ' outbound dials';
 }
 
 // ---- two motions ---------------------------------------------------------
@@ -2307,7 +2305,12 @@ var ROUTECLS = {PRODUCT:'p-brand', PRICING:'p-brand', MARKETING:'p-mute',
   OPS:'p-warn', REP_COACHING:'p-good'};
 
 function drawVom(){
-  var rows = V.themes.filter(function(t){
+  var themes = V.themes.map(function(t){
+    return {label: t.label, cat: t.category, desc: t.description, q: t.quotes || [],
+      route: t.routeTo, m30: t.mentions30d, m7: t.mentions7d, reps: t.distinctReps,
+      trend: t.trend, ids: t.ids || []};
+  });
+  var rows = themes.filter(function(t){
     if (VS.cat && t.cat !== VS.cat) return false;
     if (VS.trend && t.trend !== VS.trend) return false;
     if (VS.q){
@@ -2356,23 +2359,23 @@ document.getElementById('vomq').addEventListener('input', function(){
   vt=setTimeout(function(){ VS.q=v; drawVom(); }, 150);
 });
 document.getElementById('vomnote').textContent =
-  V.stats.itemsExtracted + ' moments pulled from ' + V.stats.callsAnalyzed +
+  V.corpusStats.itemsExtracted + ' moments pulled from ' + V.corpusStats.callsAnalyzed +
   ' transcribed calls, clustered into ' + V.themes.length + ' themes.';
 document.getElementById('vomwin').innerHTML =
-  '<b>Fixed 30-day mining window: ' + esc(rangeLab(V.stats.windowStart, V.stats.windowEnd)) + ' (' +
-  V.stats.windowStart + ' to ' + V.stats.windowEnd + '). ' +
+  '<b>Fixed 30-day mining window: ' + esc(rangeLab(V.corpusStats.windowStart, V.corpusStats.windowEnd)) + ' (' +
+  V.corpusStats.windowStart + ' to ' + V.corpusStats.windowEnd + '). ' +
   'This section does NOT follow the period tabs and does not respond to the seat, rep, segment, ' +
   'outcome or search filters.</b> The themes are a mined transcript corpus: the clustering, the ' +
   'counts, the trend labels and the quotes were all computed once against these ' +
-  V.stats.callsAnalyzed + ' calls and cannot be re-cut to a different range without re-mining. ' +
+  V.corpusStats.callsAnalyzed + ' calls and cannot be re-cut to a different range without re-mining. ' +
   'The <b>30 days</b> and <b>Last 7</b> columns are windows <i>inside that corpus</i>, ending ' +
-  V.stats.windowEnd + ' ' + DASH + ' they are not the period you selected above, and the Last 7 ' +
+  V.corpusStats.windowEnd + ' ' + DASH + ' they are not the period you selected above, and the Last 7 ' +
   'column ends before the extract window does. Read this as standing market commentary next to the ' +
   'numbers, never as the selected period’s voice.';
 document.getElementById('vomfoot').innerHTML =
-  'Mined from ' + fmt(V.stats.callsAnalyzed) + ' call transcripts dated ' + V.stats.windowStart +
-  ' to ' + V.stats.windowEnd + ', clustered into ' + V.themes.length + ' themes from ' +
-  fmt(V.stats.itemsExtracted) + ' extracted moments. Quotes are capped at 25 words and de-identified ' +
+  'Mined from ' + fmt(V.corpusStats.callsAnalyzed) + ' call transcripts dated ' + V.corpusStats.windowStart +
+  ' to ' + V.corpusStats.windowEnd + ', clustered into ' + V.themes.length + ' themes from ' +
+  fmt(V.corpusStats.itemsExtracted) + ' extracted moments. Quotes are capped at 25 words and de-identified ' +
   '— names replaced with roles, no patient detail. Counts are item-level, so one call can ' +
   'contribute more than one mention to a theme; the <b>Reps</b> column is the honest measure of how ' +
   'widespread a theme is — a theme raised twenty times by one person is a coaching item, the same ' +
@@ -2385,9 +2388,9 @@ document.getElementById('vomfoot').innerHTML =
   'theme came up, not quotable rep or prospect language. <b>None of this moves with the period tabs</b> ' +
   '— see the band above.';
 document.getElementById('vomexec').innerHTML =
-  (V.exec||[]).map(function(e){ return '<li>' + esc(e) + '</li>'; }).join('');
+  (V.executiveRead||[]).map(function(e){ return '<li>' + esc(e) + '</li>'; }).join('');
 document.getElementById('vomchanged').innerHTML =
-  (V.changed||[]).map(function(e){ return '<li>' + esc(e) + '</li>'; }).join('')
+  (V.changedSinceLastRun||[]).map(function(e){ return '<li>' + esc(e) + '</li>'; }).join('')
   || '<li class="z">First run - nothing to compare against yet.</li>';
 [['vomcat','cat','c'],['vomtrend','trend','t']].forEach(function(g){
   document.getElementById(g[0]).addEventListener('click', function(e){

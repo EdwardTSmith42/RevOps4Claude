@@ -1,10 +1,10 @@
 {
   "window": {
-    "start": "2026-06-22",
-    "end_exclusive": "2026-09-20",
+    "start": "2026-06-23",
+    "end_exclusive": "2026-09-21",
     "note": "90 complete days ending yesterday. Today is excluded so no figure sits on a partial day."
   },
-  "generatedAtUtc": "2026-09-20T23:52:53Z",
+  "generatedAtUtc": "2026-09-21T12:14:13Z",
   "team": {
     "80632115": "Brandon Slaughter",
     "84616314": "Mel Matthews",
@@ -17,7 +17,7 @@
     {
       "id": "contacts",
       "label": "Contacts touched",
-      "value": 6191,
+      "value": 6175,
       "system": "HubSpot CRM search API",
       "object": "CONTACT",
       "predicate": "Distinct contacts associated to any CALL / MEETING / EMAIL / NOTE / TASK owned by [80632115, 84616314, 88456783, 96412054, 96412056, 96412059] inside the window",
@@ -28,7 +28,7 @@
     {
       "id": "dials",
       "label": "Outbound dials",
-      "value": 2036,
+      "value": 2005,
       "system": "HubSpot CRM search API",
       "object": "CALL",
       "predicate": "hs_call_source = 'INTEGRATIONS_PLATFORM' AND hs_call_direction = 'OUTBOUND'",
@@ -39,18 +39,18 @@
     {
       "id": "call_connects",
       "label": "Call connects (3+ minutes)",
-      "value": 330,
+      "value": 327,
       "system": "HubSpot CRM search API",
       "object": "CALL",
       "predicate": "Call source = Integrations Platform AND Direction = Outbound AND Call duration >= 180000 ms (3 minutes)",
       "dateProperty": "Activity date (hs_timestamp)",
       "grain": "one row per outbound dial",
-      "verify": "THIS IS THE TEAM'S DEFINITION, set by Mel Matthews on 2026-09-14: 'A call connect and a demo connect need to be different lengths IMO. Call connect: >=3 minutes. Demo connect: >=10 minutes.' It is a strict subset of Outbound dials, so it can never exceed them: 330 of 2036 (16.2%). Reproduce it in HubSpot: Calls index, Call source = Integrations Platform, Direction = Outbound, Call duration is greater than or equal to 3 minutes, Activity date in range. It does NOT match HubSpot's own connected count - see the next row for why."
+      "verify": "THIS IS THE TEAM'S DEFINITION, set by Mel Matthews on 2026-09-14: 'A call connect and a demo connect need to be different lengths IMO. Call connect: >=3 minutes. Demo connect: >=10 minutes.' It is a strict subset of Outbound dials, so it can never exceed them: 327 of 2005 (16.3%). Reproduce it in HubSpot: Calls index, Call source = Integrations Platform, Direction = Outbound, Call duration is greater than or equal to 3 minutes, Activity date in range. It does NOT match HubSpot's own connected count - see the next row for why."
     },
     {
       "id": "connects",
       "label": "Connects on call outcome (HubSpot's rule, secondary)",
-      "value": 1281,
+      "value": 1258,
       "system": "HubSpot CRM search API",
       "object": "CALL",
       "predicate": "a dial whose Call outcome is Connected (f240bbac-87c9-4f6e-bf70-924b57d47db7), Meeting booked (2e7360c1-6b71-40e9-ab2b-30ae98a4678c) or Left live message (a4c4c377-d246-4b32-a13b-75a56a4cd0ff)",
@@ -61,7 +61,7 @@
     {
       "id": "dm",
       "label": "Reached decision maker",
-      "value": 1019,
+      "value": 1001,
       "system": "HubSpot CRM search API",
       "object": "CALL",
       "predicate": "a dial dispositioned Connected or Meeting booked (excludes Left live message)",
@@ -72,7 +72,7 @@
     {
       "id": "demos",
       "label": "Demos",
-      "value": 591,
+      "value": 587,
       "system": "HubSpot CRM search API",
       "object": "MEETING_EVENT",
       "predicate": "'demo' appears in hs_meeting_title (case-insensitive)",
@@ -83,18 +83,18 @@
     {
       "id": "demo_connects",
       "label": "Demo connects (10+ minutes)",
-      "value": 446,
+      "value": 443,
       "system": "HubSpot CRM search API",
       "object": "MEETING_EVENT",
       "predicate": "'demo' appears in the Meeting name (case-insensitive) AND Meeting recording duration >= 600000 ms (10 minutes)",
       "dateProperty": "Activity date (hs_timestamp)",
       "grain": "one row per meeting",
-      "verify": "Mel Matthews, 2026-09-14: demo connect = 10 minutes. This does NOT change the Demos count above it - Demos is still every demo-titled meeting, Laura's house definition. The 10-minute bar splits that count: 446 of 591 demos (75.5%) cleared it. Reproduce it in HubSpot: Meetings index, Meeting name contains demo, Meeting recording duration >= 10 minutes, Activity date in range."
+      "verify": "Mel Matthews, 2026-09-14: demo connect = 10 minutes. This does NOT change the Demos count above it - Demos is still every demo-titled meeting, Laura's house definition. The 10-minute bar splits that count: 443 of 587 demos (75.5%) cleared it. Reproduce it in HubSpot: Meetings index, Meeting name contains demo, Meeting recording duration >= 10 minutes, Activity date in range."
     },
     {
       "id": "perf",
       "label": "Demos performed on the retired 5-minute gate (prior definition)",
-      "value": 568,
+      "value": 564,
       "system": "HubSpot CRM search API",
       "object": "MEETING_EVENT",
       "predicate": "demo-titled AND Meeting recording duration > 300000 ms (5 minutes)",
@@ -105,18 +105,18 @@
     {
       "id": "dur_dist",
       "label": "Outbound dials by call duration",
-      "value": 2036,
+      "value": 2005,
       "system": "HubSpot CRM search API",
       "object": "CALL",
       "predicate": "every outbound dialer call, bucketed on Call duration; buckets are left-closed and right-open so each dial lands in exactly one",
       "dateProperty": "Activity date (hs_timestamp)",
       "grain": "one row per outbound dial",
-      "verify": "The seven buckets sum to Outbound dials by construction, and the top four (3 min and over) ARE the Call connects row - the 3-minute connect line falls on a bucket boundary, so the marked line on the chart and the connect rule cannot drift apart. On this window: Under 30 sec 573 (28.1%); 30-60 sec 516 (25.3%); 1-3 min 617 (30.3%); 3-5 min 169 (8.3%); 5-10 min 91 (4.5%); 10-20 min 39 (1.9%); 20 min+ 31 (1.5%)."
+      "verify": "The seven buckets sum to Outbound dials by construction, and the top four (3 min and over) ARE the Call connects row - the 3-minute connect line falls on a bucket boundary, so the marked line on the chart and the connect rule cannot drift apart. On this window: Under 30 sec 567 (28.3%); 30-60 sec 511 (25.5%); 1-3 min 600 (29.9%); 3-5 min 167 (8.3%); 5-10 min 90 (4.5%); 10-20 min 39 (1.9%); 20 min+ 31 (1.5%)."
     },
     {
       "id": "meetings",
       "label": "Meetings",
-      "value": 611,
+      "value": 606,
       "system": "HubSpot CRM search API",
       "object": "MEETING_EVENT",
       "predicate": "hubspot_owner_id IN [80632115, 84616314, 88456783, 96412054, 96412056, 96412059]",
@@ -127,13 +127,13 @@
     {
       "id": "noshow",
       "label": "Demo no-shows (under 10 minutes)",
-      "value": 145,
+      "value": 144,
       "system": "HubSpot CRM search API",
       "object": "MEETING_EVENT",
       "predicate": "'demo' appears in the Meeting name (case-insensitive) AND Meeting recording duration < 600000 ms (10 minutes). This is exactly Demos minus Demo connects.",
       "dateProperty": "Activity date (hs_timestamp)",
       "grain": "one row per meeting",
-      "verify": "Ed Smith ruled on 2026-09-20 that a demo whose recording ran under ten minutes IS a no-show, so these 145 are marked, not flagged as candidates. Reproduce it in HubSpot: Meetings index, Meeting name contains demo, Meeting recording duration less than 10 minutes, Activity date in range. INTERIM PROXY, NOT GROUND TRUTH: duration stands in for attendance because attendance is not recorded yet. Laura is building real attendance data from the meeting records and it is not backfilled; when it lands it should replace this rule. EVIDENCE FOR THE RULE: against the hand-set Demo Booking Status field these 145 break down as Booked 47, Cancelled 1, No Show 51, Not Booked 1, Not set (blank) 1, Occurred 30, Unclassified 14 - 51 the field already flagged No Show, 77 it called Booked or Occurred, 1 blank. The 77 it called Booked or Occurred are where the hand-set field was overstating attendance."
+      "verify": "Ed Smith ruled on 2026-09-20 that a demo whose recording ran under ten minutes IS a no-show, so these 144 are marked, not flagged as candidates. Reproduce it in HubSpot: Meetings index, Meeting name contains demo, Meeting recording duration less than 10 minutes, Activity date in range. INTERIM PROXY, NOT GROUND TRUTH: duration stands in for attendance because attendance is not recorded yet. Laura is building real attendance data from the meeting records and it is not backfilled; when it lands it should replace this rule. EVIDENCE FOR THE RULE: against the hand-set Demo Booking Status field these 144 break down as Booked 47, Cancelled 1, No Show 50, Not Booked 1, Not set (blank) 1, Occurred 30, Unclassified 14 - 50 the field already flagged No Show, 77 it called Booked or Occurred, 1 blank. The 77 it called Booked or Occurred are where the hand-set field was overstating attendance."
     },
     {
       "id": "noshow_field_retired",
@@ -182,7 +182,7 @@
     {
       "id": "missed",
       "label": "Missed inbound calls",
-      "value": 271,
+      "value": 268,
       "system": "HubSpot CRM search API",
       "object": "CALL",
       "predicate": "hs_call_direction = 'INBOUND' AND hs_call_disposition is empty AND hs_call_duration = 0",
@@ -204,7 +204,7 @@
     {
       "id": "signal",
       "label": "Inbound engagement signal",
-      "value": 2735,
+      "value": 2727,
       "system": "HubSpot CRM search API",
       "object": "CONTACT",
       "predicate": "hs_last_sales_activity_type is set",
@@ -371,20 +371,20 @@
     {
       "id": "unowned",
       "label": "Dialer calls with no owner in HubSpot",
-      "value": 62,
+      "value": 60,
       "recovered": 0,
       "note": "HubSpot leaves hubspot_owner_id null on many Aloware calls. The body names the rep and their line, so we parse `Line: Sales- <Rep>` and re-attribute. Any owner-filtered report understates every rep who dials from their own line."
     },
     {
       "id": "orphan_calls",
       "label": "Calls with no contact association",
-      "value": 267,
+      "value": 262,
       "note": "Included in team totals, absent from the contact list - they cannot land on a row."
     },
     {
       "id": "fanout",
       "label": "Contacts with no company / many companies",
-      "value": 752,
+      "value": 745,
       "note": "Primary company resolved via associatedcompanyid, which matches HubSpot's own Primary association exactly. Caps every company-grain figure."
     }
   ]
