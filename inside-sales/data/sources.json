@@ -4,7 +4,7 @@
     "end_exclusive": "2026-09-20",
     "note": "90 complete days ending yesterday. Today is excluded so no figure sits on a partial day."
   },
-  "generatedAtUtc": "2026-09-20T23:34:47Z",
+  "generatedAtUtc": "2026-09-20T23:52:53Z",
   "team": {
     "80632115": "Brandon Slaughter",
     "84616314": "Mel Matthews",
@@ -204,7 +204,7 @@
     {
       "id": "signal",
       "label": "Inbound engagement signal",
-      "value": 2733,
+      "value": 2735,
       "system": "HubSpot CRM search API",
       "object": "CONTACT",
       "predicate": "hs_last_sales_activity_type is set",

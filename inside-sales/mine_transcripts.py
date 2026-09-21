@@ -117,7 +117,6 @@ def fetch_transcripts(ids, log):
             "authenticated. Re-run with --skip-transcripts to publish without new themes, or "
             "point HUBSPOT_CLI at the binary." % (HS, len(todo)))
     env = dict(os.environ)
-    env.pop("HUBSPOT_ACCESS_TOKEN", None)
 
     def parse(s):
         i = s.find("{")
