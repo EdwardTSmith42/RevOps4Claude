@@ -267,6 +267,31 @@ def _key(t):
     return (t.get("category") or "", (t.get("label") or "").strip().lower())
 
 
+# The slim projection is what build.py actually embeds into the page, so any field
+# the dashboard reads MUST be listed here. exampleCallIds was missing, which is why
+# the Voice of the Market "Calls" column rendered a dash: the ids existed in
+# voice_of_market.json and never reached the browser.
+CALL_ID_CAP = 10          # HubSpot call links rendered per theme
+SLIM_THEME_KEYS = ("category", "label", "description", "mentions30d", "mentions7d",
+                   "trend", "distinctReps", "routeTo", "quotes", "exampleCallIds")
+
+
+def write_slim(full):
+    """Project voice_of_market.json down to vom_slim.json. Single source of truth for
+    the whitelist, callable without a delta so an existing corpus can be re-projected
+    (see --reslim)."""
+    themes = full.get("themes") or []
+    slim = {"corpusStats": full.get("corpusStats", {}),
+            "themes": [{k: t.get(k) for k in SLIM_THEME_KEYS} for t in themes],
+            "executiveRead": full.get("executiveRead", []),
+            "dataQualityCaveats": full.get("dataQualityCaveats", []),
+            "changedSinceLastRun": full.get("changedSinceLastRun", [])}
+    tmp = VOM_SLIM + ".tmp"
+    json.dump(slim, open(tmp, "w", encoding="utf-8"), separators=(",", ":"))
+    os.replace(tmp, VOM_SLIM)
+    return sum(1 for t in slim["themes"] if t.get("exampleCallIds"))
+
+
 def merge(log, today=None):
     if not os.path.exists(DELTA):
         return None
@@ -296,7 +321,7 @@ def merge(log, today=None):
             for c in (d.get("exampleCallIds") or []):
                 if c not in t.setdefault("exampleCallIds", []):
                     t["exampleCallIds"].append(c)
-            t["exampleCallIds"] = t["exampleCallIds"][-6:]
+            t["exampleCallIds"] = t["exampleCallIds"][-CALL_ID_CAP:]
             t["lastSeen"] = str(today)
             updated += 1
         else:
@@ -309,7 +334,7 @@ def merge(log, today=None):
                  "distinctReps": int(d.get("distinctReps") or 0),
                  "routeTo": d.get("routeTo") or "",
                  "quotes": (d.get("quotes") or [])[:4],
-                 "exampleCallIds": (d.get("exampleCallIds") or [])[:6],
+                 "exampleCallIds": (d.get("exampleCallIds") or [])[:CALL_ID_CAP],
                  "firstSeen": str(today),
                  "lastSeen": str(today)}
             by[k] = t
@@ -362,16 +387,7 @@ def merge(log, today=None):
     json.dump(out, open(tmp, "w", encoding="utf-8"), indent=1)
     os.replace(tmp, VOM)
 
-    slim = {"corpusStats": stats,
-            "themes": [{k: t.get(k) for k in ("category", "label", "description", "mentions30d",
-                                              "mentions7d", "trend", "distinctReps", "routeTo",
-                                              "quotes")} for t in themes],
-            "executiveRead": out.get("executiveRead", []),
-            "dataQualityCaveats": out.get("dataQualityCaveats", []),
-            "changedSinceLastRun": out.get("changedSinceLastRun", [])}
-    tmp = VOM_SLIM + ".tmp"
-    json.dump(slim, open(tmp, "w", encoding="utf-8"), separators=(",", ":"))
-    os.replace(tmp, VOM_SLIM)
+    write_slim(out)
 
     newly = list(stage_info.get("skippedIds") or [])
     for fn in os.listdir(STAGE) if os.path.isdir(STAGE) else []:
@@ -431,7 +447,17 @@ def main():
                          "first incremental run does not re-mine three months of history")
     ap.add_argument("--stage-only", action="store_true")
     ap.add_argument("--merge-only", action="store_true")
+    ap.add_argument("--reslim", action="store_true",
+                    help="re-project data/voice_of_market.json into vom_slim.json with the "
+                         "current whitelist and exit; no mining, no state change")
     a = ap.parse_args()
+
+    if a.reslim:
+        full = json.load(open(VOM, encoding="utf-8"))
+        n = write_slim(full)
+        print(json.dumps({"reslim": {"themes": len(full.get("themes") or []),
+                                     "withCallIds": n, "wrote": os.path.basename(VOM_SLIM)}}))
+        return 0
 
     def log(m):
         print("  " + m, file=sys.stderr)

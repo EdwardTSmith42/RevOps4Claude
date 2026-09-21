@@ -2308,7 +2308,7 @@ function drawVom(){
   var themes = V.themes.map(function(t){
     return {label: t.label, cat: t.category, desc: t.description, q: t.quotes || [],
       route: t.routeTo, m30: t.mentions30d, m7: t.mentions7d, reps: t.distinctReps,
-      trend: t.trend, ids: t.ids || []};
+      trend: t.trend, ids: t.exampleCallIds || []};
   });
   var rows = themes.filter(function(t){
     if (VS.cat && t.cat !== VS.cat) return false;
