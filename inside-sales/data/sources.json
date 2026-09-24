@@ -4,7 +4,7 @@
     "end_exclusive": "2026-09-21",
     "note": "90 complete days ending yesterday. Today is excluded so no figure sits on a partial day."
   },
-  "generatedAtUtc": "2026-09-21T12:14:13Z",
+  "generatedAtUtc": "2026-09-21T15:41:21Z",
   "team": {
     "80632115": "Brandon Slaughter",
     "84616314": "Mel Matthews",
@@ -138,7 +138,7 @@
     {
       "id": "noshow_field_retired",
       "label": "No-shows on the retired Demo Booking Status field (prior definition)",
-      "value": 150,
+      "value": 151,
       "system": "HubSpot CRM search API",
       "object": "CONTACT",
       "predicate": "Demo Booking Status = 'No Show'",
@@ -204,7 +204,7 @@
     {
       "id": "signal",
       "label": "Inbound engagement signal",
-      "value": 2727,
+      "value": 2740,
       "system": "HubSpot CRM search API",
       "object": "CONTACT",
       "predicate": "hs_last_sales_activity_type is set",

@@ -5,13 +5,13 @@
   },
   "unowned_calls": 60,
   "recovered_calls": 0,
-  "generated_at_utc": "2026-09-21T12:14:13Z",
+  "generated_at_utc": "2026-09-21T15:41:21Z",
   "counts": {
     "calls": 2787,
     "meetings": 606,
     "emails": 15974,
     "notes": 67,
-    "tasks": 1066,
+    "tasks": 1065,
     "leads": 6175,
     "companies": 5240
   },
@@ -9112,7 +9112,7 @@
     "demo_connects_10min": 443,
     "no_shows_under_10min": 144,
     "demos_performed_5min_old_gate": 564,
-    "old_no_show_metric_demo_booking_status_contacts": 150,
+    "old_no_show_metric_demo_booking_status_contacts": 151,
     "no_shows_by_demo_booking_status": {
       "Booked": 47,
       "Cancelled": 1,
@@ -9123,12 +9123,12 @@
       "Unclassified": 14
     },
     "demo_connects_by_demo_booking_status": {
-      "Booked": 159,
+      "Booked": 158,
       "Cancelled": 1,
       "No Show": 104,
       "Not Booked": 3,
       "Not set (blank)": 2,
-      "Occurred": 153,
+      "Occurred": 154,
       "Unclassified": 21
     },
     "interim_proxy": "Duration is an INTERIM PROXY for attendance, not ground truth. Laura is building real attendance data from the meeting records; it is not backfilled yet. When it lands it should replace this rule.",
