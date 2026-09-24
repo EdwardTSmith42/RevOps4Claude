@@ -1,12 +1,12 @@
 {
  "corpusStats": {
-  "callsAnalyzed": 326,
+  "callsAnalyzed": 405,
   "itemsExtracted": 978,
   "canonicalThemes": 36,
   "windowStart": "2026-08-09",
-  "windowEnd": "2026-09-21",
-  "lastIncrementOn": "2026-09-21",
-  "lastIncrementCalls": 76,
+  "windowEnd": "2026-09-23",
+  "lastIncrementOn": "2026-09-23",
+  "lastIncrementCalls": 79,
   "mode": "incremental"
  },
  "themes": [
@@ -14,8 +14,8 @@
    "category": "OBJECTION",
    "label": "Gatekeeper blocks the SDR account-health call",
    "description": "The dominant outcome of the SDR's outbound account-check dials this week: the office manager or decision-maker is with a patient, in a meeting, out sick, or simply not the one who answers, and the rep leaves contact info for a callback that has not yet happened.",
-   "mentions30d": 145,
-   "mentions7d": 27,
+   "mentions30d": 170,
+   "mentions7d": 25,
    "trend": "RISING",
    "distinctReps": 2,
    "routeTo": "OPS",
@@ -26,22 +26,26 @@
     "The office manager was in a meeting during the call."
    ],
    "exampleCallIds": [
-    "116531159926",
-    "116534100772",
-    "116634761095",
-    "116660889529",
-    "116698563953",
-    "116743467530"
+    "117230646854",
+    "117235795725",
+    "117236813614",
+    "117246357876",
+    "117246567259",
+    "117248389639",
+    "117256538295",
+    "117256554103",
+    "117260453147",
+    "117260467720"
    ],
-   "lastSeen": "2026-09-21"
+   "lastSeen": "2026-09-23"
   },
   {
    "category": "COMPETITOR",
    "label": "Incumbents deny or partially approve; practices stack lenders",
    "description": "Practices on demos this week described running multiple lenders side by side (Cherry, Sunbit, CareCredit, Candid Pro) and reps drew explicit approval-rate and funding-floor contrasts against Cherry.",
-   "mentions30d": 53,
-   "mentions7d": 4,
-   "trend": "STEADY",
+   "mentions30d": 54,
+   "mentions7d": 1,
+   "trend": "FADING",
    "distinctReps": 6,
    "routeTo": "MARKETING",
    "quotes": [
@@ -56,17 +60,18 @@
     "116516982877",
     "116527645609",
     "116546325056",
-    "116633749006"
+    "116633749006",
+    "117176032860"
    ],
-   "lastSeen": "2026-09-21"
+   "lastSeen": "2026-09-23"
   },
   {
    "category": "PROCESS_FRICTION",
    "label": "Area manager relationship does not exist",
    "description": "Enrolled practices repeatedly report they have never met, or have not yet responded to, their assigned dedicated area manager, even after an introductory email or a prior check-in call promised the connection.",
-   "mentions30d": 42,
-   "mentions7d": 3,
-   "trend": "STEADY",
+   "mentions30d": 43,
+   "mentions7d": 1,
+   "trend": "FADING",
    "distinctReps": 4,
    "routeTo": "OPS",
    "quotes": [
@@ -81,9 +86,10 @@
     "116717269026",
     "116938755374",
     "117013630030",
-    "117102088714"
+    "117102088714",
+    "117176722222"
    ],
-   "lastSeen": "2026-09-21"
+   "lastSeen": "2026-09-23"
   },
   {
    "category": "BUYING_SIGNAL",
@@ -91,7 +97,7 @@
    "description": "On several outbound and inbound demos this week the prospect stated clear intent to move forward with HFD rather than just agreeing to review materials.",
    "mentions30d": 42,
    "mentions7d": 4,
-   "trend": "STEADY",
+   "trend": "RISING",
    "distinctReps": 6,
    "routeTo": "OPS",
    "quotes": [
@@ -139,9 +145,9 @@
    "category": "PROCESS_FRICTION",
    "label": "Post-enrollment handoff is failing (dormant, blocked, or unsupported)",
    "description": "Practices already enrolled or mid-enrollment describe stalled account creation, unclear enrollment status, and promised program benefits that never materialized, in one case with patients actively being turned away.",
-   "mentions30d": 36,
-   "mentions7d": 4,
-   "trend": "RISING",
+   "mentions30d": 38,
+   "mentions7d": 2,
+   "trend": "STEADY",
    "distinctReps": 4,
    "routeTo": "OPS",
    "quotes": [
@@ -156,17 +162,19 @@
     "116987704095",
     "116999815580",
     "117013327147",
-    "117045089382"
+    "117045089382",
+    "117181917592",
+    "117245486172"
    ],
-   "lastSeen": "2026-09-21"
+   "lastSeen": "2026-09-23"
   },
   {
    "category": "BUYING_SIGNAL",
    "label": "Area manager meet-and-greet booked off the SDR check-in motion",
    "description": "The SDR's routine account-update dial converted into a scheduled introduction with the practice's dedicated area manager.",
-   "mentions30d": 34,
+   "mentions30d": 37,
    "mentions7d": 3,
-   "trend": "STEADY",
+   "trend": "RISING",
    "distinctReps": 1,
    "routeTo": "OPS",
    "quotes": [
@@ -181,9 +189,12 @@
     "116885878704",
     "116501275529",
     "116547281976",
-    "116684032307"
+    "116684032307",
+    "117189141110",
+    "117229025793",
+    "117256583058"
    ],
-   "lastSeen": "2026-09-21"
+   "lastSeen": "2026-09-23"
   },
   {
    "category": "COMPETITOR",
@@ -191,7 +202,7 @@
    "description": "Practices point to specific incumbent-lender pain points, especially CareCredit decline rates and patient affordability, as the reason they are actively evaluating HFD.",
    "mentions30d": 33,
    "mentions7d": 3,
-   "trend": "STEADY",
+   "trend": "RISING",
    "distinctReps": 5,
    "routeTo": "MARKETING",
    "quotes": [
@@ -211,6 +222,31 @@
    "lastSeen": "2026-09-21"
   },
   {
+   "category": "WIN_OR_PRAISE",
+   "label": "Approval breadth is the message that closes",
+   "description": "The 99% approval rate, the guaranteed minimum instead of a token counter-offer, the 300 FICO floor, ITIN acceptance and HSA/FSA plus patient-chosen payment dates are the specific points that produce enthusiasm.",
+   "mentions30d": 31,
+   "mentions7d": 2,
+   "trend": "STEADY",
+   "distinctReps": 6,
+   "routeTo": "MARKETING",
+   "quotes": [
+    "Wow. Hey, I'm like, man, I might do my Invisalign now with you guys.",
+    "my patients on the other lender have always asked, can I use my HSA as my monthly payment and they cannot",
+    "HFD offers a 99% approval rate regardless of credit score.",
+    "No hard credit checks are performed, ensuring no impact on credit scores."
+   ],
+   "exampleCallIds": [
+    "114909716372",
+    "114852511923",
+    "115175028572",
+    "115571822501",
+    "117176855668",
+    "117185970084"
+   ],
+   "lastSeen": "2026-09-23"
+  },
+  {
    "category": "PROCESS_FRICTION",
    "label": "Sales collateral is wrong, missing, or inconsistent",
    "description": "The deep-subprime slide was corrected live on at least five demos, credit bands are absent from the pricing pages, practice fee reads as patient APR, and the one-pagers, APR-by-tier sheet, payment calculator and sandbox that partners keep asking for do not exist or are inconsistently claimed to exist.",
@@ -228,26 +264,6 @@
     "115792345394",
     "115594794074",
     "115634763602"
-   ]
-  },
-  {
-   "category": "WIN_OR_PRAISE",
-   "label": "Approval breadth is the message that closes",
-   "description": "The 99% approval rate, the guaranteed minimum instead of a token counter-offer, the 300 FICO floor, ITIN acceptance and HSA/FSA plus patient-chosen payment dates are the specific points that produce enthusiasm.",
-   "mentions30d": 29,
-   "mentions7d": 0,
-   "trend": "FADING",
-   "distinctReps": 6,
-   "routeTo": "MARKETING",
-   "quotes": [
-    "Wow. Hey, I'm like, man, I might do my Invisalign now with you guys.",
-    "my patients on the other lender have always asked, can I use my HSA as my monthly payment and they cannot"
-   ],
-   "exampleCallIds": [
-    "114909716372",
-    "114852511923",
-    "115175028572",
-    "115571822501"
    ]
   },
   {
@@ -354,9 +370,9 @@
    "category": "PROCESS_FRICTION",
    "label": "Multi-location, DSO and channel-partner structure",
    "description": "Calls into one location of a multi-location practice frequently cannot resolve the account-health question because the relevant office manager or patient records sit at a different location entirely.",
-   "mentions30d": 22,
-   "mentions7d": 2,
-   "trend": "STEADY",
+   "mentions30d": 23,
+   "mentions7d": 1,
+   "trend": "FADING",
    "distinctReps": 4,
    "routeTo": "OPS",
    "quotes": [
@@ -371,9 +387,38 @@
     "116722970448",
     "116776220031",
     "116886520068",
-    "117045345073"
+    "117045345073",
+    "117191690246"
    ],
-   "lastSeen": "2026-09-21"
+   "lastSeen": "2026-09-23"
+  },
+  {
+   "category": "OBJECTION",
+   "label": "Financing is a small share of production; patients pay cash",
+   "description": "Practices repeatedly tell the account-health rep that less than half of production comes from third-party financing, with most patients paying out of pocket, via personal credit cards, or through insurance instead.",
+   "mentions30d": 23,
+   "mentions7d": 3,
+   "trend": "RISING",
+   "distinctReps": 4,
+   "routeTo": "MARKETING",
+   "quotes": [
+    "So most of your demographic, they pay out of pocket. Yeah.",
+    "In this area we do less financing than other areas. Patients are more open to paying up front.",
+    "Less than 50% of production comes from patient financing.",
+    "not many patients require financing."
+   ],
+   "exampleCallIds": [
+    "115280071694",
+    "116885878704",
+    "116938755374",
+    "117011895982",
+    "117041699213",
+    "117057254454",
+    "117190216969",
+    "117250409350",
+    "117256583058"
+   ],
+   "lastSeen": "2026-09-23"
   },
   {
    "category": "PRICING_SIGNAL",
@@ -436,31 +481,6 @@
    ]
   },
   {
-   "category": "OBJECTION",
-   "label": "Financing is a small share of production; patients pay cash",
-   "description": "Practices repeatedly tell the account-health rep that less than half of production comes from third-party financing, with most patients paying out of pocket, via personal credit cards, or through insurance instead.",
-   "mentions30d": 20,
-   "mentions7d": 5,
-   "trend": "RISING",
-   "distinctReps": 4,
-   "routeTo": "MARKETING",
-   "quotes": [
-    "So most of your demographic, they pay out of pocket. Yeah.",
-    "In this area we do less financing than other areas. Patients are more open to paying up front.",
-    "Less than 50% of production comes from patient financing.",
-    "not many patients require financing."
-   ],
-   "exampleCallIds": [
-    "115280071694",
-    "116885878704",
-    "116938755374",
-    "117011895982",
-    "117041699213",
-    "117057254454"
-   ],
-   "lastSeen": "2026-09-21"
-  },
-  {
    "category": "PROCESS_FRICTION",
    "label": "Reps cannot answer product, pricing or underwriting questions",
    "description": "Deferred-to-email answers on underwriting criteria, refunds, term gating, loan increases, PMS integrations, data retention and practice-type eligibility repeatedly became the thing the deal was waiting on.",
@@ -501,12 +521,39 @@
    ]
   },
   {
+   "category": "PROCESS_FRICTION",
+   "label": "Booked demos see high no-show and last-minute reschedule rates",
+   "description": "Multiple booked demos this week required a chase call because the prospect (or in one case HFD's own side) never joined the video call, forcing reps to wait a few minutes and then reschedule.",
+   "mentions30d": 19,
+   "mentions7d": 1,
+   "trend": "STEADY",
+   "distinctReps": 3,
+   "routeTo": "OPS",
+   "quotes": [
+    "He mentioned he typically stays on for about 15 minutes before needing to reschedule.",
+    "has been waiting for ten minutes without a response.",
+    "If the recipient cannot attend, they can reschedule.",
+    "indicating he would wait for a few more minutes before moving on"
+   ],
+   "exampleCallIds": [
+    "116632527747",
+    "116689878159",
+    "116697985620",
+    "116699617820",
+    "116741139291",
+    "116742816815",
+    "117190603797"
+   ],
+   "firstSeen": "2026-09-21",
+   "lastSeen": "2026-09-23"
+  },
+  {
    "category": "OBJECTION",
    "label": "In-house financing is the real incumbent",
    "description": "Interest-free in-house plans, not Cherry or CareCredit, are what HFD has to beat at the front desk \u2014 staff default to them and several practices route every patient internally.",
    "mentions30d": 18,
    "mentions7d": 1,
-   "trend": "FADING",
+   "trend": "STEADY",
    "distinctReps": 5,
    "routeTo": "REP_COACHING",
    "quotes": [
@@ -526,7 +573,7 @@
    "description": "Distinct from prospect objections: several enrolled providers have stopped using HFD, asked for the account to be closed, or been instructed by the owner to use it only after competitor declines \u2014 which then inflates their blended fee and reinforces the decision.",
    "mentions30d": 18,
    "mentions7d": 1,
-   "trend": "FADING",
+   "trend": "STEADY",
    "distinctReps": 3,
    "routeTo": "OPS",
    "quotes": [
@@ -559,32 +606,6 @@
     "115675863477",
     "114899972883"
    ]
-  },
-  {
-   "category": "PROCESS_FRICTION",
-   "label": "Booked demos see high no-show and last-minute reschedule rates",
-   "description": "Multiple booked demos this week required a chase call because the prospect (or in one case HFD's own side) never joined the video call, forcing reps to wait a few minutes and then reschedule.",
-   "mentions30d": 18,
-   "mentions7d": 6,
-   "trend": "NEW",
-   "distinctReps": 3,
-   "routeTo": "OPS",
-   "quotes": [
-    "He mentioned he typically stays on for about 15 minutes before needing to reschedule.",
-    "has been waiting for ten minutes without a response.",
-    "If the recipient cannot attend, they can reschedule.",
-    "indicating he would wait for a few more minutes before moving on"
-   ],
-   "exampleCallIds": [
-    "116632527747",
-    "116689878159",
-    "116697985620",
-    "116699617820",
-    "116741139291",
-    "116742816815"
-   ],
-   "firstSeen": "2026-09-21",
-   "lastSeen": "2026-09-21"
   },
   {
    "category": "OBJECTION",
@@ -647,6 +668,29 @@
    ]
   },
   {
+   "category": "OBJECTION",
+   "label": "Practice declines or defers the area manager introduction",
+   "description": "Short staffing, busy seasons, Labor Day, vendor-meeting bans and simple lack of perceived value pushed a large share of the SDR asks out weeks or refused them outright; none recurred in the last seven days.",
+   "mentions30d": 15,
+   "mentions7d": 1,
+   "trend": "STEADY",
+   "distinctReps": 1,
+   "routeTo": "REP_COACHING",
+   "quotes": [
+    "We don't usually meet with anyone. We work straight through lunch. We don't take any meetings",
+    "No, no. Like I don't see a need to do that.",
+    "The practice stated they were not interested."
+   ],
+   "exampleCallIds": [
+    "115791282975",
+    "115280071694",
+    "116100846879",
+    "115811208259",
+    "117247600806"
+   ],
+   "lastSeen": "2026-09-23"
+  },
+  {
    "category": "FEAR_OR_RISK",
    "label": "Down payment requirement blocks the patients who need it",
    "description": "The 15% and 30% subprime and deep-subprime down payments (and the $500 tier) are repeatedly named as unworkable for exactly the low-credit patients HFD is meant to serve; one practice dropped a competitor for the same reason.",
@@ -664,26 +708,6 @@
     "115202094186",
     "115675863477",
     "115100269878"
-   ]
-  },
-  {
-   "category": "OBJECTION",
-   "label": "Practice declines or defers the area manager introduction",
-   "description": "Short staffing, busy seasons, Labor Day, vendor-meeting bans and simple lack of perceived value pushed a large share of the SDR asks out weeks or refused them outright; none recurred in the last seven days.",
-   "mentions30d": 14,
-   "mentions7d": 0,
-   "trend": "FADING",
-   "distinctReps": 1,
-   "routeTo": "REP_COACHING",
-   "quotes": [
-    "We don't usually meet with anyone. We work straight through lunch. We don't take any meetings",
-    "No, no. Like I don't see a need to do that."
-   ],
-   "exampleCallIds": [
-    "115791282975",
-    "115280071694",
-    "116100846879",
-    "115811208259"
    ]
   },
   {
@@ -788,18 +812,18 @@
   }
  ],
  "executiveRead": [
-  "This is a small catch-up batch (76 calls, 2026-09-04 and 2026-09-08 through 09-11) staged after the full remine hit its per-run cap, so it reads as a tail slice of one work week rather than a trend window. The gatekeeper-block pattern alone accounts for 27 of the 76 calls (36%) and is almost entirely one SDR's (ownerId 80632115) account-health dial motion \u2014 consistent with the standing base-rate finding that this is the modal outcome of that motion, not a new development.",
-  "Six of the 76 calls are demo no-shows or last-minute reschedules across three different reps/owners (116632527747, 116689878159, 116697985620, 116699617820, 116741139291, 116742816815), including one case (116741139291) where the prospect showed up and no one from HFD joined the Teams call \u2014 worth checking demo-calendar reliability on both sides, not just the prospect's.",
-  "Four demos this batch produced explicit enrollment intent (\"we're definitely going to use you guys\", \"wants to activate HFD as quickly as possible\"), all from reps presenting against a named incumbent (Cherry, Sunbit, CareCredit, Candid Pro), reinforcing the standing theme that competitive approval-rate and funding-floor comparisons are what closes.",
-  "No new theme categories emerged in this batch beyond what full-remine batch 1 already surfaced; every theme here is a continuation of an existing bucket. Same data-quality caveat as batch 1 applies: none of these 76 files are verbatim transcripts."
+  "This is a small catch-up batch (79 calls, 2026-09-21 and 2026-09-22) staged after the incremental mine hit its watermark, so it reads as a two-day tail slice rather than a trend window. The gatekeeper-block pattern again dominates at 25 of 79 calls (32%), continuing the standing base-rate finding that this is the modal outcome of the SDR account-health dial motion, almost entirely ownerId 80632115.",
+  "Three separate practices this batch independently volunteered that less than half their production comes from third-party financing (Genesis Family Dentistry, Mills Dental Group, Fountain City Dental Group), reinforcing that theme as a real and recurring account-health signal rather than a one-off.",
+  "One multi-location provider (three centers, one tax ID) is actively moving off its current financing aggregator to enroll with HFD directly \u2014 a concrete instance of the standing multi-location/channel-partner theme, worth a warm handoff to check enrollment completes cleanly.",
+  "No new theme categories emerged in this batch; every match is a continuation of an already-established bucket from the standing corpus."
  ],
  "dataQualityCaveats": [
-  "Every one of the 76 files is source=AI_SUMMARY or source=CALL_BODY (63/13 split by manifest) \u2014 zero source=TRANSCRIPT records. Same root cause as the same-day full-remine batch: the HubSpot CLI's transcript-fetch subcommand is failing authentication in this environment (it requires 'hubspot auth login', not the HUBSPOT_ACCESS_TOKEN service key this container is set up with), so no verbatim call transcript has been mined in this run.",
-  "This batch skews heavily toward one owner (80632115) and one call type (SDR outbound account-health dials, 2026-09-08 and 09-10 specifically account for 60 of 76 calls) \u2014 mention counts here are not a representative weekly sample, they're whatever the full-remine's per-run staging cap deferred from an already-cached-transcript-free run.",
-  "'newMentionsRecent' in this batch is nearly identical to 'newMentions' because the batch's entire date range (2026-09-04 to 2026-09-11) is only 8 calendar days \u2014 the 7-day recency split is not meaningful here the way it is against a full-quarter corpus."
+  "Every one of the 79 staged files is source=AI_SUMMARY or source=CALL_BODY \u2014 zero source=TRANSCRIPT records. Same root cause as prior batches: the HubSpot CLI's transcript-fetch subcommand fails authentication in this environment (it needs 'hubspot auth login', not the HUBSPOT_ACCESS_TOKEN service key this container runs with), so no verbatim call transcript has been mined.",
+  "This batch skews heavily toward one owner (80632115) and one call type (SDR outbound account-health dials) across just two calendar days, so mention counts here are a short catch-up slice, not a representative weekly sample.",
+  "Roughly half the 79 staged files (automated IVR greetings, abandoned/no-answer call-body stubs, generic voicemail preferences) carried no thematic content and were not counted toward any theme."
  ],
  "changedSinceLastRun": [
-  "No new theme labels this batch \u2014 all five matched themes were already established (four from the base corpus, one from the same day's full-remine batch).",
-  "The gatekeeper-block theme's distinctReps in this slice is only 2, versus 3 in the standing corpus number \u2014 read as a sampling artifact of this being a short, SDR-dial-heavy catch-up window, not a shrinking rep pool."
+  "No new theme labels this batch \u2014 all ten matched themes were already established in the standing corpus.",
+  "The gatekeeper-block, financing-small-share, and area-manager-meet-and-greet themes each picked up fresh distinct-practice evidence this cycle rather than repeats of the same account."
  ]
 }

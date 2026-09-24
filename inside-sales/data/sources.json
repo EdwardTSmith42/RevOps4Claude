@@ -1,10 +1,10 @@
 {
   "window": {
-    "start": "2026-06-23",
-    "end_exclusive": "2026-09-21",
+    "start": "2026-06-25",
+    "end_exclusive": "2026-09-23",
     "note": "90 complete days ending yesterday. Today is excluded so no figure sits on a partial day."
   },
-  "generatedAtUtc": "2026-09-21T15:41:21Z",
+  "generatedAtUtc": "2026-09-23T12:14:08Z",
   "team": {
     "80632115": "Brandon Slaughter",
     "84616314": "Mel Matthews",
@@ -17,7 +17,7 @@
     {
       "id": "contacts",
       "label": "Contacts touched",
-      "value": 6175,
+      "value": 6181,
       "system": "HubSpot CRM search API",
       "object": "CONTACT",
       "predicate": "Distinct contacts associated to any CALL / MEETING / EMAIL / NOTE / TASK owned by [80632115, 84616314, 88456783, 96412054, 96412056, 96412059] inside the window",
@@ -28,7 +28,7 @@
     {
       "id": "dials",
       "label": "Outbound dials",
-      "value": 2005,
+      "value": 2025,
       "system": "HubSpot CRM search API",
       "object": "CALL",
       "predicate": "hs_call_source = 'INTEGRATIONS_PLATFORM' AND hs_call_direction = 'OUTBOUND'",
@@ -39,18 +39,18 @@
     {
       "id": "call_connects",
       "label": "Call connects (3+ minutes)",
-      "value": 327,
+      "value": 330,
       "system": "HubSpot CRM search API",
       "object": "CALL",
       "predicate": "Call source = Integrations Platform AND Direction = Outbound AND Call duration >= 180000 ms (3 minutes)",
       "dateProperty": "Activity date (hs_timestamp)",
       "grain": "one row per outbound dial",
-      "verify": "THIS IS THE TEAM'S DEFINITION, set by Mel Matthews on 2026-09-14: 'A call connect and a demo connect need to be different lengths IMO. Call connect: >=3 minutes. Demo connect: >=10 minutes.' It is a strict subset of Outbound dials, so it can never exceed them: 327 of 2005 (16.3%). Reproduce it in HubSpot: Calls index, Call source = Integrations Platform, Direction = Outbound, Call duration is greater than or equal to 3 minutes, Activity date in range. It does NOT match HubSpot's own connected count - see the next row for why."
+      "verify": "THIS IS THE TEAM'S DEFINITION, set by Mel Matthews on 2026-09-14: 'A call connect and a demo connect need to be different lengths IMO. Call connect: >=3 minutes. Demo connect: >=10 minutes.' It is a strict subset of Outbound dials, so it can never exceed them: 330 of 2025 (16.3%). Reproduce it in HubSpot: Calls index, Call source = Integrations Platform, Direction = Outbound, Call duration is greater than or equal to 3 minutes, Activity date in range. It does NOT match HubSpot's own connected count - see the next row for why."
     },
     {
       "id": "connects",
       "label": "Connects on call outcome (HubSpot's rule, secondary)",
-      "value": 1258,
+      "value": 1263,
       "system": "HubSpot CRM search API",
       "object": "CALL",
       "predicate": "a dial whose Call outcome is Connected (f240bbac-87c9-4f6e-bf70-924b57d47db7), Meeting booked (2e7360c1-6b71-40e9-ab2b-30ae98a4678c) or Left live message (a4c4c377-d246-4b32-a13b-75a56a4cd0ff)",
@@ -61,7 +61,7 @@
     {
       "id": "dm",
       "label": "Reached decision maker",
-      "value": 1001,
+      "value": 1003,
       "system": "HubSpot CRM search API",
       "object": "CALL",
       "predicate": "a dial dispositioned Connected or Meeting booked (excludes Left live message)",
@@ -72,7 +72,7 @@
     {
       "id": "demos",
       "label": "Demos",
-      "value": 587,
+      "value": 597,
       "system": "HubSpot CRM search API",
       "object": "MEETING_EVENT",
       "predicate": "'demo' appears in hs_meeting_title (case-insensitive)",
@@ -83,18 +83,18 @@
     {
       "id": "demo_connects",
       "label": "Demo connects (10+ minutes)",
-      "value": 443,
+      "value": 452,
       "system": "HubSpot CRM search API",
       "object": "MEETING_EVENT",
       "predicate": "'demo' appears in the Meeting name (case-insensitive) AND Meeting recording duration >= 600000 ms (10 minutes)",
       "dateProperty": "Activity date (hs_timestamp)",
       "grain": "one row per meeting",
-      "verify": "Mel Matthews, 2026-09-14: demo connect = 10 minutes. This does NOT change the Demos count above it - Demos is still every demo-titled meeting, Laura's house definition. The 10-minute bar splits that count: 443 of 587 demos (75.5%) cleared it. Reproduce it in HubSpot: Meetings index, Meeting name contains demo, Meeting recording duration >= 10 minutes, Activity date in range."
+      "verify": "Mel Matthews, 2026-09-14: demo connect = 10 minutes. This does NOT change the Demos count above it - Demos is still every demo-titled meeting, Laura's house definition. The 10-minute bar splits that count: 452 of 597 demos (75.7%) cleared it. Reproduce it in HubSpot: Meetings index, Meeting name contains demo, Meeting recording duration >= 10 minutes, Activity date in range."
     },
     {
       "id": "perf",
       "label": "Demos performed on the retired 5-minute gate (prior definition)",
-      "value": 564,
+      "value": 573,
       "system": "HubSpot CRM search API",
       "object": "MEETING_EVENT",
       "predicate": "demo-titled AND Meeting recording duration > 300000 ms (5 minutes)",
@@ -105,18 +105,18 @@
     {
       "id": "dur_dist",
       "label": "Outbound dials by call duration",
-      "value": 2005,
+      "value": 2025,
       "system": "HubSpot CRM search API",
       "object": "CALL",
       "predicate": "every outbound dialer call, bucketed on Call duration; buckets are left-closed and right-open so each dial lands in exactly one",
       "dateProperty": "Activity date (hs_timestamp)",
       "grain": "one row per outbound dial",
-      "verify": "The seven buckets sum to Outbound dials by construction, and the top four (3 min and over) ARE the Call connects row - the 3-minute connect line falls on a bucket boundary, so the marked line on the chart and the connect rule cannot drift apart. On this window: Under 30 sec 567 (28.3%); 30-60 sec 511 (25.5%); 1-3 min 600 (29.9%); 3-5 min 167 (8.3%); 5-10 min 90 (4.5%); 10-20 min 39 (1.9%); 20 min+ 31 (1.5%)."
+      "verify": "The seven buckets sum to Outbound dials by construction, and the top four (3 min and over) ARE the Call connects row - the 3-minute connect line falls on a bucket boundary, so the marked line on the chart and the connect rule cannot drift apart. On this window: Under 30 sec 582 (28.7%); 30-60 sec 516 (25.5%); 1-3 min 597 (29.5%); 3-5 min 173 (8.5%); 5-10 min 85 (4.2%); 10-20 min 40 (2.0%); 20 min+ 32 (1.6%)."
     },
     {
       "id": "meetings",
       "label": "Meetings",
-      "value": 606,
+      "value": 616,
       "system": "HubSpot CRM search API",
       "object": "MEETING_EVENT",
       "predicate": "hubspot_owner_id IN [80632115, 84616314, 88456783, 96412054, 96412056, 96412059]",
@@ -127,18 +127,18 @@
     {
       "id": "noshow",
       "label": "Demo no-shows (under 10 minutes)",
-      "value": 144,
+      "value": 145,
       "system": "HubSpot CRM search API",
       "object": "MEETING_EVENT",
       "predicate": "'demo' appears in the Meeting name (case-insensitive) AND Meeting recording duration < 600000 ms (10 minutes). This is exactly Demos minus Demo connects.",
       "dateProperty": "Activity date (hs_timestamp)",
       "grain": "one row per meeting",
-      "verify": "Ed Smith ruled on 2026-09-20 that a demo whose recording ran under ten minutes IS a no-show, so these 144 are marked, not flagged as candidates. Reproduce it in HubSpot: Meetings index, Meeting name contains demo, Meeting recording duration less than 10 minutes, Activity date in range. INTERIM PROXY, NOT GROUND TRUTH: duration stands in for attendance because attendance is not recorded yet. Laura is building real attendance data from the meeting records and it is not backfilled; when it lands it should replace this rule. EVIDENCE FOR THE RULE: against the hand-set Demo Booking Status field these 144 break down as Booked 47, Cancelled 1, No Show 50, Not Booked 1, Not set (blank) 1, Occurred 30, Unclassified 14 - 50 the field already flagged No Show, 77 it called Booked or Occurred, 1 blank. The 77 it called Booked or Occurred are where the hand-set field was overstating attendance."
+      "verify": "Ed Smith ruled on 2026-09-20 that a demo whose recording ran under ten minutes IS a no-show, so these 145 are marked, not flagged as candidates. Reproduce it in HubSpot: Meetings index, Meeting name contains demo, Meeting recording duration less than 10 minutes, Activity date in range. INTERIM PROXY, NOT GROUND TRUTH: duration stands in for attendance because attendance is not recorded yet. Laura is building real attendance data from the meeting records and it is not backfilled; when it lands it should replace this rule. EVIDENCE FOR THE RULE: against the hand-set Demo Booking Status field these 145 break down as Booked 47, Cancelled 1, No Show 47, Not Booked 1, Not set (blank) 1, Occurred 34, Unclassified 14 - 47 the field already flagged No Show, 81 it called Booked or Occurred, 1 blank. The 81 it called Booked or Occurred are where the hand-set field was overstating attendance."
     },
     {
       "id": "noshow_field_retired",
       "label": "No-shows on the retired Demo Booking Status field (prior definition)",
-      "value": 151,
+      "value": 150,
       "system": "HubSpot CRM search API",
       "object": "CONTACT",
       "predicate": "Demo Booking Status = 'No Show'",
@@ -149,7 +149,7 @@
     {
       "id": "enrolled",
       "label": "Sourced enrollments",
-      "value": 166,
+      "value": 173,
       "system": "HubSpot CRM search API",
       "object": "COMPANY",
       "predicate": "Enrollment date on the practice falls inside the window (minus 1 day) AND, on or before that date, someone on the team made a REAL OUTREACH TOUCH to an associated contact: an outbound call, an outbound email, a meeting, or an inbound call somebody answered. A note, a task, an inbound email we never replied to, and an inbound call nobody picked up do NOT qualify.",
@@ -160,29 +160,29 @@
     {
       "id": "locations",
       "label": "Locations enrolled (sourced)",
-      "value": 186,
+      "value": 195,
       "system": "HubSpot CRM search API",
       "object": "COMPANY",
-      "predicate": "every credited company record: each sourced practice record (167) plus each parent group record the rollup credits (19)",
+      "predicate": "every credited company record: each sourced practice record (174) plus each parent group record the rollup credits (21)",
       "dateProperty": "Enrollment date on the record, shifted back one day",
       "grain": "one row per enrolled company record",
-      "verify": "Mel Matthews, 2026-09-14: 'AEs are paid on total number of locations enrolled AND % of first 40-days funding. Seeing the total number of locations enrolled would be ideal (it would be great if we could see both).' This is the LARGER of the two: a group that enrols a parent record and three treating locations is four records here. The parent records are listed one by one in summary.parent_rollup.parents_added, each with the sourced child that pulled it in. THIS ROW IS THE FULL WINDOW AND INCLUDES THE PARENT RECORDS. The Locations enrolled figure on the Combined card is smaller (167) and always will be: a parent group record carries no contacts of its own, so it cannot appear on a contact row and cannot be re-counted inside a selected period. The card counts the 167 records the team actually worked."
+      "verify": "Mel Matthews, 2026-09-14: 'AEs are paid on total number of locations enrolled AND % of first 40-days funding. Seeing the total number of locations enrolled would be ideal (it would be great if we could see both).' This is the LARGER of the two: a group that enrols a parent record and three treating locations is four records here. The parent records are listed one by one in summary.parent_rollup.parents_added, each with the sourced child that pulled it in. THIS ROW IS THE FULL WINDOW AND INCLUDES THE PARENT RECORDS. The Locations enrolled figure on the Combined card is smaller (174) and always will be: a parent group record carries no contacts of its own, so it cannot appear on a contact row and cannot be re-counted inside a selected period. The card counts the 174 records the team actually worked."
     },
     {
       "id": "practices",
       "label": "Practices enrolled (sourced)",
-      "value": 179,
+      "value": 188,
       "system": "HubSpot CRM search API",
       "object": "COMPANY",
       "predicate": "the distinct BUSINESSES behind those same credited records. Two records are one practice when they share a Provider ID, or when a normalised name matches on any of Company name, Legal Business Name, Practice Name or Doing Business As AND that name also appears in both records' Company name",
       "dateProperty": "Enrollment date on the practice, shifted back one day",
       "grain": "one distinct practice (business), not one company record",
-      "verify": "The SMALLER of the two and always <= Locations enrolled; the 7 in the gap are extra records for a business already counted. Ed Smith, 2026-09-20: 'Be sure to check legalname, practice name and dba when matching.' Name matching lowercases, folds '&' and punctuation, and strips entity suffixes and credentials (Inc, LLC, PLLC, PC, PA, DDS, DMD, MD), so 'Perla Dental PC' and 'Perla Dental' are one name. A name is IGNORED when every token in it is a category word (dental, family, care, center, smile), because that describes an industry and not a business. A name must also be CORROBORATED - it only joins records whose own Company name contains it - because Practice Name is a defaulted field here: 48 unrelated records carry 'Children's Choice Dental Care Stockton'. Real brands still join, because their locations are named after them ('Bayou Orthodontics - Harvey', '- Baton Rouge'). Parent/child is deliberately NOT used: that is one owner, not one practice, and it is what Locations already rolls up. Deduping on Provider ID alone would give 186. Every record this joined is listed group by group in summary.practice_identity, with the Provider IDs and names, so each merge can be checked by hand. THIS ROW IS THE FULL WINDOW AND INCLUDES THE PARENT RECORDS, for the same reason as the row above it, so the Practices enrolled figure on the Combined card is smaller. Compare the pair on the card against each other, and this pair against each other - never one from the card against one from here."
+      "verify": "The SMALLER of the two and always <= Locations enrolled; the 7 in the gap are extra records for a business already counted. Ed Smith, 2026-09-20: 'Be sure to check legalname, practice name and dba when matching.' Name matching lowercases, folds '&' and punctuation, and strips entity suffixes and credentials (Inc, LLC, PLLC, PC, PA, DDS, DMD, MD), so 'Perla Dental PC' and 'Perla Dental' are one name. A name is IGNORED when every token in it is a category word (dental, family, care, center, smile), because that describes an industry and not a business. A name must also be CORROBORATED - it only joins records whose own Company name contains it - because Practice Name is a defaulted field here: 48 unrelated records carry 'Children's Choice Dental Care Stockton'. Real brands still join, because their locations are named after them ('Bayou Orthodontics - Harvey', '- Baton Rouge'). Parent/child is deliberately NOT used: that is one owner, not one practice, and it is what Locations already rolls up. Deduping on Provider ID alone would give 195. Every record this joined is listed group by group in summary.practice_identity, with the Provider IDs and names, so each merge can be checked by hand. THIS ROW IS THE FULL WINDOW AND INCLUDES THE PARENT RECORDS, for the same reason as the row above it, so the Practices enrolled figure on the Combined card is smaller. Compare the pair on the card against each other, and this pair against each other - never one from the card against one from here."
     },
     {
       "id": "missed",
       "label": "Missed inbound calls",
-      "value": 268,
+      "value": 267,
       "system": "HubSpot CRM search API",
       "object": "CALL",
       "predicate": "hs_call_direction = 'INBOUND' AND hs_call_disposition is empty AND hs_call_duration = 0",
@@ -193,7 +193,7 @@
     {
       "id": "segment",
       "label": "Segment",
-      "value": 35,
+      "value": 34,
       "system": "HubSpot CRM search API",
       "object": "CONTACT",
       "predicate": "grouped on hs_object_source_detail_1, falling back to hs_object_source_label",
@@ -204,7 +204,7 @@
     {
       "id": "signal",
       "label": "Inbound engagement signal",
-      "value": 2740,
+      "value": 2747,
       "system": "HubSpot CRM search API",
       "object": "CONTACT",
       "predicate": "hs_last_sales_activity_type is set",
@@ -335,6 +335,14 @@
       ]
     },
     {
+      "company_id": "58304307036",
+      "name": "Perfect Smile and Implant Center - Parent - 39988",
+      "enrollment_date": "2026-09-09",
+      "via": [
+        "58322961966"
+      ]
+    },
+    {
       "company_id": "58304749837",
       "name": "Rigby Dental Partners, PLLC - Corporate - 39994",
       "enrollment_date": "2026-09-09",
@@ -365,26 +373,34 @@
       "via": [
         "58477719827"
       ]
+    },
+    {
+      "company_id": "58526298894",
+      "name": "Inspire Dental - Parent - 40355",
+      "enrollment_date": "2026-09-21",
+      "via": [
+        "58519575713"
+      ]
     }
   ],
   "dataQuality": [
     {
       "id": "unowned",
       "label": "Dialer calls with no owner in HubSpot",
-      "value": 60,
+      "value": 62,
       "recovered": 0,
       "note": "HubSpot leaves hubspot_owner_id null on many Aloware calls. The body names the rep and their line, so we parse `Line: Sales- <Rep>` and re-attribute. Any owner-filtered report understates every rep who dials from their own line."
     },
     {
       "id": "orphan_calls",
       "label": "Calls with no contact association",
-      "value": 262,
+      "value": 265,
       "note": "Included in team totals, absent from the contact list - they cannot land on a row."
     },
     {
       "id": "fanout",
       "label": "Contacts with no company / many companies",
-      "value": 745,
+      "value": 760,
       "note": "Primary company resolved via associatedcompanyid, which matches HubSpot's own Primary association exactly. Caps every company-grain figure."
     }
   ]

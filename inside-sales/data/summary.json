@@ -1,29 +1,29 @@
 {
   "window": {
-    "start": "2026-06-23",
-    "end": "2026-09-21"
+    "start": "2026-06-25",
+    "end": "2026-09-23"
   },
-  "unowned_calls": 60,
+  "unowned_calls": 62,
   "recovered_calls": 0,
-  "generated_at_utc": "2026-09-21T15:41:21Z",
+  "generated_at_utc": "2026-09-23T12:14:08Z",
   "counts": {
-    "calls": 2787,
-    "meetings": 606,
-    "emails": 15974,
-    "notes": 67,
-    "tasks": 1065,
-    "leads": 6175,
-    "companies": 5240
+    "calls": 2799,
+    "meetings": 616,
+    "emails": 16106,
+    "notes": 69,
+    "tasks": 1069,
+    "leads": 6181,
+    "companies": 5241
   },
   "unassociated": {
-    "calls": 262,
+    "calls": 265,
     "meetings": 0,
     "emails": 7
   },
   "by_rep": {
     "Mel Matthews": {
       "team": "Inside Sales",
-      "leads_touched": 253,
+      "leads_touched": 240,
       "dials": 5,
       "out_dials": 5,
       "in_dials": 0,
@@ -45,139 +45,139 @@
       ],
       "conversations_2min": 4,
       "talk_hours": 0.6,
-      "meetings": 92,
-      "demos": 90,
-      "demos_performed": 87,
-      "demo_connects": 68,
-      "demos_under10": 22,
-      "meeting_recordings": 121,
-      "emails_out": 740,
-      "emails_in": 1118,
-      "enrolled_companies_touched": 52,
-      "sourced_enrollments": 51
+      "meetings": 83,
+      "demos": 81,
+      "demos_performed": 79,
+      "demo_connects": 62,
+      "demos_under10": 19,
+      "meeting_recordings": 111,
+      "emails_out": 706,
+      "emails_in": 1106,
+      "enrolled_companies_touched": 54,
+      "sourced_enrollments": 54
     },
     "Steven Kelly": {
       "team": "Inside Sales",
-      "leads_touched": 1157,
-      "dials": 88,
-      "out_dials": 67,
-      "in_dials": 21,
-      "missed_inbound": 12,
-      "connects": 53,
-      "dm_connects": 53,
-      "call_connects": 16,
-      "dm_rate": 0.602,
-      "connect_rate": 0.602,
-      "call_connect_rate": 0.239,
+      "leads_touched": 1170,
+      "dials": 91,
+      "out_dials": 69,
+      "in_dials": 22,
+      "missed_inbound": 13,
+      "connects": 55,
+      "dm_connects": 55,
+      "call_connects": 17,
+      "dm_rate": 0.604,
+      "connect_rate": 0.604,
+      "call_connect_rate": 0.246,
       "hist": [
         20,
         14,
-        17,
-        2,
+        18,
+        3,
         1,
         4,
         9
       ],
-      "conversations_2min": 38,
-      "talk_hours": 11.1,
-      "meetings": 79,
-      "demos": 78,
-      "demos_performed": 78,
-      "demo_connects": 69,
-      "demos_under10": 9,
-      "meeting_recordings": 62,
-      "emails_out": 2284,
-      "emails_in": 463,
-      "enrolled_companies_touched": 23,
-      "sourced_enrollments": 23
+      "conversations_2min": 40,
+      "talk_hours": 11.6,
+      "meetings": 84,
+      "demos": 83,
+      "demos_performed": 82,
+      "demo_connects": 73,
+      "demos_under10": 10,
+      "meeting_recordings": 63,
+      "emails_out": 2314,
+      "emails_in": 488,
+      "enrolled_companies_touched": 24,
+      "sourced_enrollments": 24
     },
     "Gabrielle Nurod": {
       "team": "Inside Sales",
-      "leads_touched": 1550,
-      "dials": 164,
-      "out_dials": 161,
-      "in_dials": 3,
+      "leads_touched": 1557,
+      "dials": 173,
+      "out_dials": 168,
+      "in_dials": 5,
       "missed_inbound": 121,
-      "connects": 122,
-      "dm_connects": 121,
-      "call_connects": 49,
-      "dm_rate": 0.738,
-      "connect_rate": 0.744,
-      "call_connect_rate": 0.304,
+      "connects": 127,
+      "dm_connects": 126,
+      "call_connects": 50,
+      "dm_rate": 0.728,
+      "connect_rate": 0.734,
+      "call_connect_rate": 0.298,
       "hist": [
-        43,
+        48,
         26,
-        43,
+        44,
         12,
         17,
         16,
-        4
+        5
       ],
-      "conversations_2min": 69,
-      "talk_hours": 9.9,
-      "meetings": 289,
-      "demos": 284,
-      "demos_performed": 270,
-      "demo_connects": 204,
-      "demos_under10": 80,
+      "conversations_2min": 72,
+      "talk_hours": 10.4,
+      "meetings": 295,
+      "demos": 290,
+      "demos_performed": 276,
+      "demo_connects": 209,
+      "demos_under10": 81,
       "meeting_recordings": 411,
-      "emails_out": 3215,
-      "emails_in": 1851,
-      "enrolled_companies_touched": 108,
-      "sourced_enrollments": 100
+      "emails_out": 3237,
+      "emails_in": 1874,
+      "enrolled_companies_touched": 109,
+      "sourced_enrollments": 103
     },
     "Andrea Chacin": {
       "team": "Inside Sales",
-      "leads_touched": 1132,
-      "dials": 75,
-      "out_dials": 72,
+      "leads_touched": 1143,
+      "dials": 78,
+      "out_dials": 75,
       "in_dials": 3,
       "missed_inbound": 11,
-      "connects": 42,
-      "dm_connects": 41,
-      "call_connects": 24,
-      "dm_rate": 0.547,
-      "connect_rate": 0.56,
+      "connects": 45,
+      "dm_connects": 44,
+      "call_connects": 25,
+      "dm_rate": 0.564,
+      "connect_rate": 0.577,
       "call_connect_rate": 0.333,
       "hist": [
         13,
         24,
-        11,
+        13,
         10,
         3,
-        5,
+        6,
         6
       ],
-      "conversations_2min": 30,
-      "talk_hours": 5.6,
-      "meetings": 55,
-      "demos": 54,
-      "demos_performed": 53,
-      "demo_connects": 45,
-      "demos_under10": 9,
+      "conversations_2min": 32,
+      "talk_hours": 5.9,
+      "meetings": 61,
+      "demos": 60,
+      "demos_performed": 58,
+      "demo_connects": 49,
+      "demos_under10": 11,
       "meeting_recordings": 33,
-      "emails_out": 2067,
-      "emails_in": 499,
-      "enrolled_companies_touched": 14,
-      "sourced_enrollments": 13
+      "emails_out": 2093,
+      "emails_in": 535,
+      "enrolled_companies_touched": 18,
+      "sourced_enrollments": 17
     },
     "Taylor Sloan": {
       "team": "Inside Sales",
-      "leads_touched": 1167,
-      "dials": 94,
-      "out_dials": 93,
+      "leads_touched": 1173,
+      "dials": 98,
+      "out_dials": 97,
       "in_dials": 1,
       "missed_inbound": 15,
-      "connects": 61,
-      "dm_connects": 61,
+      "connects": 63,
+      "dm_connects": 63,
       "call_connects": 31,
-      "dm_rate": 0.649,
-      "connect_rate": 0.649,
-      "call_connect_rate": 0.333,
+      "dm_rate": 0.643,
+      "connect_rate": 0.643,
+      "call_connect_rate": 0.32,
       "hist": [
         17,
-        28,
-        17,
+        31,
+        18,
         7,
         2,
         10,
@@ -185,74 +185,75 @@
       ],
       "conversations_2min": 37,
       "talk_hours": 9.4,
-      "meetings": 81,
-      "demos": 81,
-      "demos_performed": 76,
-      "demo_connects": 57,
+      "meetings": 83,
+      "demos": 83,
+      "demos_performed": 78,
+      "demo_connects": 59,
       "demos_under10": 24,
       "meeting_recordings": 73,
-      "emails_out": 2314,
-      "emails_in": 656,
-      "enrolled_companies_touched": 26,
-      "sourced_enrollments": 25
+      "emails_out": 2332,
+      "emails_in": 680,
+      "enrolled_companies_touched": 29,
+      "sourced_enrollments": 28
     },
     "Brandon Slaughter": {
       "team": "SDR",
-      "leads_touched": 966,
-      "dials": 1609,
-      "out_dials": 1607,
+      "leads_touched": 964,
+      "dials": 1613,
+      "out_dials": 1611,
       "in_dials": 2,
-      "missed_inbound": 52,
-      "connects": 975,
-      "dm_connects": 720,
+      "missed_inbound": 50,
+      "connects": 968,
+      "dm_connects": 710,
       "call_connects": 203,
-      "dm_rate": 0.447,
-      "connect_rate": 0.606,
+      "dm_rate": 0.44,
+      "connect_rate": 0.6,
       "call_connect_rate": 0.126,
       "hist": [
-        474,
-        419,
-        511,
-        134,
-        67,
+        484,
+        421,
+        503,
+        139,
+        62,
         2,
         0
       ],
-      "conversations_2min": 348,
-      "talk_hours": 37.5,
+      "conversations_2min": 341,
+      "talk_hours": 37.0,
       "meetings": 10,
       "demos": 0,
       "demos_performed": 0,
       "demo_connects": 0,
       "demos_under10": 0,
-      "meeting_recordings": 52,
-      "emails_out": 129,
-      "emails_in": 638,
+      "meeting_recordings": 50,
+      "emails_out": 121,
+      "emails_in": 620,
       "enrolled_companies_touched": 7,
       "sourced_enrollments": 3
     }
   },
   "by_segment": {
-    "Other (Bcc_To_Crm)": 170,
+    "Web form (Zite)": 559,
     "Manually created": 115,
-    "Inbound chat/conversation": 96,
-    "Other (Extension)": 41,
-    "Web form (Zite)": 546,
+    "Other (Extension)": 40,
+    "Other (Bcc_To_Crm)": 168,
+    "Inbound chat/conversation": 99,
     "Other (microsoft teams)": 5,
-    "Other (revops intake)": 5,
+    "Referral (Referral Rock)": 51,
     "Scrape (Clay)": 4008,
-    "Referral (Referral Rock)": 49,
-    "Other (Meetings)": 50,
-    "List import": 483,
-    "Other (modern patient options dental ebook (v.03.14.23))": 12,
-    "Other (livestorm)": 126,
-    "Dialer-created (Aloware)": 133,
-    "Other (Email_Integration)": 36,
-    "Other (livestorm webinars)": 23,
-    "Other (Integration)": 22,
-    "Web form (other)": 66,
-    "Web form (Contact us)": 86,
+    "Dialer-created (Aloware)": 135,
+    "Other (revops intake)": 5,
+    "List import": 478,
+    "Other (livestorm)": 125,
     "Other (Form)": 21,
+    "Other (Meetings)": 51,
+    "Other (livestorm webinars)": 23,
+    "Web form (Contact us)": 85,
+    "Other (due diligence 2026)": 10,
+    "Web form (other)": 64,
+    "Other (Email_Integration)": 33,
+    "Other (modern patient options dental ebook (v.03.14.23))": 12,
+    "Other (Integration)": 22,
     "Other (account manager contact request)": 15,
     "Unknown": 5,
     "Other (incentive 2)": 32,
@@ -260,28 +261,26 @@
     "Other (hfd enrollment)": 1,
     "Other (summer promo)": 4,
     "Other (Internal_Processing)": 3,
-    "Other (due diligence 2026)": 9,
     "Other (refer your doctor)": 5,
     "Other (brian quasebarth align event [august 20, 2026])": 1,
     "Other (brian quesebarth study club [august 19th, 2025])": 1,
     "Other (sdr-2026)": 1,
     "Other (Mobile_Ios)": 1,
-    "Other (Forward_To_Crm)": 1,
-    "Other (book a demo v2)": 1
+    "Other (Forward_To_Crm)": 1
   },
   "totals_company_grain": {
-    "distinct_enrolled_companies_touched": 201,
-    "distinct_sourced_enrollments": 186,
-    "distinct_enrolled_companies_touched_direct": 182,
-    "distinct_sourced_enrollments_direct": 167
+    "distinct_enrolled_companies_touched": 208,
+    "distinct_sourced_enrollments": 195,
+    "distinct_enrolled_companies_touched_direct": 188,
+    "distinct_sourced_enrollments_direct": 174
   },
   "parent_rollup": {
     "rule": "a sourced CHILD credits its PARENT company too, but only if the parent also enrolled inside the window",
     "mechanism": "child COMPANY.parent_provider == parent COMPANY.provider_unique_key",
-    "sourced_direct": 167,
-    "sourced_rolled_up": 186,
-    "touched_direct": 182,
-    "touched_rolled_up": 201,
+    "sourced_direct": 174,
+    "sourced_rolled_up": 195,
+    "touched_direct": 188,
+    "touched_rolled_up": 208,
     "parents_added": [
       {
         "company_id": "56473957157",
@@ -464,6 +463,18 @@
         ]
       },
       {
+        "company_id": "58304307036",
+        "name": "Perfect Smile and Implant Center - Parent - 39988",
+        "provider_id": "39988",
+        "enrollment_date": "2026-09-09",
+        "via": [
+          {
+            "company_id": "58322961966",
+            "name": "Perfect Smile at Doral - 39990"
+          }
+        ]
+      },
+      {
         "company_id": "58304749837",
         "name": "Rigby Dental Partners, PLLC - Corporate - 39994",
         "provider_id": "39994",
@@ -510,6 +521,18 @@
             "name": "Liberty Dental Arts - 39650"
           }
         ]
+      },
+      {
+        "company_id": "58526298894",
+        "name": "Inspire Dental - Parent - 40355",
+        "provider_id": "40355",
+        "enrollment_date": "2026-09-21",
+        "via": [
+          {
+            "company_id": "58519575713",
+            "name": "Inspire Dental - 39651"
+          }
+        ]
       }
     ],
     "parents_skipped_no_in_window_enrollment": [
@@ -536,10 +559,10 @@
     "not_parent_provider": "the parent link is deliberately NOT used. Amulet Management LLC parents 48 records including Williams Orthodontics (Gilbert AZ) and Jensen Orthodontics (Las Cruces NM): one owner, not one practice. Joining on it would collapse a DSO footprint to a single practice and make the locations/practices gap meaningless.",
     "runaway_backstop": "a name that would still join more than 25 records is rejected outright; every rejection is listed below",
     "over_all_company_records": {
-      "company_records": 5244,
-      "practices": 4749,
-      "multi_record_practices": 406,
-      "name_joins_used": 499,
+      "company_records": 5245,
+      "practices": 4747,
+      "multi_record_practices": 408,
+      "name_joins_used": 502,
       "rejected_names": [
         {
           "normalised_name": "access dental smile",
@@ -691,16 +714,6 @@
           ]
         },
         {
-          "normalised_name": "athens oconee dentistry at exchange",
-          "company_records": 2,
-          "distinct_provider_ids": 1,
-          "reason": "not corroborated - the shared name does not appear in the Company name of two or more of these records, so it is a copied or defaulted value, not evidence of one business",
-          "company_names": [
-            "Athens Oconee Dentistry",
-            "Athens Oconee Dentistry  - 28207"
-          ]
-        },
-        {
           "normalised_name": "atlantic dental care",
           "company_records": 4,
           "distinct_provider_ids": 4,
@@ -767,6 +780,16 @@
             "Bayou Braces - New Iberia - 20217",
             "Bayou Braces - Orthodontist Laplace - 31089",
             "Bayou Orthodontics - Lafayette - 20390"
+          ]
+        },
+        {
+          "normalised_name": "bella dental",
+          "company_records": 2,
+          "distinct_provider_ids": 2,
+          "reason": "not corroborated - the shared name does not appear in the Company name of two or more of these records, so it is a copied or defaulted value, not evidence of one business",
+          "company_names": [
+            "Atascocita Dentistry - 29992",
+            "Omega Dental - 35419"
           ]
         },
         {
@@ -1008,7 +1031,7 @@
           ]
         },
         {
-          "normalised_name": "clearchoice birmingham",
+          "normalised_name": "clearchoice chapel hill durham",
           "company_records": 6,
           "distinct_provider_ids": 6,
           "reason": "not corroborated - the shared name does not appear in the Company name of two or more of these records, so it is a copied or defaulted value, not evidence of one business",
@@ -1032,6 +1055,16 @@
             "Diamond Braces - Jamaica - 35602",
             "Diamond Braces - SPFD BLVD Garden City",
             "Diamond Braces - Springfield - 35603"
+          ]
+        },
+        {
+          "normalised_name": "collingdale dental arts",
+          "company_records": 2,
+          "distinct_provider_ids": 2,
+          "reason": "not corroborated - the shared name does not appear in the Company name of two or more of these records, so it is a copied or defaulted value, not evidence of one business",
+          "company_names": [
+            "Ritt Dental - 34698",
+            "Ritt Dental - 34711"
           ]
         },
         {
@@ -1460,17 +1493,6 @@
           ]
         },
         {
-          "normalised_name": "family dental practice lancaster",
-          "company_records": 3,
-          "distinct_provider_ids": 3,
-          "reason": "not corroborated - the shared name does not appear in the Company name of two or more of these records, so it is a copied or defaulted value, not evidence of one business",
-          "company_names": [
-            "Dental Associates of Torrance - 29190",
-            "Magicland Children's Dentistry & Orthodontics Dental -  Driftwood - 28481",
-            "West Coast Dental Services, INC - 14232"
-          ]
-        },
-        {
           "normalised_name": "fort greene orthodontics",
           "company_records": 2,
           "distinct_provider_ids": 2,
@@ -1562,6 +1584,22 @@
           "company_names": [
             "Gentle Dentisrty - 30002",
             "Gentle Dentistry"
+          ]
+        },
+        {
+          "normalised_name": "gloss dental city park",
+          "company_records": 72,
+          "distinct_provider_ids": 72,
+          "reason": "not corroborated - the shared name does not appear in the Company name of two or more of these records, so it is a copied or defaulted value, not evidence of one business",
+          "company_names": [
+            "Alvin Smiles - 31586",
+            "Apex Dental - 19206",
+            "Avenue Dental - 19196",
+            "Bellmead Kids Dentistry - 31606",
+            "Brite Smile Dental - 31587",
+            "Canyon Lake Smiles - 31588",
+            "Castroville Dental - 31589",
+            "Community Dental Partners - Parent - 19130"
           ]
         },
         {
@@ -1702,7 +1740,7 @@
           ]
         },
         {
-          "normalised_name": "ideal dental winston salem",
+          "normalised_name": "ideal dental sugar land",
           "company_records": 10,
           "distinct_provider_ids": 10,
           "reason": "not corroborated - the shared name does not appear in the Company name of two or more of these records, so it is a copied or defaulted value, not evidence of one business",
@@ -1818,6 +1856,16 @@
           "company_names": [
             "Daleville Dentist - 34577",
             "Pearisburg Dental Center - 34576"
+          ]
+        },
+        {
+          "normalised_name": "jd garland dental",
+          "company_records": 2,
+          "distinct_provider_ids": 2,
+          "reason": "not corroborated - the shared name does not appear in the Company name of two or more of these records, so it is a copied or defaulted value, not evidence of one business",
+          "company_names": [
+            "Inspire Dental - 39651",
+            "Inspire Dental - Parent - 40355"
           ]
         },
         {
@@ -1967,16 +2015,6 @@
           ]
         },
         {
-          "normalised_name": "killeen pediatric dentistry",
-          "company_records": 2,
-          "distinct_provider_ids": 2,
-          "reason": "not corroborated - the shared name does not appear in the Company name of two or more of these records, so it is a copied or defaulted value, not evidence of one business",
-          "company_names": [
-            "Killeen Children's Dental & Orthodontics - 31608",
-            "Killeen Children's Dental Center - 21040"
-          ]
-        },
-        {
           "normalised_name": "lakewood family dental fort wayne",
           "company_records": 2,
           "distinct_provider_ids": 2,
@@ -1987,18 +2025,6 @@
           ]
         },
         {
-          "normalised_name": "ledge stone dental care",
-          "company_records": 4,
-          "distinct_provider_ids": 4,
-          "reason": "not corroborated - the shared name does not appear in the Company name of two or more of these records, so it is a copied or defaulted value, not evidence of one business",
-          "company_names": [
-            "Christie Dental of Indian Harbour Beach - 30764",
-            "Dexter Dental Studio - 37669",
-            "Smile Design New Port Richey - 36420",
-            "Smile Design Westchase - 36391"
-          ]
-        },
-        {
           "normalised_name": "m virk h skountrianos",
           "company_records": 2,
           "distinct_provider_ids": 2,
@@ -2006,6 +2032,17 @@
           "company_names": [
             "Smiles Orthodontics Graham - 18870",
             "Smiles Orthodontics Puyallup - 18869"
+          ]
+        },
+        {
+          "normalised_name": "magicland dental moreno valley",
+          "company_records": 3,
+          "distinct_provider_ids": 3,
+          "reason": "not corroborated - the shared name does not appear in the Company name of two or more of these records, so it is a copied or defaulted value, not evidence of one business",
+          "company_names": [
+            "Dental Associates of Torrance - 29190",
+            "Magicland Children's Dentistry & Orthodontics Dental -  Driftwood - 28481",
+            "West Coast Dental Services, INC - 14232"
           ]
         },
         {
@@ -2197,16 +2234,6 @@
           ]
         },
         {
-          "normalised_name": "orthodontic associates owings mills",
-          "company_records": 2,
-          "distinct_provider_ids": 2,
-          "reason": "not corroborated - the shared name does not appear in the Company name of two or more of these records, so it is a copied or defaulted value, not evidence of one business",
-          "company_names": [
-            "Barakat Orthodontics Sterling - Nokes - 29782",
-            "Smile Doctors Orthodontics - Parent - 24303"
-          ]
-        },
-        {
           "normalised_name": "pallavi batra",
           "company_records": 2,
           "distinct_provider_ids": 2,
@@ -2276,6 +2303,18 @@
             "Ponce Dental Studio - Atlanta - 19011",
             "Ponce Dental Studio - Buckhead  - 31799",
             "Ponce Dental Studio - Parent - 31325"
+          ]
+        },
+        {
+          "normalised_name": "prestige dental care",
+          "company_records": 4,
+          "distinct_provider_ids": 4,
+          "reason": "not corroborated - the shared name does not appear in the Company name of two or more of these records, so it is a copied or defaulted value, not evidence of one business",
+          "company_names": [
+            "Christie Dental of Indian Harbour Beach - 30764",
+            "Dexter Dental Studio - 37669",
+            "Smile Design New Port Richey - 36420",
+            "Smile Design Westchase - 36391"
           ]
         },
         {
@@ -2357,17 +2396,19 @@
         },
         {
           "normalised_name": "s ebrahimian",
-          "company_records": 3,
-          "distinct_provider_ids": 3,
+          "company_records": 5,
+          "distinct_provider_ids": 5,
           "reason": "not corroborated - the shared name does not appear in the Company name of two or more of these records, so it is a copied or defaulted value, not evidence of one business",
           "company_names": [
+            "Implants 4 Life - 40427",
+            "Implants 4 Life - 40428",
             "Implants 4 Life - Santa Clarita - 38975",
             "Implants 4 Life Sherman Oaks - 38913",
             "Implants 4 life Chino - 38974"
           ]
         },
         {
-          "normalised_name": "sage dental chattanooga at hamilton place",
+          "normalised_name": "sage dental lebanon",
           "company_records": 4,
           "distinct_provider_ids": 4,
           "reason": "not corroborated - the shared name does not appear in the Company name of two or more of these records, so it is a copied or defaulted value, not evidence of one business",
@@ -2387,22 +2428,6 @@
             "NEWPORT DENTAL GROUP - 25234",
             "Newport Dental Group - 38781",
             "Newport Dental Group Inc - 15718"
-          ]
-        },
-        {
-          "normalised_name": "same day dental south",
-          "company_records": 72,
-          "distinct_provider_ids": 72,
-          "reason": "not corroborated - the shared name does not appear in the Company name of two or more of these records, so it is a copied or defaulted value, not evidence of one business",
-          "company_names": [
-            "Alvin Smiles - 31586",
-            "Apex Dental - 19206",
-            "Avenue Dental - 19196",
-            "Bellmead Kids Dentistry - 31606",
-            "Brite Smile Dental - 31587",
-            "Canyon Lake Smiles - 31588",
-            "Castroville Dental - 31589",
-            "Community Dental Partners - Parent - 19130"
           ]
         },
         {
@@ -2519,19 +2544,6 @@
           "company_names": [
             "Smile Magic of El Paso - 19229",
             "Smile Magic of Zaragoza - 19221"
-          ]
-        },
-        {
-          "normalised_name": "smile magic el paso montana",
-          "company_records": 5,
-          "distinct_provider_ids": 5,
-          "reason": "not corroborated - the shared name does not appear in the Company name of two or more of these records, so it is a copied or defaulted value, not evidence of one business",
-          "company_names": [
-            "Hill Country PDO - 21025",
-            "Killeen Children's Dental Center - 21040",
-            "Smile Magic of El Paso Montana - 21024",
-            "Smile Professionals of El Paso  - 21026",
-            "Westlake Orthodontics  - 27258"
           ]
         },
         {
@@ -2699,24 +2711,33 @@
           ]
         },
         {
-          "normalised_name": "trusmile now chandler 30396",
-          "company_records": 3,
-          "distinct_provider_ids": 3,
+          "normalised_name": "tripp leitner orthodontics rock hill",
+          "company_records": 2,
+          "distinct_provider_ids": 2,
           "reason": "not corroborated - the shared name does not appear in the Company name of two or more of these records, so it is a copied or defaulted value, not evidence of one business",
           "company_names": [
-            "TruSmile Now - Parent - 30395",
-            "TruSmile Now Ahwatukee - 30393",
-            "TruSmile Now Chandler - 30396"
+            "Barakat Orthodontics Sterling - Nokes - 29782",
+            "Smile Doctors Orthodontics - Parent - 24303"
           ]
         },
         {
-          "normalised_name": "ts dental management",
+          "normalised_name": "trusmile now chandler 30396",
           "company_records": 2,
           "distinct_provider_ids": 2,
           "reason": "not corroborated - the shared name does not appear in the Company name of two or more of these records, so it is a copied or defaulted value, not evidence of one business",
           "company_names": [
             "TruSmile Now - Parent - 30395",
-            "TruSmile Now Ahwatukee - 30393"
+            "TruSmile Now Chandler - 30396"
+          ]
+        },
+        {
+          "normalised_name": "uno dental san francisco",
+          "company_records": 2,
+          "distinct_provider_ids": 1,
+          "reason": "not corroborated - the shared name does not appear in the Company name of two or more of these records, so it is a copied or defaulted value, not evidence of one business",
+          "company_names": [
+            "UNO DENTAL SAN FRANCISCO - 19738",
+            "UNO DENTAL SF"
           ]
         },
         {
@@ -2787,16 +2808,6 @@
           "company_names": [
             "Smile Design New Port Richey - 36420",
             "Smile Design Westchase - 36391"
-          ]
-        },
-        {
-          "normalised_name": "westlake orthodontic arts",
-          "company_records": 2,
-          "distinct_provider_ids": 2,
-          "reason": "not corroborated - the shared name does not appear in the Company name of two or more of these records, so it is a copied or defaulted value, not evidence of one business",
-          "company_names": [
-            "Westlake Orthodontics  - 27258",
-            "Westlake Pediatric Dentistry & Orthodontics - 31614"
           ]
         },
         {
@@ -2909,16 +2920,6 @@
           "company_names": [
             "Crompton Park Oral Surgery and Implant Associates - 27895",
             "Crompton Park Oral Surgery and Implant Associates - 35860"
-          ]
-        },
-        {
-          "normalised_name": "yr dental",
-          "company_records": 2,
-          "distinct_provider_ids": 2,
-          "reason": "not corroborated - the shared name does not appear in the Company name of two or more of these records, so it is a copied or defaulted value, not evidence of one business",
-          "company_names": [
-            "Hill Country PDO - 21025",
-            "Hill Country Pediatric Dentistry & Orthodontics - 31607"
           ]
         },
         {
@@ -5369,20 +5370,6 @@
           "names": [
             "Marlborough Endodontics - 27887",
             "Marlborough Endodontics - 35852"
-          ]
-        },
-        {
-          "practice_key": "28261495186",
-          "company_records": [
-            "28261495186",
-            "55859585186"
-          ],
-          "provider_ids": [
-            "28207"
-          ],
-          "names": [
-            "Athens Oconee Dentistry",
-            "Athens Oconee Dentistry  - 28207"
           ]
         },
         {
@@ -7976,6 +7963,20 @@
           ]
         },
         {
+          "practice_key": "40802039301",
+          "company_records": [
+            "40802039301",
+            "57714547471"
+          ],
+          "provider_ids": [
+            "35419"
+          ],
+          "names": [
+            "Omega Dental",
+            "Omega Dental - 35419"
+          ]
+        },
+        {
           "practice_key": "40965480462",
           "company_records": [
             "40965480462",
@@ -8390,21 +8391,6 @@
             "Metro Dental Health - Parent - 38933",
             "Metro Dental Health DC - 38935",
             "Metro Dental Health VA - 38934"
-          ]
-        },
-        {
-          "practice_key": "56503980368",
-          "company_records": [
-            "56503980368",
-            "57674938529"
-          ],
-          "provider_ids": [
-            "38964",
-            "39699"
-          ],
-          "names": [
-            "Southland Dental Care - 38964",
-            "Southland Dental Care - 39699"
           ]
         },
         {
@@ -9010,6 +8996,24 @@
           ]
         },
         {
+          "practice_key": "57880018549",
+          "company_records": [
+            "57880018549",
+            "58543770748",
+            "58552679717"
+          ],
+          "provider_ids": [
+            "38974",
+            "40427",
+            "40428"
+          ],
+          "names": [
+            "Implants 4 Life - 40427",
+            "Implants 4 Life - 40428",
+            "Implants 4 life Chino - 38974"
+          ]
+        },
+        {
           "practice_key": "57908504367",
           "company_records": [
             "57908504367",
@@ -9035,6 +9039,20 @@
           "names": [
             "IDEAL DENTAL CARE",
             "Ideal Dental Care - 39612"
+          ]
+        },
+        {
+          "practice_key": "58322666019",
+          "company_records": [
+            "58322666019",
+            "58522180511"
+          ],
+          "provider_ids": [
+            "40338"
+          ],
+          "names": [
+            "Metroplex Oral & Facial Surgery - 40338",
+            "Metroplex Oral and Facial Surgery"
           ]
         },
         {
@@ -9068,6 +9086,20 @@
           ]
         },
         {
+          "practice_key": "58497278825",
+          "company_records": [
+            "58497278825",
+            "58543167102"
+          ],
+          "provider_ids": [
+            "39658"
+          ],
+          "names": [
+            "Dentist on Colonial Drive",
+            "Dentist on Colonial Drive - 39658"
+          ]
+        },
+        {
           "practice_key": "58497776186",
           "company_records": [
             "58497776186",
@@ -9089,46 +9121,46 @@
     "locations_rule": "every credited COMPANY record: each sourced practice record plus each parent group record credited by the parent rollup",
     "practices_rule": "the distinct BUSINESSES behind those records, joined on Provider ID or on a corroborated Legal Business Name, Practice Name, Doing Business As or Company name",
     "sourced": {
-      "locations": 186,
-      "practices": 179,
-      "practices_if_deduped_on_provider_id_only": 186,
-      "direct_company_records": 167,
-      "parent_records_credited": 19,
+      "locations": 195,
+      "practices": 188,
+      "practices_if_deduped_on_provider_id_only": 195,
+      "direct_company_records": 174,
+      "parent_records_credited": 21,
       "practice_records_without_provider_id": 0
     },
     "touched": {
-      "locations": 201,
-      "practices": 193,
-      "practices_if_deduped_on_provider_id_only": 201,
-      "direct_company_records": 182,
-      "parent_records_credited": 19,
+      "locations": 208,
+      "practices": 200,
+      "practices_if_deduped_on_provider_id_only": 208,
+      "direct_company_records": 188,
+      "parent_records_credited": 20,
       "practice_records_without_provider_id": 0
     }
   },
   "demo_split": {
     "rule": "Demos is UNCHANGED (every demo-titled meeting). The 10-minute bar splits it: at or above 10 minutes is a demo connect, under 10 minutes IS a no-show.",
     "ruling": "Ed Smith, 2026-09-20: 'I think we should mark them as no shows for the ones under [10 minutes].'",
-    "demos": 587,
-    "demo_connects_10min": 443,
-    "no_shows_under_10min": 144,
-    "demos_performed_5min_old_gate": 564,
-    "old_no_show_metric_demo_booking_status_contacts": 151,
+    "demos": 597,
+    "demo_connects_10min": 452,
+    "no_shows_under_10min": 145,
+    "demos_performed_5min_old_gate": 573,
+    "old_no_show_metric_demo_booking_status_contacts": 150,
     "no_shows_by_demo_booking_status": {
       "Booked": 47,
       "Cancelled": 1,
-      "No Show": 50,
+      "No Show": 47,
       "Not Booked": 1,
       "Not set (blank)": 1,
-      "Occurred": 30,
+      "Occurred": 34,
       "Unclassified": 14
     },
     "demo_connects_by_demo_booking_status": {
-      "Booked": 158,
+      "Booked": 154,
       "Cancelled": 1,
-      "No Show": 104,
+      "No Show": 106,
       "Not Booked": 3,
-      "Not set (blank)": 2,
-      "Occurred": 154,
+      "Not set (blank)": 3,
+      "Occurred": 164,
       "Unclassified": 21
     },
     "interim_proxy": "Duration is an INTERIM PROXY for attendance, not ground truth. Laura is building real attendance data from the meeting records; it is not backfilled yet. When it lands it should replace this rule.",
