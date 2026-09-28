@@ -208,12 +208,55 @@ src = open(SRC, encoding="utf-8").read()
 # date-bounded, so they do not ride the rolling 90-day window and re-running
 # extract.py neither refreshes nor invalidates them.
 deals = open(os.path.join(HERE, "data", "deals.json"), encoding="utf-8").read()
+CAL = os.path.join(HERE, "data", "demo_calendar.json")
+if os.path.exists(CAL):
+    caldoc = json.load(open(CAL, encoding="utf-8"))
+else:
+    caldoc = {"asOf": None, "asOfDate": None, "meetings": [], "counts": {}}
+    print("!! data/demo_calendar.json missing - the demo cards will render empty")
+_fut = [m for m in caldoc["meetings"] if m.get("future")]
+_d7 = None
+if caldoc.get("asOfDate"):
+    import datetime as _dt
+    _d7 = (_dt.date.fromisoformat(caldoc["asOfDate"]) + _dt.timedelta(days=6)).isoformat()
+_n7 = sum(1 for m in _fut if _d7 and m["d"] <= _d7)
+_upcoming_row = {
+    "id": "demo_upcoming", "label": "Upcoming demos (scheduled ahead)", "value": len(_fut),
+    "system": "HubSpot CRM search API", "object": "MEETING_EVENT",
+    "predicate": "'demo' appears in the Meeting name (case-insensitive) AND Meeting start time is at "
+                 "or after the calendar pull time AND Meeting outcome is not Canceled AND Meeting owner "
+                 "is one of the six Inside Sales / SDR reps",
+    "dateProperty": "Meeting start time (hs_meeting_start_time)", "grain": "one row per meeting",
+    "verify": "Pulled by pull_demo_calendar.py at %s, separately from the 90-day extract, which ends "
+              "at midnight today and so cannot see anything scheduled ahead. The page splits this count "
+              "at seven days: %d dated today through %s, %d later. Meeting outcome is NOT an attendance "
+              "signal on booked meetings - HubSpot stamps most of them Completed at booking time (%d of "
+              "the %d upcoming meetings on this pull already read Completed) - so only Canceled is used, "
+              "to drop cancellations. The Demos held card beside it is the SAME pull, past side: "
+              "demo-titled meetings dated inside the period whose recording ran ten minutes or longer, "
+              "at meeting grain, which is why it can read lower than the contact-grain demo counts on "
+              "the funnel and the Inbound card. Reproduce it in HubSpot: Meetings index, Meeting name "
+              "contains demo, Meeting start time is after today, Meeting outcome is not Canceled, "
+              "Meeting owner in the team."
+              % (caldoc.get("asOf") or "(no pull)", _n7, _d7 or "?", len(_fut) - _n7,
+                 sum(1 for m in _fut if m.get("outcome") == "COMPLETED"), len(_fut)),
+}
+_ms = srcdoc.setdefault("metrics", [])
+_ms[:] = [m for m in _ms if m.get("id") != "demo_upcoming"]
+_ix = next((i for i, m in enumerate(_ms) if m.get("id") == "noshow"), len(_ms) - 1)
+_ms.insert(_ix + 1, _upcoming_row)
+json.dump(srcdoc, open(SRC, "w", encoding="utf-8"), indent=2)
+src = open(SRC, encoding="utf-8").read()
+cal = json.dumps(caldoc, separators=(",", ":"))
+assert "/*__DEMOS__*/" in html, "demo calendar marker missing from template"
 assert "/*__DEALS__*/" in html, "deals marker missing from template"
 assert "/*__DATA__*/" in html, "data marker missing from template"
 built = os.path.join(HERE, "dashboard_built.html")
 open(built, "w", encoding="utf-8").write(
-    html.replace("/*__DATA__*/", data).replace("/*__VOM__*/", vom).replace("/*__REV__*/", rev).replace("/*__SRC__*/", src).replace("/*__DEALS__*/", deals))
+    html.replace("/*__DATA__*/", data).replace("/*__VOM__*/", vom).replace("/*__REV__*/", rev).replace("/*__SRC__*/", src).replace("/*__DEALS__*/", deals).replace("/*__DEMOS__*/", cal))
 
+print("demo calendar: %d past, %d upcoming (%d in the next 7 days), pulled %s"
+      % (len(caldoc["meetings"]) - len(_fut), len(_fut), _n7, caldoc.get("asOf")))
 print(f"rows {len(slim)} | payload {os.path.getsize(out)/1048576:.2f} MB "
       f"| built {os.path.getsize(built)/1048576:.2f} MB")
 print(f"sourced (real-outreach guard): contacts {_was_contacts} -> {_now_contacts}, "

@@ -19,12 +19,16 @@ Exits `0` on success, `1` on any failed gate. On failure **nothing is published*
 | Step | Script | Gates |
 |---|---|---|
 | extract | `extract.py` | contacts > 0; contact count within ±60% of the previous run; internal bucket-identity self-check |
+| calendar | `pull_demo_calendar.py` | writes `data/demo_calendar.json`: every demo-titled meeting the team owns from the window start with no upper bound (Meeting start time, not Activity date), Canceled dropped; feeds the three Demo cards |
 | cohort | `build.py` | `data/sourced_pids.txt` non-empty; cohort within ±60% of previous |
 | revenue | `tableau_revenue.py` | all five period buckets present and non-null; caveats intact |
 | transcripts | `mine_transcripts.py` | stages new calls only (see below) |
 | build | `build.py` | file exists; 0 non-ASCII; under 15 MB; all five markers consumed; cohort unchanged |
 
 Flags: `--skip-extract`, `--skip-revenue`, `--skip-transcripts`, `--full-transcripts`.
+
+The calendar step is the only source of demos scheduled ahead: `extract.py` ends at midnight
+today by design. It is regenerated every run and is not a state file.
 
 The cohort step runs **before** revenue on purpose. Revenue filters on
 `data/sourced_pids.txt`, and running it first meant revenue was cut from the

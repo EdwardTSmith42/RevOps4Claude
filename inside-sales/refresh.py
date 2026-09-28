@@ -211,6 +211,13 @@ def main():
             log["steps"].append(s.ok(**gate_extract(s, prev)))
             log["window"] = log["steps"][-1]["counts"].get("window")
 
+        s = Step("calendar")
+        out = sh(["pull_demo_calendar.py"], s)
+        try:
+            log["steps"].append(s.ok(**json.loads(out.strip().splitlines()[-1])))
+        except (ValueError, IndexError):
+            log["steps"].append(s.ok())
+
         s = Step("cohort")
         sh(["build.py"], s)
         pids = read_pids()

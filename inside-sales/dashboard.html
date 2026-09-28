@@ -292,30 +292,13 @@ footer{margin-top:40px; padding-top:18px; border-top:1px solid var(--line); font
   </div>
 
   <section>
-    <div class="shead"><h2>Read this first</h2>
-      <span class="note">Three things in the data that change how these numbers should be read.
-      <b>These three describe the whole extract window</b>, not the period you select below &mdash; they are
-      properties of the pipeline, not of a week.</span></div>
-    <div class="finds">
-      <div class="find">
-        <div class="tag">Definition</div>
-        <h3>Connects now run on duration, at two different bars</h3>
-        <span class="big">3 min / 10 min</span>
-        <p>A call connect is a dial of <b>3 minutes or more</b>; a demo connect is a recording of
-          <b>10 minutes or more</b>, and a demo under that is counted a no-show.
-          <b>Approved by Mel Matthews and Ed Smith.</b> The old single 5-minute gate failed
-          because it was applied to both populations at once &mdash; on this window it clears just 8% of
-          real outbound dials but 96% of meeting recordings. Two bars on two populations fixes that.
-          <b>HubSpot's own automation still runs on disposition</b>, so both numbers are
-          reported side by side and neither is a correction of the other.</p>
-      </div>
-      <div class="find">
-         <div class="tag">Coverage</div>
-        <h3>The scraped list is sitting untouched</h3>
-        <span class="big">7,738 &rarr; 0.3%</span>
-        <p>Laura's <span class="mono">CLI_LR</span> scrape load is the portal's largest contact source and is assigned to reps. In a 300-contact sample, 1 had a call and 0 had a task.</p>
-      </div>
-    </div>
+    <div class="shead"><h2>Demos</h2>
+      <span class="note">All three cards count <b>meetings</b>, one row per meeting in HubSpot, so a demo with
+      three contacts on the invite counts once here and three times in the contact-grain figures further
+      down. <b>Demos held</b> follows the period tab and the Seat and Rep filters. The two <b>upcoming</b>
+      cards are scheduled from the moment the calendar was pulled, so they ignore the period tab and follow
+      Seat and Rep only. Segment, outcome and search filters apply to none of the three.</span></div>
+    <div class="finds" id="demoboxes">&mdash;</div>
   </section>
 
   <section>
@@ -675,6 +658,7 @@ footer{margin-top:40px; padding-top:18px; border-top:1px solid var(--line); font
 <script id="rev" type="application/json">/*__REV__*/</script>
 <script id="src" type="application/json">/*__SRC__*/</script>
 <script id="dealdata" type="application/json">/*__DEALS__*/</script>
+<script id="democal" type="application/json">/*__DEMOS__*/</script>
 <script>
 (function(){
 "use strict";
@@ -683,6 +667,7 @@ var V  = JSON.parse(document.getElementById('vom').textContent);
 var R  = JSON.parse(document.getElementById('rev').textContent);
 var S_ = JSON.parse(document.getElementById('src').textContent);
 var D  = JSON.parse(document.getElementById('dealdata').textContent);
+var DM = JSON.parse(document.getElementById('democal').textContent);
 
 var C = ['var(--c1)','var(--c2)','var(--c3)','var(--c4)','var(--c5)'];
 var SEAT = {'Brandon Slaughter':'SDR','Gabrielle Nurod':'Inside Sales','Mel Matthews':'Inside Sales','Steven Kelly':'Inside Sales','Andrea Chacin':'Inside Sales','Taylor Sloan':'Inside Sales'};
@@ -1865,6 +1850,80 @@ document.getElementById('period').innerHTML = PORDER.map(function(k){
     esc(p.label) + '<small>' + esc(p.range) + '</small></button>';
 }).join('');
 
+function demoInView(m){
+  if (S.team && m.seat !== S.team) return false;
+  if (S.rep  && m.rep  !== S.rep)  return false;
+  return true;
+}
+function drawDemoBoxes(p){
+  var M = (DM.meetings || []).filter(demoInView);
+  var CAL0 = DM.asOfDate || ANCHOR;
+  var d7 = isoAdd(CAL0, 6), d8 = isoAdd(CAL0, 7);
+  var held = 0, past = 0, next7 = 0, later = 0, beyond = 0, todayDone = 0, byDay = {}, last = null;
+  M.forEach(function(m){
+    if (m.future){
+      if (m.d <= d7){
+        next7++; byDay[m.d] = (byDay[m.d] || 0) + 1;
+        if (m.d === CAL0) later++;
+      } else {
+        beyond++; if (last === null || m.d > last) last = m.d;
+      }
+    } else {
+      if (m.d === CAL0) todayDone++;
+      if (p.covered && m.d >= p.aLo && m.d <= p.aHi){
+        past++; if ((m.rec || 0) >= 600000) held++;
+      }
+    }
+  });
+  var ns = past - held;
+  var who = (S.rep ? esc(S.rep) : S.team ? esc(S.team) + ' seat' : 'the team');
+  function card(tag, h3, big, body){
+    return '<div class="find"><div class="tag">' + tag + '</div><h3>' + h3 + '</h3>' +
+      '<span class="big">' + big + '</span><p>' + body + '</p></div>';
+  }
+  var dayline = Object.keys(byDay).sort().map(function(d){
+    return dlab(d) + ' <b>' + fmt(byDay[d]) + '</b>';
+  }).join(' ' + MID + ' ');
+  var pulled = DM.asOf ? DM.asOf.replace('T', ' ').replace('Z', ' UTC') : DASH;
+  document.getElementById('demoboxes').innerHTML =
+    card('Demos held ' + MID + ' ' + esc(p.label.toLowerCase()),
+      'Demos held, no-shows and the no-show rate',
+      fmt(held) + ' <span style="font-size:15px;color:var(--ink-3)">held</span> ' + MID + ' ' +
+        fmt(ns) + ' <span style="font-size:15px;color:var(--ink-3)">no-show</span> ' + MID + ' ' +
+        pct(ns, past) + '%',
+      (past
+        ? '<b>' + fmt(past) + ' demo meetings</b> for ' + who + ' dated ' +
+          esc(rangeLab(p.aLo, p.aHi)) + '. <b>' + fmt(held) + '</b> ran ten minutes or longer and count ' +
+          'as held; <b>' + fmt(ns) + '</b> ran under ten minutes and count as no-shows, a <b>' +
+          pct(ns, past) + '% no-show rate</b>. '
+        : !p.covered
+          ? '<b>No complete day in this period yet.</b> The extract ends at midnight today, so ' +
+            esc(p.label) + ' has nothing to count until the next refresh; the Last week tab is the ' +
+            'one to read today. '
+          : 'No demo meetings for ' + who + ' dated ' + esc(rangeLab(p.aLo, p.aHi)) + '. ') +
+      'Same ten-minute recording bar as the rep scorecard. Recording length stands in for attendance ' +
+      'until real attendance data lands, so read the rate as an estimate, not a verdict on a rep.' +
+      (p.partial && p.covered ? ' Today contributes nothing here: the extract ends at midnight today.' : '')) +
+    card('Upcoming ' + MID + ' next 7 days', 'Demos scheduled ' + esc(dlab(CAL0)) + ' ' + NDASH + ' ' +
+        esc(dlab(d7)),
+      fmt(next7),
+      (next7 ? 'By day: ' + dayline + '. ' : 'Nothing on the calendar for ' + who + ' in the next seven days. ') +
+      (later ? '<b>' + fmt(later) + '</b> of these are later today. ' : '') +
+      (todayDone ? '<b>' + fmt(todayDone) + '</b> more already took place earlier today and will land in ' +
+        'Demos held after tomorrow\'s refresh. ' : '') +
+      'Counts every demo-titled meeting owned by ' + who + ' with a start time after the calendar pull (' +
+      esc(pulled) + '), minus any marked Canceled.' +
+      (CAL0 !== ANCHOR ? ' <b>The calendar was pulled on ' + esc(dlab(CAL0)) + ' and the activity extract ' +
+        'on ' + esc(dlab(ANCHOR)) + ';</b> these two cards follow the calendar date.' : '')) +
+    card('Upcoming ' + MID + ' beyond 7 days', 'Demos scheduled ' + esc(dlab(d8)) + ' or later',
+      fmt(beyond),
+      (beyond
+        ? 'The farthest one out is <b>' + esc(dlab(last)) + '</b>. '
+        : 'Nothing booked for ' + who + ' more than a week out. ') +
+      'Demos here are booked short: most land within days of being set, so a low number is normal and a ' +
+      'rising one means the calendar is filling ahead. Same pull and same rules as the card to the left.');
+}
+
 function drawPeriodCaveat(p){
   var bits = [];
   bits.push('<b>' + esc(p.label) + ': ' + esc(p.range) + '</b> ' + DASH + ' ' + p.days +
@@ -1898,9 +1957,10 @@ function drawPeriodCaveat(p){
       'partial day, which means <b>today itself contributes nothing</b> to any activity count here. ' +
       'Revenue is cut on the full ' + esc(p.range) + '.');
   }
-  li.push('<b>What follows this tab:</b> the funnel, the paid-acquisition funnel, Combined / inbound / ' +
+  li.push('<b>What follows this tab:</b> the Demos held card, the funnel, the paid-acquisition funnel, Combined / inbound / ' +
     'outbound, the two-seats cards, the rep scorecard, the segment cards, the contact list, and the ' +
-    'revenue tiles. <b>What does not:</b> Voice of the market, which is a fixed mined corpus over its ' +
+    'revenue tiles. <b>What does not:</b> the two upcoming-demo cards, which run from the calendar pull ' +
+    'moment, not from a period; Voice of the market, which is a fixed mined corpus over its ' +
     'own 30-day window; the monthly revenue series, which is the breakdown this tab cuts across; and ' +
     '"Where every number comes from", which documents definitions over the full window by design. Each ' +
     'of those says so where it sits.');
@@ -2225,6 +2285,7 @@ function render(){
   drawFunnel(rows, p); drawMotion3(rows, p); drawRevenue(p); drawMarketing(rows, p);
   drawMotions(rows, p); drawReps(rows, p); drawSegs(rows, p); drawLeads(rows);
   drawDuration(rows, p);
+  drawDemoBoxes(p);
   drawDeals();
   drawPeriodCaveat(p); drawActiveLine(p, rows.length);
 }
