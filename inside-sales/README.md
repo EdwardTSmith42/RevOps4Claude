@@ -40,7 +40,7 @@ The cohort step runs **before** revenue on purpose. Revenue filters on
 
 | Variable | Notes |
 |---|---|
-| `HUBSPOT_SERVICE_KEY` | HubSpot private-app token. Set **only this one.** `extract.py` reads `HUBSPOT_ACCESS_TOKEN` first and falls back to this; `mine_transcripts.py` unsets `HUBSPOT_ACCESS_TOKEN` before shelling to the CLI. Setting both to different values makes them authenticate as different apps. |
+| `HUBSPOT_SERVICE_KEY` | HubSpot private-app token. Set **only this one.** `extract.py` and `mine_transcripts.py` both read `HUBSPOT_ACCESS_TOKEN` first and fall back to this. Setting both to different values makes them authenticate as different apps. |
 | `TABLEAU_PAT_NAME` | Personal access token name from 10az.online.tableau.com |
 | `TABLEAU_PAT_SECRET` | The token secret |
 
@@ -58,20 +58,50 @@ over a holiday comes back to a dead token.
 
 ---
 
-## The HubSpot CLI
+## Transcripts are mined locally, not fetched from HubSpot
 
-Transcript mining needs the HubSpot Agent CLI binary. The diarized transcript is not
-reachable over REST — `/crm/v3/objects/calls/{id}` returns `hs_call_body` and
-`hs_call_summary` but not the transcript, and the four plausible transcript endpoints
-all 404.
+HubSpot's own transcript endpoint (`crm/extensions/calling/v3/transcripts/by-activity`)
+is the Calling Extensions API, gated to whichever app is registered as the call's
+calling provider. We aren't that app (the team's calls are recorded by **Aloware**, a
+third-party dialer, or by HubSpot's own meeting-bot video recorder for pre-migration
+demo calls — see below), so it 403s no matter what scope you grant a private app or
+service key. The HubSpot CLI is **no longer required** for this pipeline.
 
-Install it at runtime rather than committing it (the binary is platform-specific and
-self-upgrades):
+Instead, `mine_transcripts.py` reads the plain CRM property `hs_call_recording_url`
+(no special scope needed — any token that can read `calls` objects can read this),
+follows HubSpot's auth redirect to wherever the actual file lives, downloads it, and
+transcribes it locally with `faster-whisper` (CPU, no GPU needed). The file is deleted
+immediately after each transcription attempt, success or failure — it never
+accumulates on disk and is never sent to a third party.
+
+Two recording sources exist in the corpus, both handled by the same code path since
+the difference is just which domain the redirect lands on and whether the file is
+`.mp3` or `.mp4` (`faster-whisper` decodes either directly, audio-only or video):
+
+- **Aloware** (`.mp3`, S3-hosted) — the team's calling platform from ~Aug 20–Sep 11
+  2026 onward (migrated rep-by-rep; the SDR rep was on it from day one).
+- **HubSpot's own meeting-bot recordings** (`.mp4`, HubSpot's CDN) — pre-migration
+  video sales demos.
+
+Setup, at runtime (not committed — platform-specific wheels):
 
 ```bash
-curl -fsSL https://api.hubapi.com/hub/cli/backend/hub-cli/latest/install.sh | sh
-export PATH="$HOME/.hubspot/bin:$PATH"
+python3 -m pip install faster-whisper requests
 ```
+
+Use `python3 -m pip`, not a bare `pip` — on some images `pip` resolves to a
+different Python installation than the one actually running these scripts, and the
+package silently installs somewhere `mine_transcripts.py` can't import it from.
+
+`WHISPER_MODEL_SIZE` (default `small`) picks the model — `tiny`/`base` for speed,
+`medium`/`large-v3` for accuracy, if the default proves wrong for this corpus. No
+code change needed to adjust it, just the env var.
+
+**Known limitation, not a bug**: some meeting-bot recordings are genuinely silent
+(confirmed with `ffmpeg -af volumedetect` — the mic track is pure noise floor, not
+quiet speech). `fetch_transcripts` reports those as a failed fetch like any other,
+and `build_records()` already falls back to `hs_call_summary`/`hs_call_body` for
+calls with no usable transcript, same as it always has.
 
 ---
 
@@ -92,6 +122,15 @@ drift.
 
 Volume: ~25–45 transcripts on a typical daily incremental run, against 2,824 calls for
 a full re-mine. A 250-file cap per run bounds the worst case after an outage.
+
+Local transcription is CPU-bound and the cost scales with call length, not just
+count: a short SDR dial transcribes in seconds, but a ~24-minute demo call took
+~6.5 minutes on a 4-core box with the `small` model. Downloads run concurrently
+(I/O-bound); transcription runs one call at a time on purpose — `faster-whisper`
+already uses every available core for a single job, so running several in parallel
+would have them fight over the same cores rather than go faster. Size a full
+250-call re-mine's wall-clock time accordingly before assuming it fits whatever
+window ran the old (blocked) approach.
 
 ---
 

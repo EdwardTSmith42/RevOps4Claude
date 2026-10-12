@@ -6,10 +6,14 @@ import json
 import os
 import re
 import shutil
-import subprocess
 import sys
-import time
-from concurrent.futures import ThreadPoolExecutor
+import tempfile
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+try:
+    import requests
+except ImportError:
+    requests = None
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DATA = os.path.join(HERE, "data")
@@ -20,7 +24,11 @@ DELTA = os.path.join(DATA, "vom_delta.json")
 VOM = os.path.join(DATA, "voice_of_market.json")
 VOM_SLIM = os.path.join(DATA, "vom_slim.json")
 RAW_CALLS = os.path.join(DATA, "raw_calls.jsonl")
-HS = os.environ.get("HUBSPOT_CLI", r"C:/Users/esmith/.hubspot/bin/hubspot.exe")
+
+HUBSPOT_TOKEN = os.environ.get("HUBSPOT_ACCESS_TOKEN") or os.environ.get("HUBSPOT_SERVICE_KEY")
+HUBSPOT_API_BASE = "https://api.hubapi.com"
+WHISPER_MODEL_SIZE = os.environ.get("WHISPER_MODEL_SIZE", "small")
+WHISPER_DOWNLOAD_WORKERS = int(os.environ.get("WHISPER_DOWNLOAD_WORKERS", "6"))
 
 OWN = {"84616314", "96412056", "88456783", "96412059", "96412054", "80632115"}
 DISPO = {"9d9162e7-6cf3-4944-bf63-4dff82258764": "Busy",
@@ -104,46 +112,92 @@ def read_cache():
     return cache
 
 
+_WHISPER_MODEL = None
+
+
+def _whisper_model():
+    global _WHISPER_MODEL
+    if _WHISPER_MODEL is None:
+        from faster_whisper import WhisperModel
+        _WHISPER_MODEL = WhisperModel(WHISPER_MODEL_SIZE, device="cpu", compute_type="int8")
+    return _WHISPER_MODEL
+
+
+def _recording_url(cid):
+    r = requests.get("%s/crm/v3/objects/calls/%s" % (HUBSPOT_API_BASE, cid),
+                      params={"properties": "hs_call_recording_url"},
+                      headers={"Authorization": "Bearer %s" % HUBSPOT_TOKEN}, timeout=30)
+    r.raise_for_status()
+    return (r.json().get("properties") or {}).get("hs_call_recording_url")
+
+
+def _download_recording(cid):
+    url = _recording_url(cid)
+    if not url:
+        return None
+    resp = requests.get(url, headers={"Authorization": "Bearer %s" % HUBSPOT_TOKEN},
+                         timeout=120, allow_redirects=True, stream=True)
+    resp.raise_for_status()
+    ctype = resp.headers.get("Content-Type", "")
+    suffix = ".mp4" if "video" in ctype else ".mp3" if "audio" in ctype else ".bin"
+    fd, path = tempfile.mkstemp(suffix=suffix, prefix="call_%s_" % cid)
+    with os.fdopen(fd, "wb") as f:
+        for chunk in resp.iter_content(chunk_size=1 << 20):
+            f.write(chunk)
+    return path
+
+
+def _transcribe(path):
+    segments, _info = _whisper_model().transcribe(path, vad_filter=True)
+    return [s.text.strip() for s in segments if s.text.strip()]
+
+
 def fetch_transcripts(ids, log):
     have = set(read_cache())
     todo = [c for c in ids if c not in have]
     if not todo:
         log("transcript cache already covers all %d calls" % len(ids))
         return
-    if not (os.path.exists(HS) or shutil.which(HS) or shutil.which("hubspot")):
-        raise SystemExit(
-            "the HubSpot CLI is not on this machine (looked for %s), so %d new calls cannot have "
-            "their transcripts fetched. This step needs a runner that has the CLI installed and "
-            "authenticated. Re-run with --skip-transcripts to publish without new themes, or "
-            "point HUBSPOT_CLI at the binary." % (HS, len(todo)))
-    env = dict(os.environ)
+    if requests is None:
+        raise SystemExit("the 'requests' package is required to fetch call recordings "
+                          "(pip install requests)")
+    if not HUBSPOT_TOKEN:
+        raise SystemExit("HUBSPOT_ACCESS_TOKEN or HUBSPOT_SERVICE_KEY must be set to "
+                          "read call recording URLs")
 
-    def parse(s):
-        i = s.find("{")
-        return json.loads(s[i:]) if i >= 0 else None
-
-    def fetch(cid):
-        for _ in range(3):
-            try:
-                p = subprocess.run([HS, "activities", "transcript", "get", cid, "--format", "json"],
-                                   capture_output=True, text=True, encoding="utf-8",
-                                   errors="replace", env=env, timeout=120)
-                d = parse(p.stdout)
-            except Exception:
-                d = None
-            if d and d.get("ok"):
-                return {"id": cid, "ok": True, "rec": (d.get("data") or [None])[0]}
-            time.sleep(1.5)
-        return {"id": cid, "ok": False, "rec": None}
+    def download(cid):
+        try:
+            return cid, _download_recording(cid), None
+        except Exception as e:
+            return cid, None, str(e)
 
     n = fails = 0
-    with open(CACHE, "a", encoding="utf-8") as f, ThreadPoolExecutor(max_workers=6) as ex:
-        for res in ex.map(fetch, todo):
-            f.write(json.dumps(res) + "\n")
+    with open(CACHE, "a", encoding="utf-8") as f, \
+            ThreadPoolExecutor(max_workers=WHISPER_DOWNLOAD_WORKERS) as ex:
+        futures = {ex.submit(download, cid): cid for cid in todo}
+        for fut in as_completed(futures):
+            cid, path, _err = fut.result()
+            ok, rec = False, None
+            if path is not None:
+                try:
+                    texts = _transcribe(path)
+                    if texts:
+                        ok = True
+                        rec = {"transcriptSource": "WHISPER_LOCAL",
+                               "utterances": [{"speaker": {"role": "", "name": "SPEAKER"},
+                                               "text": t} for t in texts]}
+                except Exception:
+                    ok, rec = False, None
+                finally:
+                    try:
+                        os.remove(path)
+                    except OSError:
+                        pass
+            f.write(json.dumps({"id": cid, "ok": ok, "rec": rec}) + "\n")
             n += 1
-            if not res["ok"]:
+            if not ok:
                 fails += 1
-    log("fetched %d new transcripts (%d failed)" % (n, fails))
+    log("transcribed %d calls locally via Whisper (%d failed)" % (n, fails))
 
 
 def build_records(call_rows, cache):
