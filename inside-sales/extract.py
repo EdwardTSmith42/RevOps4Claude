@@ -447,7 +447,8 @@ def main():
     companies = batch_read("companies", company_ids, [
         "name", "city", "state", "industry", "domain", "createdate", "lifecyclestage",
         "enrollment_date", "provider_unique_key", "provider_activated_date",
-        "ae_demo_converted_by", "ae_evaluation_status", "total_loan_applications",
+        "ae_demo_converted_by", "ae_evaluation_status", "ae_evaluation_period_start_date",
+        "ae_evaluation_period_end_date", "total_loan_applications",
         "total_loan_activations", "total_loan_volume", "last_month_loan_volume",
         "total_contract_value", "contract_value_month_to_date", "total_activations",
         "provider_workflow", "provider_status", "hubspot_owner_id", "parent_provider",
@@ -1088,6 +1089,8 @@ def main():
             "unqualified_reason": p.get("unqualified_reason") or "",
             "ae_credited": co.get("ae_demo_converted_by") or "",
             "ae_eval_status": co.get("ae_evaluation_status") or "",
+            "ae_eval_start": (co.get("ae_evaluation_period_start_date") or "")[:10],
+            "ae_eval_end": (co.get("ae_evaluation_period_end_date") or "")[:10],
             "loan_apps": co.get("total_loan_applications") or "",
             "loan_activations": co.get("total_loan_activations") or "",
             "loan_volume": co.get("total_loan_volume") or "",

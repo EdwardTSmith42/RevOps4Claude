@@ -459,6 +459,35 @@ footer{margin-top:40px; padding-top:18px; border-top:1px solid var(--line); font
   </section>
 
   <section>
+    <div class="shead"><h2>Evaluation ended this month</h2>
+      <span class="note">Providers whose AE evaluation period (<code>ae_evaluation_period_end_date</code>)
+      ended in the current calendar month. Loan applications, activations and contract value are read
+      as-is from HubSpot <a class="srcmark" href="#src-eval_cohort_this_month" data-src="eval_cohort_this_month">src</a>
+      &mdash; HFD's own backend job already restricts them to the first 40 days of the evaluation period, so
+      nothing here is recomputed.</span></div>
+    <div class="panel scroll">
+      <table id="evaltbl_this"><thead><tr>
+        <th>Provider</th><th>AE</th><th>Eval start</th><th>Eval end</th>
+        <th class="r">Loan apps</th><th class="r">Activations</th>
+        <th class="r">Contract value</th><th class="r">Contract value MTD</th>
+      </tr></thead><tbody></tbody></table>
+    </div>
+  </section>
+
+  <section>
+    <div class="shead"><h2>Evaluation ended last month</h2>
+      <span class="note">Same definition, previous calendar month
+      <a class="srcmark" href="#src-eval_cohort_last_month" data-src="eval_cohort_last_month">src</a>.</span></div>
+    <div class="panel scroll">
+      <table id="evaltbl_last"><thead><tr>
+        <th>Provider</th><th>AE</th><th>Eval start</th><th>Eval end</th>
+        <th class="r">Loan apps</th><th class="r">Activations</th>
+        <th class="r">Contract value</th><th class="r">Contract value MTD</th>
+      </tr></thead><tbody></tbody></table>
+    </div>
+  </section>
+
+  <section>
     <div class="shead"><h2>Where the contacts come from</h2>
       <span class="note">Source is read from the record's own creation trail, not the Lead Source field, which is blank on 82% of these contacts.</span>
       <span class="note" id="segnote">&mdash;</span></div>
@@ -659,6 +688,7 @@ footer{margin-top:40px; padding-top:18px; border-top:1px solid var(--line); font
 <script id="src" type="application/json">/*__SRC__*/</script>
 <script id="dealdata" type="application/json">/*__DEALS__*/</script>
 <script id="democal" type="application/json">/*__DEMOS__*/</script>
+<script id="evaldata" type="application/json">/*__EVAL__*/</script>
 <script>
 (function(){
 "use strict";
@@ -668,6 +698,7 @@ var R  = JSON.parse(document.getElementById('rev').textContent);
 var S_ = JSON.parse(document.getElementById('src').textContent);
 var D  = JSON.parse(document.getElementById('dealdata').textContent);
 var DM = JSON.parse(document.getElementById('democal').textContent);
+var EC = JSON.parse(document.getElementById('evaldata').textContent);
 
 var C = ['var(--c1)','var(--c2)','var(--c3)','var(--c4)','var(--c5)'];
 var SEAT = {'Brandon Slaughter':'SDR','Gabrielle Nurod':'Inside Sales','Mel Matthews':'Inside Sales','Steven Kelly':'Inside Sales','Andrea Chacin':'Inside Sales','Taylor Sloan':'Inside Sales'};
@@ -2275,6 +2306,29 @@ function drawDeals(){
     'do count both records. <b>Next step is blank on all ' + all.length + ' Deals.</b>';
 }
 
+function evalRow(r){
+  function n(v){ return v ? fmt(v) : '<span class="z">0</span>'; }
+  return '<tr><td>' + esc(r.company || '(no name)') +
+    '<span class="who">' + esc(r.providerId || '') + '</span></td>' +
+    '<td>' + esc(r.aeCredited || DASH) + '</td>' +
+    '<td class="mono">' + esc(r.evalStart || DASH) + '</td>' +
+    '<td class="mono">' + esc(r.evalEnd || DASH) + '</td>' +
+    '<td class="r">' + n(r.loanApplications) + '</td>' +
+    '<td class="r">' + n(r.loanActivations) + '</td>' +
+    '<td class="r">' + usd(r.contractValue) + '</td>' +
+    '<td class="r">' + usd(r.contractValueMtd) + '</td></tr>';
+}
+
+function drawEvalCohort(){
+  function fill(id, providers){
+    document.querySelector('#' + id + ' tbody').innerHTML = providers.map(evalRow).join('') ||
+      '<tr><td colspan="8" style="padding:20px;text-align:center;color:var(--ink-3)">' +
+      'No providers in this cohort.</td></tr>';
+  }
+  fill('evaltbl_this', EC.thisMonth.providers);
+  fill('evaltbl_last', EC.lastMonth.providers);
+}
+
 function render(){
   var p = PER[S.p] || PER.last90;
   var rows = [];
@@ -2287,6 +2341,7 @@ function render(){
   drawDuration(rows, p);
   drawDemoBoxes(p);
   drawDeals();
+  drawEvalCohort();
   drawPeriodCaveat(p); drawActiveLine(p, rows.length);
 }
 

@@ -1,4 +1,5 @@
 """Build the artifact: slim the lead rows, then inject them into dashboard.html."""
+import datetime as dt
 import json, os
 from collections import Counter
 
@@ -159,6 +160,80 @@ PIDS = os.path.join(HERE, "data", "sourced_pids.txt")
 open(PIDS, "w", encoding="utf-8").write(
     ",".join("'%s'" % p for p in sorted(_now_pids)))
 
+EVAL_STATUSES = {"Active", "Completed"}
+
+
+def _num(v):
+    try:
+        return float(v) if v not in (None, "") else 0
+    except (TypeError, ValueError):
+        return 0
+
+
+def _eval_companies():
+    seen = {}
+    for r in rows:
+        cid = r.get("company_id")
+        if not cid or cid in seen:
+            continue
+        if r.get("ae_eval_status") not in EVAL_STATUSES:
+            continue
+        if not r.get("provider_id"):
+            continue
+        if not r.get("ae_eval_end"):
+            continue
+        seen[cid] = r
+    return seen
+
+
+def _eval_row(r):
+    return {
+        "company": r.get("company") or "",
+        "providerId": r.get("provider_id") or "",
+        "evalStatus": r.get("ae_eval_status") or "",
+        "evalStart": r.get("ae_eval_start") or "",
+        "evalEnd": r.get("ae_eval_end") or "",
+        "aeCredited": r.get("ae_credited") or "",
+        "loanApplications": _num(r.get("loan_apps")),
+        "loanActivations": _num(r.get("loan_activations")),
+        "contractValue": _num(r.get("contract_value")),
+        "contractValueMtd": _num(r.get("contract_value_mtd")),
+    }
+
+
+_today = dt.date.today()
+_this_month_start = _today.replace(day=1)
+_last_month_end = _this_month_start - dt.timedelta(days=1)
+_last_month_start = _last_month_end.replace(day=1)
+
+
+def _end_in(dstr, lo, hi):
+    try:
+        d = dt.date.fromisoformat(dstr)
+    except (TypeError, ValueError):
+        return False
+    return lo <= d <= hi
+
+
+_eval_pool = _eval_companies()
+_eval_this = sorted((_eval_row(r) for r in _eval_pool.values()
+                     if _end_in(r.get("ae_eval_end"), _this_month_start, _today)),
+                    key=lambda d: d["evalEnd"])
+_eval_last = sorted((_eval_row(r) for r in _eval_pool.values()
+                     if _end_in(r.get("ae_eval_end"), _last_month_start, _last_month_end)),
+                    key=lambda d: d["evalEnd"])
+
+eval_cohort_doc = {
+    "generatedAtUtc": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+    "today": _today.isoformat(),
+    "thisMonth": {"start": _this_month_start.isoformat(), "end": _today.isoformat(),
+                  "providers": _eval_this},
+    "lastMonth": {"start": _last_month_start.isoformat(), "end": _last_month_end.isoformat(),
+                  "providers": _eval_last},
+}
+json.dump(eval_cohort_doc, open(os.path.join(HERE, "data", "eval_cohort.json"), "w",
+                                 encoding="utf-8"), separators=(",", ":"))
+
 slim = []
 for r in rows:
     d = {k: r.get(k) for k in KEEP}
@@ -245,15 +320,48 @@ _ms = srcdoc.setdefault("metrics", [])
 _ms[:] = [m for m in _ms if m.get("id") != "demo_upcoming"]
 _ix = next((i for i, m in enumerate(_ms) if m.get("id") == "noshow"), len(_ms) - 1)
 _ms.insert(_ix + 1, _upcoming_row)
+
+_eval_predicate = ("ae_evaluation_status is Active or Completed AND provider_unique_key is known AND "
+                   "ae_evaluation_period_end_date falls in %s. ae_evaluation_period_end_date runs "
+                   "roughly 8 weeks (observed 36-56 days, usually 56) after ae_evaluation_period_start_date "
+                   "- it is the evaluation program's own length, not the 40-day window the loan metrics "
+                   "below are computed over.")
+_eval_verify = ("total_loan_applications, total_loan_activations, total_contract_value and "
+                "contract_value_month_to_date are read as-is from the HubSpot Company record - no "
+                "recomputation. HFD's own backend job counts loan applications and contracts created in "
+                "the FIRST 40 days of the evaluation period (ae_evaluation_period_start_date through "
+                "start_date + 40 days), a sub-window of the longer evaluation period named by "
+                "ae_evaluation_period_end_date above. contract_value_month_to_date is bounded to the "
+                "calendar month containing ae_evaluation_period_start_date, not a rolling as-of-today "
+                "figure. Cross-check against HubSpot report 160709529 (\"Inside Sales Primary Success "
+                "Metrics (Detail)\", dashboard 18090699), which reads the same Company properties with "
+                "the same Active/Completed filter.")
+_ms[:] = [m for m in _ms if m.get("id") not in ("eval_cohort_this_month", "eval_cohort_last_month")]
+_ms.append({
+    "id": "eval_cohort_this_month", "label": "Providers whose evaluation ended this month",
+    "value": len(_eval_this), "system": "HubSpot CRM", "object": "COMPANY",
+    "predicate": _eval_predicate % "the current calendar month",
+    "dateProperty": "ae_evaluation_period_end_date", "grain": "one row per provider company",
+    "verify": _eval_verify,
+})
+_ms.append({
+    "id": "eval_cohort_last_month", "label": "Providers whose evaluation ended last month",
+    "value": len(_eval_last), "system": "HubSpot CRM", "object": "COMPANY",
+    "predicate": _eval_predicate % "the previous calendar month",
+    "dateProperty": "ae_evaluation_period_end_date", "grain": "one row per provider company",
+    "verify": _eval_verify,
+})
 json.dump(srcdoc, open(SRC, "w", encoding="utf-8"), indent=2)
 src = open(SRC, encoding="utf-8").read()
 cal = json.dumps(caldoc, separators=(",", ":"))
+evalcohort = json.dumps(eval_cohort_doc, separators=(",", ":"))
 assert "/*__DEMOS__*/" in html, "demo calendar marker missing from template"
 assert "/*__DEALS__*/" in html, "deals marker missing from template"
 assert "/*__DATA__*/" in html, "data marker missing from template"
+assert "/*__EVAL__*/" in html, "eval cohort marker missing from template"
 built = os.path.join(HERE, "dashboard_built.html")
 open(built, "w", encoding="utf-8").write(
-    html.replace("/*__DATA__*/", data).replace("/*__VOM__*/", vom).replace("/*__REV__*/", rev).replace("/*__SRC__*/", src).replace("/*__DEALS__*/", deals).replace("/*__DEMOS__*/", cal))
+    html.replace("/*__DATA__*/", data).replace("/*__VOM__*/", vom).replace("/*__REV__*/", rev).replace("/*__SRC__*/", src).replace("/*__DEALS__*/", deals).replace("/*__DEMOS__*/", cal).replace("/*__EVAL__*/", evalcohort))
 
 print("demo calendar: %d past, %d upcoming (%d in the next 7 days), pulled %s"
       % (len(caldoc["meetings"]) - len(_fut), len(_fut), _n7, caldoc.get("asOf")))
